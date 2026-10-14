@@ -1,41 +1,67 @@
 # renderer/remotion/ — Remotion reference renderer
-Status: Scaffold (task 001): `src/index.ts` and a smoke test, no Remotion dependency yet. Rendering: tasks 004, 019–035, 039–046.
-Run: `npm run typecheck -w @quarto-video/remotion`; tests: root `npm run test`.
+Status: Minimal render (task 004): any valid IR 0.1 renders to MP4 with a placeholder `title` scene. Themes, presets and the other components: tasks 019–035, 039–046.
+Run: `npm run render -w renderer/remotion -- <ir.json> <out.mp4>`; typecheck: `npm run typecheck -w @quarto-video/remotion`; unit tests: root `npm run test`; render tests: root `npm run test:integration`.
 
 ## Purpose
 Render a valid Video IR manifest to frames and encode the output (PRD §8.4).
 It implements what `packages/registry` declares; it decides nothing about
 what is valid.
 
-## Layout (target)
-- `src/Root.tsx` — composition reading the IR from input props.
-- `components/<id>/` — one directory per registry component.
-- `animations/<id>.ts`, `transitions/<id>.ts` — preset implementations.
-- `media/` — video/image primitives, `fit` logic, device frames.
-- `themes/` — theme provider; fonts bundled locally under `themes/fonts/`.
-- `src/render.ts` — `render(irPath, outPath, opts)` used by the CLI.
-- `src/registry-map.ts` — registry id → implementation map.
+## Layout
+- `src/entry.ts` — Remotion bundle entry (`registerRoot`).
+- `src/Root.tsx` — `video` composition; size, fps and length come from the IR
+  input props via `calculateMetadata`.
+- `src/IrVideo.tsx` — plays scenes in order with `<Series>` on `settings.background`.
+- `src/registry-map.ts` — registry id → implementation (`title` only).
+- `src/render.ts` — `render(irPath, outPath, opts)`: validate, bundle, encode.
+- `src/cli.ts` — `render` script entry (exit 0 on success, 1 on error, 2 on usage).
+- `src/errors.ts` — `IrRenderError`, thrown for rejected input.
+- `components/title/` — placeholder centred title; `components/<id>/` for the rest.
+- `test/` — unit tests: invalid IR rejection (no browser), pinned versions.
+- Planned, not yet present: `animations/`, `transitions/`, `media/`, `themes/`.
+
+## Versions (ADR-0001, exact)
+- `remotion`, `@remotion/bundler`, `@remotion/renderer`: 4.0.530 (released 2026-09-29).
+- `react`, `react-dom`: 19.2.8; `@types/react`: 19.2.18.
+- Upgrades happen only in a dedicated task. Test `pinning.test.ts` enforces exact ranges.
+
+## Browser (no downloads)
+Chromium is preinstalled; do not run `playwright install`. Remotion is pointed
+at the existing headless shell, never at its own download:
+- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell`.
+- API: `render(ir, out, { browserExecutable })`. Unset means Remotion downloads its own browser.
+- The integration test finds `chromium_headless_shell-*` under `PLAYWRIGHT_BROWSERS_PATH`
+  (or honours `QV_BROWSER_EXECUTABLE`); it fails if none exists.
 
 ## Rules
 - Input is IR only. Never import `packages/validator` or `packages/cli`.
-- Check `schemaVersion` on load and fail clearly on unknown majors.
+- `render()` validates before anything else; invalid IR rejects with the JSON
+  path (for example `/scenes/0/durationFrames`) and never starts a browser.
+- Unknown components are rejected the same way (`/scenes/<i>/component`).
+- Check `schemaVersion` on load: `validateIr` already enforces `"0.1"`.
 - Visual state = f(IR, frame). Use `useCurrentFrame()`/props only. Banned:
   `Date`, `Math.random`, `performance.now`, timers, `fetch`, remote URLs
   (enforced by lint rule from task 021).
+- Sources use NodeNext `./x.js` imports; `render.ts` maps `.js` to `.ts/.tsx`
+  for webpack through `webpackOverride`.
 - Animations read durations from the IR; never hard-code frame counts that
   can exceed a scene's frames.
-- Layout uses theme tokens only; no magic colours or font sizes in components.
+- Layout uses theme tokens only; the placeholder `title` hard-codes its
+  style until task 019.
 - Media `src` are project-relative IR paths resolved against the asset root
-  passed by the CLI.
-- Pin exact Remotion versions (ADR-0001); upgrade only in a dedicated task.
+  passed by the CLI (task 006).
 
 ## Adding a component or preset
-1. Registry entry (contract) exists. 2. Implement here and add it to
-`registry-map.ts`. 3. Add visual cases in `tests/visual/cases/`.
-4. Write `docs/components/<id>.md`. The parity test fails until all exist.
+1. Registry entry (contract) exists. 2. Implement under `components/<id>/` and
+add it to `src/registry-map.ts`. 3. Add visual cases in `tests/visual/cases/`.
+4. Write `docs/components/<id>.md`.
 
 ## Testing
-Unit tests for preset curves; integration renders; visual regression stills.
+- Unit (`npm run test`): invalid-IR rejection, pinned versions.
+- Integration (`npm run test:integration`): renders `packages/ir/examples/minimal.json`
+  shrunk to 640×360 and 1 s, and a two-scene IR; ffprobe checks size, 30 fps and
+  frame count = sum of `durationFrames`.
+- Not yet covered: `tsc` does not check `tests/integration/` (no tsconfig there).
 
 ## Related
 Tasks 004, 019–046. ADR-0001, 0005, 0009.
