@@ -79,8 +79,13 @@ spawn`; post-render scripts run with the project directory as cwd.
   Quarto 1.10.19 (ADR-0002)". Docs must not claim that an extension, filter or
   custom format renders video, that `quarto render <dir>` works without
   `_quarto.yml`, or any other Quarto version, platform, project or preview.
-- Follow-up 007a: make the post-render form supported (tested, with a
-  project template and CLI discovery that uses no undocumented internals).
+- Follow-up 007a (done): the post-render form is supported. `videos/hello/_quarto.yml`
+  and `videos/hello/render-video.sh` implement it; the CLI is found through
+  `video` on PATH or `npm exec --prefix <repo>`, both documented. Tested by
+  `tests/integration/quarto-render.test.ts` (file and directory forms write the
+  MP4; a failing `video render` exits non-zero and leaves no `output.mp4` when none existed).
+  The supported claim is limited to `videos/hello` with the pinned Quarto
+  (1.10.19); other projects copy the two files.
 
 ## Verification
 - `scripts/spike-quarto-native.sh` prints the lines above and exits 0. Its
