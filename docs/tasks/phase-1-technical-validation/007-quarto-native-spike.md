@@ -1,6 +1,6 @@
 # 007 — Quarto-native invocation spike
 
-Phase 1 · Status: in-progress · Depends on: 006 · PRD: §1.3, §4.3, §16, §18.1 · ADR: writes 0002
+Phase 1 · Status: done · Depends on: 006 · PRD: §1.3, §4.3, §16, §18.1 · ADR: writes 0002
 
 ## Goal
 Find out, with evidence, whether `quarto render videos/hello/index.qmd` (and
@@ -33,5 +33,30 @@ Human check:
 2. Run `scripts/spike-quarto-native.sh`; the WORKS/FAILS lines match the ADR.
 
 ## Notes
+- Choices: the extension is copied into each temp project (Quarto searches
+  the project directory only). The custom format is a temp-copy variant
+  (`formats: html: output-ext: mp4`), not a repo change.
+- `post-render-failure-exit` is a negative control: WORKS means quarto exits
+  non-zero when the hook fails.
+- A Lua filter that spawns `video render` (`pandoc.pipe`) was not spiked: it
+  breaks the purity rule in `_extensions/video/README.md`.
+- The spike hook uses an absolute repo path (`QV_SPIKE_REPO`). It is spike-only.
+- PRD §18.1 is resolved by ADR-0002. Agents do not edit the PRD; a human
+  should mark §18.1 as resolved.
 
 ## Completion log
+- 2026-10-14. Decision (ADR-0002, accepted): `video render` stays the entry
+  point. `quarto render` writes `output.mp4` only through a project
+  `_quarto.yml` post-render hook that runs `video render` (file and directory
+  forms, Quarto 1.10.19). Filters and custom formats write the manifest only.
+  A directory without `_quarto.yml` renders nothing and exits 0.
+- Evidence: `scripts/spike-quarto-native.sh` (7 forms; output in ADR-0002).
+  Covered by `tests/integration/spike-quarto-native.test.ts` ("prints the
+  evidence recorded in ADR-0002"), which runs in `npm run test:integration`.
+- Automated, all exit 0: `npm run check`, `npm run test`, `npm run test:lua`
+  (26 pass), `npm run test:integration` (spike test included),
+  `scripts/check.sh --all`, `scripts/test.sh --all`.
+- Follow-up: 007a (supported post-render render, hook location, CLI discovery).
+  Human to mark PRD §18.1 resolved.
+- Human check pending: read ADR-0002; run `scripts/spike-quarto-native.sh`
+  and compare its lines with the ADR.
