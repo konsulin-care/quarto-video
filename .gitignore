@@ -20,3 +20,6 @@ videos/*/index.html
 videos/*/index_files/
 videos/*/.quarto/
 videos/*/.gitignore
+
+# Harness worktrees for delegated agents (local state, never committed)
+.claude/worktrees/
