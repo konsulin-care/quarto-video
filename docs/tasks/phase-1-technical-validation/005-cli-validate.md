@@ -1,6 +1,6 @@
 # 005 — `video validate`
 
-Phase 1 · Status: todo · Depends on: 003 · PRD: §4.2, §9.1 · ADR: —
+Phase 1 · Status: in-progress · Depends on: 003 · PRD: §4.2, §9.1 · ADR: —
 
 ## Goal
 `video validate <path>` resolves a project from a directory or a `.qmd`
