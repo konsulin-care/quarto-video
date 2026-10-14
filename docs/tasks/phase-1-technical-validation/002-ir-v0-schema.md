@@ -1,6 +1,6 @@
 # 002 — IR v0 schema and checker
 
-Phase 1 · Status: todo · Depends on: 001 · PRD: §8.2 · ADR: —
+Phase 1 · Status: in-progress · Depends on: 001 · PRD: §8.2 · ADR: —
 
 ## Goal
 A minimal, versioned Video IR JSON Schema plus a checker that accepts valid
