@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: Integration suite live (task 004: `tests/integration/render.test.ts`, needs a Chromium headless shell). `npm run test:lua|test:visual` still print "no tests yet" until tasks 003 and 020 (005 for CLI integration).
+Status: `npm run test:lua` and `npm run test:integration` are real. `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell) and the minimal-filter golden test (task 003), both through the pinned Quarto. `test:visual` is still a placeholder until task 020; the CLI harness arrives with task 005.
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 

@@ -63,8 +63,9 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run format` · `npm run lint` · `npm run typecheck` · `npm run test`.
 - `npm run typecheck -w @quarto-video/ir` — one workspace.
 - `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002).
-- `npm run test:integration` — renders via Remotion (task 004); needs a Chromium headless shell (`renderer/remotion/README.md`).
-- `npm run test:lua|test:visual` — placeholders until tasks 003, 020.
+- `npm run test:lua` — Lua filter unit tests via `quarto pandoc` (task 003).
+- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`) and the golden filter test (task 003).
+- `npm run test:visual` — placeholder until task 020.
 - `video validate|render` arrive with 005/006.
 
 ## Working rules

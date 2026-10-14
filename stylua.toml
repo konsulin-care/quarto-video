@@ -1,0 +1,7 @@
+# StyLua settings for Lua code (ADR-0010). Matches the 2-space style of the
+# TypeScript and shell code in this repository.
+indent_type = "Spaces"
+indent_width = 2
+column_width = 100
+quote_style = "AutoPreferDouble"
+line_endings = "Unix"
