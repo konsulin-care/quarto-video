@@ -166,16 +166,19 @@ describe("video validate", () => {
   });
 
   it("exits 1 and reports the document when the filter rejects it", () => {
-    const project = join(SCRATCH, "no-video-block");
+    const project = join(SCRATCH, "invalid-video-setting");
     mkdirSync(project, { recursive: true });
-    writeFileSync(join(project, "index.qmd"), "# No video block\n");
+    writeFileSync(
+      join(project, "index.qmd"),
+      '---\nvideo:\n  fps: 0\n---\n\n::: {.scene component="title" duration="4s"}\nX\n:::\n',
+    );
     const run = video(["validate", project]);
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      "ERROR index.qmd\nfront matter needs a video block with width, height, fps and background\n" +
-        "Add a video block with width, height, fps and background.\n",
+      'ERROR index.qmd\nvideo.fps must be a whole number of at least 1, got "0"\n' +
+        "Use a whole number of at least 1, for example 30.\n",
     );
   });
 

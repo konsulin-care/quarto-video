@@ -1,7 +1,8 @@
--- Converts a scene duration attribute to integer frames (PRD §5.3, §8.2;
--- ADR-0003). Accepted: "<n>s" or "<n>ms", n a decimal with at most three
--- fraction digits. The duration is held in whole microseconds (exact) and
--- the frame count rounds half up. Shared vectors:
+-- Converts a duration to integer frames (PRD §5.3, §8.2; ADR-0003). Accepted:
+-- "<n>s" or "<n>ms", n a decimal with at most three fraction digits. The
+-- duration is held in whole microseconds (exact) and the frame count rounds
+-- half up. Used for scene `duration` attributes and for the front matter
+-- default `defaults.scene.duration`. Shared vectors:
 -- packages/ir/test-vectors/durations.json (the TS helper runs them too).
 local diagnostics = require("lib.diagnostics")
 
@@ -10,60 +11,75 @@ local M = {}
 local MAX_MICROS = 3600 * 1000000 -- 3600 s (ADR-0003)
 local MAX_WHOLE_DIGITS = 7
 
--- Raises a diagnostic that names the scene and the value.
-local function fail(code, scene_id, text, predicate, suggestion)
+-- Names the duration in messages and suggestions. `head` builds the start of
+-- the message from the value; `one` and `four` are example spellings.
+local function scene_context(scene_id)
+  return {
+    head = function(text)
+      return string.format('Scene "%s" has duration "%s"', scene_id, text)
+    end,
+    property = "duration",
+    one = 'duration="1s"',
+    four = 'duration="4s"',
+    shorter = "Use a shorter scene, for example by splitting it.",
+  }
+end
+
+local DEFAULT_CONTEXT = {
+  head = function(text)
+    return string.format('The default scene duration "%s" (defaults.scene.duration)', text)
+  end,
+  property = "defaults.scene.duration",
+  one = "defaults.scene.duration: 1s",
+  four = "defaults.scene.duration: 4s",
+  shorter = "Use a shorter default duration.",
+}
+
+-- Raises one diagnostic whose message is the context head, then the predicate.
+local function fail(ctx, code, text, predicate, suggestion)
   diagnostics.fail(
     code,
-    string.format('Scene "%s" has duration "%s", which %s.', scene_id, text, predicate),
-    { property = "duration", suggestion = suggestion }
+    string.format("%s, which %s.", ctx.head(text), predicate),
+    { property = ctx.property, suggestion = suggestion }
   )
 end
 
-local function syntax(scene_id, text, predicate)
-  fail(
-    "E_DURATION_SYNTAX",
-    scene_id,
-    text,
-    predicate,
-    'Write seconds or milliseconds, for example duration="4s".'
-  )
+local function range(ctx, text, predicate, suggestion)
+  fail(ctx, "E_DURATION_RANGE", text, predicate, suggestion)
 end
 
-local function range(scene_id, text, predicate, suggestion)
-  fail("E_DURATION_RANGE", scene_id, text, predicate, suggestion)
+local function positive_hint(ctx)
+  return string.format("Use a positive duration, for example %s.", ctx.one)
 end
 
---- Returns the number of frames for `text` at `fps` (a positive integer).
---- `scene_id` names the scene in the message. Raises E_DURATION_SYNTAX for a
---- bad form and E_DURATION_RANGE for a value that is not a positive duration
---- of at least one frame and at most 3600 s.
-function M.to_frames(text, scene_id, fps)
+-- Frames for `text` at `fps`. Raises E_DURATION_SYNTAX for a bad form and
+-- E_DURATION_RANGE for a value that is not a positive duration of at least
+-- one frame and at most 3600 s.
+local function frames_of(text, ctx, fps)
   if text:match("^%-%d") then
-    range(
-      scene_id,
-      text,
-      "must be greater than zero",
-      'Use a positive duration, for example duration="1s".'
-    )
+    range(ctx, text, "must be greater than zero", positive_hint(ctx))
   end
   local whole, dot, fraction, unit = text:match("^(%d+)(%.?)(%d*)(m?s)$")
   if whole == nil or (dot == "." and fraction == "") then
-    syntax(
-      scene_id,
+    fail(
+      ctx,
+      "E_DURATION_SYNTAX",
       text,
-      'must be a number of seconds or milliseconds, like "4s", "1.5s" or "500ms"'
+      'must be a number of seconds or milliseconds, like "4s", "1.5s" or "500ms"',
+      string.format("Write seconds or milliseconds, for example %s.", ctx.four)
     )
   end
   if #fraction > 3 then
-    syntax(scene_id, text, "has more than 3 decimal places")
+    fail(
+      ctx,
+      "E_DURATION_SYNTAX",
+      text,
+      "has more than 3 decimal places",
+      string.format("Write seconds or milliseconds, for example %s.", ctx.four)
+    )
   end
   if #whole > MAX_WHOLE_DIGITS then
-    range(
-      scene_id,
-      text,
-      "must be at most 3600s",
-      "Use a shorter scene, for example by splitting it."
-    )
+    range(ctx, text, "must be at most 3600s", ctx.shorter)
   end
   local thousandths = tonumber(fraction .. string.rep("0", 3 - #fraction))
   local micros
@@ -73,31 +89,33 @@ function M.to_frames(text, scene_id, fps)
     micros = tonumber(whole) * 1000 + thousandths
   end
   if micros == 0 then
-    range(
-      scene_id,
-      text,
-      "must be greater than zero",
-      'Use a positive duration, for example duration="1s".'
-    )
+    range(ctx, text, "must be greater than zero", positive_hint(ctx))
   end
   if micros > MAX_MICROS then
-    range(
-      scene_id,
-      text,
-      "must be at most 3600s",
-      "Use a shorter scene, for example by splitting it."
-    )
+    range(ctx, text, "must be at most 3600s", ctx.shorter)
   end
   local frames = math.floor((2 * micros * fps + 1000000) / 2000000)
   if frames < 1 then
     range(
-      scene_id,
+      ctx,
       text,
       string.format("is shorter than one frame at %d fps", fps),
       "Use a longer duration."
     )
   end
   return frames
+end
+
+--- Returns the number of frames for a scene's `text` at `fps` (a positive
+--- integer). `scene_id` names the scene in the message.
+function M.to_frames(text, scene_id, fps)
+  return frames_of(text, scene_context(scene_id), fps)
+end
+
+--- Returns the frames of the front matter default `defaults.scene.duration`.
+--- The message names the setting, not a scene.
+function M.default_frames(text, fps)
+  return frames_of(text, DEFAULT_CONTEXT, fps)
 end
 
 return M

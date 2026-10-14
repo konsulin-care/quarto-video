@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "0.1",
+  "type": "video",
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#000000"
+  },
+  "scenes": [
+    {
+      "id": "scene-001",
+      "component": "title",
+      "durationFrames": 45,
+      "content": {
+        "text": "Takes the default duration."
+      },
+      "source": {
+        "file": "index.qmd"
+      }
+    },
+    {
+      "id": "scene-002",
+      "component": "title",
+      "durationFrames": 60,
+      "content": {
+        "text": "An explicit duration wins."
+      },
+      "source": {
+        "file": "index.qmd"
+      }
+    }
+  ]
+}

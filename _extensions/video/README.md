@@ -1,12 +1,12 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest; `video.output` (task 006); diagnostics with codes (task 008). Defaults (010), source lines (011) and structured content (012) are not done.
+Status: `.scene` Divs → IR 0.1 manifest (task 003); `video.output` (006); diagnostics with codes (008); durations → frames (009); front matter defaults and unknown-key checks (010). Source lines (011) and structured content (012) are not done.
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `settings.lua` (front matter, `video.output`), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
+- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
 ## Does not own
@@ -22,49 +22,57 @@ quarto pandoc tests/fixtures/projects/minimal-filter/index.qmd \
   --from markdown --to native --lua-filter _extensions/video/video.lua > /dev/null
 ```
 
-It writes `tests/fixtures/projects/minimal-filter/.video-build/manifest.json`. The `--to native` output is discarded; the manifest is the result.
+It writes `tests/fixtures/projects/minimal-filter/.video-build/manifest.json`. The `--to native` output is discarded; the manifest is the result. Why this form: `quarto pandoc` runs the pinned Pandoc (ADR-0010), with no Quarto project resolution (PRD §4.3). `quarto render` runs the filter too, but writes no MP4 (ADR-0002); the CLI is the reference entry point. `video validate` runs this same invocation (`packages/cli/src/filter.ts`).
 
-Why this form:
-- `quarto pandoc` runs the Pandoc bundled with the pinned Quarto (mise pins Quarto 1.10.19, Pandoc 3.10, Lua 5.4; ADR-0010). Tests and users run the same Lua.
-- Plain Pandoc flags and no Quarto project or format resolution: deterministic, no dependency on undocumented Quarto internals (PRD §4.3).
-- `quarto render index.qmd` runs the filter when the document lists `filters: [video]` and writes the manifest, but no MP4 (ADR-0002). Quarto gives Pandoc a temporary copy of the file, so the filter takes the project path from `quarto.doc.input_file` and falls back to Pandoc's input list. An MP4 from `quarto render` needs the project post-render hook in ADR-0002, not this filter. The CLI is the reference entry point.
+Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three.
 
-`video validate` runs this same invocation (`packages/cli/src/filter.ts`).
+## Front matter settings (task 010)
+Every value that is present must be valid. Omitted values take the default. An empty `video:` block means all defaults.
 
-Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three, so a rejected document never leaves a stale one.
+| Key | Type | Default | Required? | Inheritance and notes |
+| --- | --- | --- | --- | --- |
+| `video.width`, `video.height` | integer ≥ 1, even (H.264) | 1920, 1080 | no | Only the IR carries them. |
+| `video.fps` | integer ≥ 1 | 30 | no | Scene durations convert at this fps (ADR-0003). |
+| `video.output` | relative path ending `.mp4`, no `..` | `output.mp4` | no | `render.json`, not the IR. |
+| `video.background` | `"#RRGGBB"` | `"#000000"` | no | Black until a theme supplies a background (task 019). |
+| `title` | text | none | no | Stored; not in the IR yet. |
+| `theme` | text | none | no | Stored; resolved by task 019. Absent means no theme yet. |
+| `defaults.scene.duration` | `<n>s` or `<n>ms` (ADR-0003) | none | no | Applies to every `.scene` without `duration`. An explicit scene `duration` wins. |
+| `defaults.scene.transition` | text | none | no | Stored; resolved by task 015. |
 
-## Diagnostics (task 008)
-- Each stage collects its errors with `diagnostics.try` and raises them together, so every bad scene and every bad setting is reported in one run.
-- On error the filter writes the diagnostics array, then fails Pandoc. The CLI reads the array and prints it (`packages/cli`). Lua errors that are not diagnostics are bugs and are reported as `E_FILTER_FAILED` by the CLI.
-- Codes and their meaning: `packages/validator/README.md`.
+Rules:
+- Unknown keys under `video` and `defaults` are `E_CONFIG_UNKNOWN_KEY`, with a "did you mean" suggestion when a known key is close. Top-level keys are shared with Quarto and are not checked here.
+- `codec` and `container` are rejected as not supported yet (PRD §5.2).
+- Settings that the IR does not carry (`title`, `theme`, transition) are validated here and stored in memory until their tasks use them. The IR schema allows only `width`, `height`, `fps`, `background`.
+- A scene without a duration and without a default is `E_SCENE_NO_DURATION`.
 
-## DSL reference
+## Scenes and durations
 | Input | Scope | Type | Default | Since |
 | --- | --- | --- | --- | --- |
-| `video.width`, `video.height` | front matter | integer ≥ 1 | none, required | 003 |
-| `video.fps` | front matter | integer ≥ 1 | none, required | 003 |
-| `video.output` | front matter | relative path ending in `.mp4`, no `..` | `output.mp4` | 006 |
-| `video.background` | front matter | `"#RRGGBB"` | none, required | 003 |
-| `.scene` | top-level block | Div with class `scene` only | — | 003 |
 | `component` | `.scene` | non-empty string, not checked | none, required | 003 |
-| `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | none, required | 003 (form 009) |
+| `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | `defaults.scene.duration`, else required | 003 (form 009, default 010) |
 
 Rules:
 - Scenes are numbered `scene-001`, `scene-002`… in document order. A document with no scenes gives `"scenes": []`.
 - Content is the scene's plain text, one line per paragraph (structured content is task 012).
 - Any other attribute, class or identifier on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error.
-- Missing required settings are errors (E_SETTING_MISSING, no defaults until task 010). Invalid values are E_SETTING_INVALID. Scene and duration problems carry their scene id.
+- Every bad setting and every bad scene is reported in one run. Scene and duration problems carry their scene id; a bad default names the setting.
+
+## Diagnostics (task 008)
+- Each stage collects its errors with `diagnostics.try` and raises them together.
+- On error the filter writes the diagnostics array, then fails Pandoc. The CLI reads the array and prints it (`packages/cli`).
+- Codes and their meaning: `packages/validator/README.md`.
 
 ## Testing
-- `npm run test:lua` runs `quarto pandoc lua _extensions/video/tests/run.lua`: unit tests for scenes, durations, settings and the encoder.
-- `npm run test:integration` runs the golden test (`tests/integration/minimal-filter.test.ts`): manifest deep-equals `expected.json`, passes `validateIr`, and contains no Pandoc or React names.
-- Both need `quarto` on `PATH` (mise provides the pinned version). Without it they fail with "quarto: not found".
+- `npm run test:lua` runs `quarto pandoc lua _extensions/video/tests/run.lua`: unit tests for scenes, durations, config, config keys and the encoder.
+- `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
+- Both need `quarto` on `PATH` (mise provides the pinned version).
 
 ## Rules
 - Lua code must be pure: no `os.execute`, `io.popen`, network, or reading files other than the document being processed.
 - Attribute names are case-sensitive and passed through unchanged; unknown attributes are NOT dropped (they are errors here).
 - Keep the Pandoc dependency inside this directory. IR content nodes must not contain Pandoc type names (`Para`, `Str`, …).
-- Duration conversion must pass `packages/ir/test-vectors/durations.json` (task 009, ADR-0003).
+- Duration conversion must pass `packages/ir/test-vectors/durations.json` (ADR-0003).
 
 ## Related
-Tasks 003, 007, 008–012, 015, 038. ADR-0002, 0003, 0004, 0005.
+Tasks 003, 007, 008–012, 015, 019, 038. ADR-0002, 0003, 0004, 0005.

@@ -1,7 +1,8 @@
 -- Collects `.scene` Divs into scene records (PRD §5.3).
 -- Scenes are top-level blocks in document order. A `.scene` anywhere else,
 -- or an attribute the filter does not know, is an error, never ignored.
--- Component names are not checked here (task 014). Every bad scene is
+-- Component names are not checked here (task 014). A scene without a
+-- duration takes the front matter default (task 010). Every bad scene is
 -- reported; the errors are diagnostics (lib/diagnostics.lua).
 local duration = require("lib.duration")
 local diagnostics = require("lib.diagnostics")
@@ -66,7 +67,28 @@ local function plain_text(div)
   return table.concat(parts, "\n")
 end
 
-local function scene_record(div, id, fps)
+-- An explicit duration wins; otherwise the front matter default applies
+-- (`default_frames`: nil when no default is set, false when the default is
+-- invalid and already reported, so the frames are discarded).
+local function scene_frames(div, id, fps, default_frames)
+  local text = div.attributes.duration
+  if text ~= nil then
+    return duration.to_frames(text, id, fps)
+  end
+  if default_frames == false then
+    return 1
+  end
+  if default_frames ~= nil then
+    return default_frames
+  end
+  diagnostics.fail(
+    "E_SCENE_NO_DURATION",
+    string.format('Scene "%s" has no duration attribute.', id),
+    { property = "duration", suggestion = 'Add duration="<n>s", for example duration="4s".' }
+  )
+end
+
+local function scene_record(div, id, fps, default_frames)
   check_shape(div, id)
   local component = div.attributes.component
   if component == nil or component == "" then
@@ -76,18 +98,10 @@ local function scene_record(div, id, fps)
       { property = "component", suggestion = 'Add component="<name>"' }
     )
   end
-  local text = div.attributes.duration
-  if text == nil then
-    diagnostics.fail(
-      "E_SCENE_NO_DURATION",
-      string.format('Scene "%s" has no duration attribute.', id),
-      { property = "duration", suggestion = 'Add duration="<n>s", for example duration="4s".' }
-    )
-  end
   return {
     id = id,
     component = component,
-    durationFrames = duration.to_frames(text, id, fps),
+    durationFrames = scene_frames(div, id, fps, default_frames),
     text = plain_text(div),
   }
 end
@@ -95,8 +109,9 @@ end
 --- Returns one record { id, component, durationFrames, text } per scene.
 --- An empty list means the document has no scenes. Raises every problem as
 --- one diagnostic error (lib/diagnostics.lua). `fps` may be a placeholder
---- when settings failed: the frames are then discarded.
-function M.collect(doc, fps)
+--- when settings failed: the frames are then discarded. `default_frames` is
+--- the frames of `defaults.scene.duration` (see scene_frames).
+function M.collect(doc, fps, default_frames)
   local top = {}
   for _, block in ipairs(doc.blocks) do
     if is_scene(block) then
@@ -124,7 +139,7 @@ function M.collect(doc, fps)
   for i, div in ipairs(top) do
     local id = string.format("scene-%03d", i)
     scenes[i] = diagnostics.try(function()
-      return scene_record(div, id, fps)
+      return scene_record(div, id, fps, default_frames)
     end, found, { sceneId = id, component = div.attributes.component })
   end
   diagnostics.raise(found)

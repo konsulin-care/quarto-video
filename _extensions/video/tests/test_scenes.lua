@@ -99,4 +99,27 @@ return {
     h.eq(list[2].code, "E_DURATION_SYNTAX", "second code")
     h.eq(list[3].code, "E_SCENE_SHAPE", "third code")
   end,
+
+  ["a scene without duration takes the default frames"] = function()
+    local list = scenes.collect(h.doc(scene("title", "4s", "")), 30)
+    h.eq(list[1].durationFrames, 120, "explicit frames")
+    local body = '::: {.scene component="title"}\nNo duration\n:::\n'
+    local defaulted = scenes.collect(h.doc(body), 30, 45)
+    h.eq(defaulted[1].durationFrames, 45, "default frames")
+  end,
+
+  ["an explicit scene duration wins over the default"] = function()
+    local body = scene("statement", "2s", "Explicit")
+    local list = scenes.collect(h.doc(body), 30, 45)
+    h.eq(list[1].durationFrames, 60, "explicit frames")
+  end,
+
+  ["an invalid default adds no missing-duration error per scene"] = function()
+    local body = '::: {.scene component="title"}\nA\n:::\n\n'
+      .. '::: {.scene component="title"}\nB\n:::\n'
+    local list = h.diagnostics_of(function()
+      scenes.collect(h.doc(body), 30, false)
+    end)
+    h.eq(#list, 0, "scene diagnostics (the default error is raised by config)")
+  end,
 }

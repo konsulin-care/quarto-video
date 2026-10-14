@@ -42,16 +42,20 @@ form humans and AI agents can act on (PRD §9).
 ## Diagnostic codes
 | Code | Stage | Meaning | Since |
 | --- | --- | --- | --- |
-| `E_SETTING_MISSING` | 1 filter | A required `video` setting or the whole `video` block is absent | 008 |
-| `E_SETTING_INVALID` | 1 filter | A `video` setting has a value that is not allowed | 008 |
+| `E_SETTING_INVALID` | 1 filter | A front matter setting (`video.*`, `defaults.scene.transition`, `theme`) has a value that is not allowed | 008 (widened 010) |
+| `E_CONFIG_UNKNOWN_KEY` | 1 filter | A key under `video` or `defaults` is not a known setting; the message names it and the suggestion is the closest known key | 010 |
 | `E_SCENE_NO_COMPONENT` | 1 filter | A `.scene` has no `component` attribute | 008 |
 | `E_SCENE_NO_DURATION` | 1 filter | A `.scene` has no `duration` attribute | 008 |
 | `E_SCENE_NESTED` | 1 filter | A `.scene` is nested inside another block | 008 |
 | `E_SCENE_SHAPE` | 1 filter | A `.scene` has an identifier, an unknown class or an unknown attribute | 008 |
-| `E_DURATION_SYNTAX` | 1 filter | A `duration` is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 |
-| `E_DURATION_RANGE` | 1 filter | A `duration` is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 |
+| `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 |
+| `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails IR 0.1 (`message` gives the JSON path) | 008 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
+
+`E_SETTING_MISSING` (task 008) was retired in task 010: no setting is required
+any more, because every setting has a default. The code is not emitted and must
+not be reused.
 
 ## Testing
 - Unit tests per stage in `test/`: formats (snapshots of the human text), schema,

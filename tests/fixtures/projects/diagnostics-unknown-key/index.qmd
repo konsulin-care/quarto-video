@@ -1,0 +1,9 @@
+---
+title: "Diagnostics: unknown key"
+video:
+  widht: 1280
+---
+
+::: {.scene component="title" duration="4s"}
+The key is misspelt.
+:::

@@ -1,0 +1,7 @@
+---
+title: "Front matter empty"
+---
+
+::: {.scene component="title" duration="2s"}
+Every setting takes its default.
+:::

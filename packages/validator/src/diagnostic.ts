@@ -5,8 +5,8 @@
 
 /** Every code the tools emit. A code is added here and to the README table. */
 export const DIAGNOSTIC_CODES = [
-  "E_SETTING_MISSING",
   "E_SETTING_INVALID",
+  "E_CONFIG_UNKNOWN_KEY",
   "E_SCENE_NO_COMPONENT",
   "E_SCENE_NO_DURATION",
   "E_SCENE_NESTED",

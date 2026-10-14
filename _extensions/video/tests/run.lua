@@ -9,7 +9,8 @@ local SUITES = {
   "tests.test_scenes",
   "tests.test_duration",
   "tests.test_duration_vectors",
-  "tests.test_settings",
+  "tests.test_config",
+  "tests.test_config_keys",
   "tests.test_json",
   "tests.test_diagnostics",
 }

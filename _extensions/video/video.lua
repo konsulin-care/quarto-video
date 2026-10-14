@@ -8,7 +8,8 @@ local function extension_root()
 end
 package.path = extension_root() .. "?.lua;" .. package.path
 
-local settings = require("lib.settings")
+local config = require("lib.config")
+local config_keys = require("lib.config_keys")
 local scenes = require("lib.scenes")
 local manifest = require("lib.manifest")
 local diagnostics = require("lib.diagnostics")
@@ -41,15 +42,32 @@ function Pandoc(doc)
 
   -- Every stage runs, so all errors are reported together (packages/validator).
   local found = {}
+  diagnostics.try(function()
+    config_keys.check(doc.meta)
+  end, found)
   local video = diagnostics.try(function()
-    return settings.read(doc.meta)
+    return config.read(doc.meta)
   end, found)
   local output = diagnostics.try(function()
-    return settings.output(doc.meta)
+    return config.output(doc.meta)
   end, found)
+  diagnostics.try(function()
+    return config.stored(doc.meta)
+  end, found)
+  -- With settings in error the frames are discarded, so fps 1 is a placeholder.
+  local fps = video and video.fps or 1
+  local before = #found
+  local defaults = diagnostics.try(function()
+    return config.scene_defaults(doc.meta, fps)
+  end, found)
+  local default_frames = defaults and defaults.frames
+  if defaults == nil and #found > before then
+    -- The default block is invalid; it is already reported. Scenes then skip
+    -- the missing-duration check.
+    default_frames = false
+  end
   local list = diagnostics.try(function()
-    -- With settings in error the frames are discarded, so fps 1 is a placeholder.
-    return scenes.collect(doc, video and video.fps or 1)
+    return scenes.collect(doc, fps, default_frames)
   end, found)
 
   diagnostics.attach_file(found, file_name)

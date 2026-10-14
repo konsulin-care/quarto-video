@@ -1,0 +1,207 @@
+-- Reads the front matter settings (PRD §5.2) and applies their defaults
+-- (task 010). Keys are checked by lib/config_keys.lua. Every value that is
+-- present must be valid: an invalid value is a diagnostic error
+-- (E_SETTING_INVALID, or the duration codes for defaults.scene.duration).
+-- Omitted values take the defaults below, so an empty document is valid.
+local diagnostics = require("lib.diagnostics")
+local duration = require("lib.duration")
+local shapes = require("lib.meta")
+
+local M = {}
+
+M.DEFAULTS = {
+  width = 1920,
+  height = 1080,
+  fps = 30,
+  background = "#000000",
+  output = "output.mp4",
+}
+
+local function invalid(property, message, suggestion)
+  diagnostics.fail("E_SETTING_INVALID", message, { property = property, suggestion = suggestion })
+end
+
+-- The value of `block[key]` as text, or nil when the key is absent. `path`
+-- names the block in messages. A map or list is not a single value.
+local function text_of(block, key, path)
+  local value = block and block[key]
+  if value == nil then
+    return nil
+  end
+  if shapes.is_map(value) or shapes.is_list(value) then
+    invalid(
+      path .. "." .. key,
+      string.format("%s.%s must be a single value, not a block or a list", path, key),
+      string.format('Write one value after "%s:" on the same line.', key)
+    )
+  end
+  return shapes.text(value)
+end
+
+-- A front matter block (`video`, `defaults`, `defaults.scene`): nil when
+-- absent or empty, the map otherwise. Any other shape is an error.
+local function block(parent, key, path)
+  local value = parent and parent[key]
+  if shapes.blank(value) then
+    return nil
+  end
+  if not shapes.is_map(value) then
+    invalid(
+      path,
+      string.format("%s must be a block of settings with nested keys", path),
+      string.format('Write "%s:" on its own line, with the settings indented below it.', key)
+    )
+  end
+  return value
+end
+
+-- A whole number of at least 1 under `video`, or the default.
+local function positive_int(video, key)
+  local text = text_of(video, key, "video")
+  if text == nil then
+    return M.DEFAULTS[key]
+  end
+  local number = text:match("^%d+$") and tonumber(text)
+  if not number or number < 1 then
+    invalid(
+      "video." .. key,
+      string.format('video.%s must be a whole number of at least 1, got "%s"', key, text),
+      "Use a whole number of at least 1, for example 30."
+    )
+  end
+  return number
+end
+
+-- width or height: a positive integer that H.264 (yuv420p, the renderer's
+-- codec) can encode, so it must be even.
+local function dimension(video, key)
+  local number = positive_int(video, key)
+  if number % 2 == 1 then
+    invalid(
+      "video." .. key,
+      string.format("video.%s must be even for H.264, got %d", key, number),
+      string.format("Use an even number, for example %d.", M.DEFAULTS[key])
+    )
+  end
+  return number
+end
+
+local function background(video)
+  local text = text_of(video, "background", "video")
+  if text == nil then
+    return M.DEFAULTS.background
+  end
+  if not text:match("^#%x%x%x%x%x%x$") then
+    invalid(
+      "video.background",
+      string.format('video.background must be a hex colour like "#10131C", got "%s"', text),
+      'Use a hex colour such as "#10131C".'
+    )
+  end
+  return text
+end
+
+--- Returns { width, height, fps, background } with defaults applied. These
+--- are the only settings the IR carries (schema/ir-0.1.json). Every invalid
+--- key is reported, not only the first.
+function M.read(meta)
+  local video = block(meta, "video", "video")
+  local found = {}
+  local settings = {
+    width = diagnostics.try(function()
+      return dimension(video, "width")
+    end, found),
+    height = diagnostics.try(function()
+      return dimension(video, "height")
+    end, found),
+    fps = diagnostics.try(function()
+      return positive_int(video, "fps")
+    end, found),
+    background = diagnostics.try(function()
+      return background(video)
+    end, found),
+  }
+  diagnostics.raise(found)
+  return settings
+end
+
+--- Returns video.output (default "output.mp4"): a path relative to the project
+--- root that ends in .mp4. Absolute paths and ".." segments are errors.
+function M.output(meta)
+  local video = block(meta, "video", "video")
+  local text = text_of(video, "output", "video")
+  if text == nil then
+    return M.DEFAULTS.output
+  end
+  local hint = 'Use a relative path such as "output.mp4".'
+  if text == "" then
+    invalid("video.output", "video.output must not be empty", hint)
+  end
+  if text:match("^[/\\]") or text:match("^%a:") then
+    invalid(
+      "video.output",
+      string.format('video.output must be relative to the project, got "%s"', text),
+      hint
+    )
+  end
+  if ("/" .. text:gsub("\\", "/") .. "/"):find("/%.%./") then
+    invalid(
+      "video.output",
+      string.format('video.output must not contain "..", got "%s"', text),
+      hint
+    )
+  end
+  if not text:lower():match("%.mp4$") then
+    invalid("video.output", string.format('video.output must end in .mp4, got "%s"', text), hint)
+  end
+  return text
+end
+
+-- Text of a value that the IR does not carry yet (theme, title, transition:
+-- resolved by tasks 019 and 015). Lists and maps are errors; so is empty text.
+local function stored_text(value, property)
+  if value == nil then
+    return nil
+  end
+  if shapes.is_map(value) or shapes.is_list(value) then
+    invalid(property, property .. " must be text", "Write a single name or sentence.")
+  end
+  local text = shapes.text(value)
+  if text == "" then
+    invalid(property, property .. " must not be empty", "Remove the key or write a value.")
+  end
+  return text
+end
+
+--- Returns { frames, transition } from `defaults.scene`: `frames` is the
+--- length of `defaults.scene.duration` at `fps` (nil when not set), and
+--- `transition` is the stored transition text (nil when not set). Invalid
+--- values raise (ADR-0003 for the duration).
+function M.scene_defaults(meta, fps)
+  local defaults = block(meta, "defaults", "defaults")
+  local scene = block(defaults, "scene", "defaults.scene")
+  local found = {}
+  local frames = diagnostics.try(function()
+    local text = text_of(scene, "duration", "defaults.scene")
+    if text ~= nil then
+      return duration.default_frames(text, fps)
+    end
+    return nil
+  end, found)
+  local transition = diagnostics.try(function()
+    return stored_text(scene and scene.transition, "defaults.scene.transition")
+  end, found)
+  diagnostics.raise(found)
+  return { frames = frames, transition = transition }
+end
+
+--- Returns the stored-only settings { title, theme } (nil when absent). They
+--- are validated here and resolved by task 019; they stay out of the IR.
+function M.stored(meta)
+  return {
+    title = stored_text(meta.title, "title"),
+    theme = stored_text(meta.theme, "theme"),
+  }
+end
+
+return M

@@ -1,0 +1,22 @@
+---
+title: "Front matter overrides"
+theme: modern
+video:
+  width: 1280
+  height: 720
+  fps: 24
+  output: clip.mp4
+  background: "#10131C"
+defaults:
+  scene:
+    duration: 1.5s
+    transition: fade
+---
+
+::: {.scene component="title"}
+The default is 1.5 s, so 36 frames at 24 fps.
+:::
+
+::: {.scene component="title" duration="2s"}
+Two seconds is 48 frames at 24 fps.
+:::

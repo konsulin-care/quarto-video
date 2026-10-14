@@ -134,7 +134,7 @@ describe("video validate diagnostics", () => {
     assert.deepEqual(
       list.map((d) => [d.code, d.property]),
       [
-        ["E_SETTING_MISSING", "video.fps"],
+        ["E_SETTING_INVALID", "video.fps"],
         ["E_SETTING_INVALID", "video.output"],
       ],
     );

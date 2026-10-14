@@ -19,7 +19,8 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 ## Decisions (task 009, ADR-0003)
 - Durations: `s` or `ms`, up to 3 decimals, exact in microseconds, rounded half up
   to frames. Zero, negative, > 3600 s and < 1 frame are errors.
-- No built-in default duration; scenes must declare one until task 010.
+- No built-in default duration. A scene without `duration` takes `defaults.scene.duration`
+  from front matter (task 010); without it, the scene is `E_SCENE_NO_DURATION`.
 
 ## Decisions (task 002)
 - Validator: `ajv@8.20.0` (exact; runtime dependency of this package), draft

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "0.1",
+  "type": "video",
+  "settings": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#10131C"
+  },
+  "scenes": [
+    {
+      "id": "scene-001",
+      "component": "title",
+      "durationFrames": 36,
+      "content": {
+        "text": "The default is 1.5 s, so 36 frames at 24 fps."
+      },
+      "source": {
+        "file": "index.qmd"
+      }
+    },
+    {
+      "id": "scene-002",
+      "component": "title",
+      "durationFrames": 48,
+      "content": {
+        "text": "Two seconds is 48 frames at 24 fps."
+      },
+      "source": {
+        "file": "index.qmd"
+      }
+    }
+  ]
+}

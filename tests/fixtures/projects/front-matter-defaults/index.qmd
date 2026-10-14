@@ -1,0 +1,14 @@
+---
+title: "Front matter defaults"
+defaults:
+  scene:
+    duration: 1.5s
+---
+
+::: {.scene component="title"}
+Takes the default duration.
+:::
+
+::: {.scene component="title" duration="2s"}
+An explicit duration wins.
+:::
