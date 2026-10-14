@@ -75,3 +75,17 @@ describe("render validation", () => {
     );
   });
 });
+
+describe("render theme", () => {
+  it("rejects an unknown theme with its name and the known themes before launching a browser", async () => {
+    const ir = await writeVariant("unknown-theme", () => undefined);
+    const failure = render(ir, join(dir, "unknown-theme.mp4"), {
+      ...NO_BROWSER,
+      theme: "retro",
+    });
+    await expect(failure).rejects.toBeInstanceOf(IrRenderError);
+    await expect(failure).rejects.toThrow(
+      'Unknown theme "retro" (known: modern)',
+    );
+  });
+});

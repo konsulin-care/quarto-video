@@ -4,9 +4,11 @@ import type { IrVideo as IrManifest } from "@quarto-video/ir";
 import { timelineOf } from "@quarto-video/ir/timeline";
 import type { FC } from "react";
 import { Composition, type CalculateMetadataFunction } from "remotion";
+import { COMPOSITION_ID } from "./composition-id.js";
 import { IrVideo, type IrVideoProps } from "./IrVideo.js";
+import { DEFAULT_THEME_ID, themeTokens } from "../themes/tokens.js";
 
-export const COMPOSITION_ID = "video";
+export { COMPOSITION_ID } from "./composition-id.js";
 
 // Studio preview only; render() always passes the real manifest as input props.
 const PREVIEW_IR: IrManifest = {
@@ -52,7 +54,7 @@ export const RemotionRoot: FC = () => (
   <Composition
     id={COMPOSITION_ID}
     component={IrVideo}
-    defaultProps={{ ir: PREVIEW_IR }}
+    defaultProps={{ ir: PREVIEW_IR, theme: themeTokens(DEFAULT_THEME_ID) }}
     calculateMetadata={calculateIrMetadata}
     width={PREVIEW_IR.settings.width}
     height={PREVIEW_IR.settings.height}

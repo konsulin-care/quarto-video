@@ -6,9 +6,10 @@ import { fileURLToPath } from "node:url";
 import { bundle, type WebpackConfiguration } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import { validateIr, type IrVideo } from "@quarto-video/ir";
-import { COMPOSITION_ID } from "./Root.js";
+import { COMPOSITION_ID } from "./composition-id.js";
 import { COMPONENTS } from "./registry-map.js";
 import { IrRenderError } from "./errors.js";
+import { DEFAULT_THEME_ID, themeIds, themeTokens } from "../themes/tokens.js";
 
 export { IrRenderError } from "./errors.js";
 
@@ -23,6 +24,8 @@ export interface RenderOptions {
   browserExecutable?: string | null;
   /** Called as frames are encoded (may be called many times). */
   onProgress?: (progress: RenderProgress) => void;
+  /** Theme id (themes/tokens.ts); unset means the default theme. */
+  theme?: string;
 }
 
 /** Signature of render(); the CLI depends on this shape, not the module. */
@@ -84,7 +87,13 @@ export async function render(
 ): Promise<void> {
   const ir = await loadIr(irPath);
   const browserExecutable = options.browserExecutable ?? null;
-  const inputProps = { ir };
+  const themeId = options.theme ?? DEFAULT_THEME_ID;
+  if (!themeIds().includes(themeId)) {
+    throw new IrRenderError(
+      `Unknown theme "${themeId}" (known: ${themeIds().join(", ")})`,
+    );
+  }
+  const inputProps = { ir, theme: themeTokens(themeId) };
   const onProgress = options.onProgress;
   const serveUrl = await bundle(bundleOptions);
   const composition = await selectComposition({
