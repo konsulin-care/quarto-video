@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@quarto-video/ir": "0.0.0"
+    "@quarto-video/ir": "0.0.0",
+    "@quarto-video/remotion": "0.0.0"
   }
 }

@@ -31,6 +31,11 @@ function filterMessage(stderr: string): string {
   return parts.join(" ") || "the Lua filter failed";
 }
 
+/** Absolute path of the IR manifest the filter writes for `project`. */
+export function manifestPath(project: Project): string {
+  return join(project.root, MANIFEST_RELATIVE);
+}
+
 /** Runs the filter on `project.document` and returns the parsed manifest. */
 export function runFilter(project: Project): FilterOutcome {
   const result = spawnSync(
@@ -65,7 +70,7 @@ export function runFilter(project: Project): FilterOutcome {
     };
   }
   try {
-    const text = readFileSync(join(project.root, MANIFEST_RELATIVE), "utf8");
+    const text = readFileSync(manifestPath(project), "utf8");
     return { kind: "manifest", json: JSON.parse(text) as unknown };
   } catch {
     const document = relative(project.root, project.document);
