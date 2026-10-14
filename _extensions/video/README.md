@@ -1,13 +1,13 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest; `video.output` (task 006). Defaults (010), source lines (011), structured content (012), diagnostics (008) and the full duration parser (009) are not done.
+Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest; `video.output` (task 006); diagnostics with codes (task 008). Defaults (010), source lines (011), structured content (012) and the full duration parser (009) are not done.
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `settings.lua` (front matter, `video.output`), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"` → frames), `manifest.lua` (IR table, JSON file), `json.lua` (deterministic encoder).
-- `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module).
+- `lib/`: `settings.lua` (front matter, `video.output`), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"` → frames), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
+- `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
 ## Does not own
 - Component semantics (which slots/props are valid) → `packages/registry` and `packages/validator`. Component names are not checked here (task 014).
@@ -31,7 +31,12 @@ Why this form:
 
 `video validate` runs this same invocation (`packages/cli/src/filter.ts`).
 
-Writes: only `<project>/.video-build/manifest.json` (the IR) and `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2). A run first deletes both old files, so a rejected document never leaves a stale one.
+Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three, so a rejected document never leaves a stale one.
+
+## Diagnostics (task 008)
+- Each stage collects its errors with `diagnostics.try` and raises them together, so every bad scene and every bad setting is reported in one run.
+- On error the filter writes the diagnostics array, then fails Pandoc. The CLI reads the array and prints it (`packages/cli`). Lua errors that are not diagnostics are bugs and are reported as `E_FILTER_FAILED` by the CLI.
+- Codes and their meaning: `packages/validator/README.md`.
 
 ## DSL reference
 | Input | Scope | Type | Default | Since |
@@ -48,7 +53,7 @@ Rules:
 - Scenes are numbered `scene-001`, `scene-002`… in document order. A document with no scenes gives `"scenes": []`.
 - Content is the scene's plain text, one line per paragraph (structured content is task 012).
 - Any other attribute, class or identifier on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error.
-- Missing required settings are filter errors (no defaults until task 010). Errors stop Pandoc with a message; no diagnostics file exists yet (task 008).
+- Missing required settings are errors (E_SETTING_MISSING, no defaults until task 010). Invalid values are E_SETTING_INVALID. Scene and duration problems carry their scene id.
 
 ## Testing
 - `npm run test:lua` runs `quarto pandoc lua _extensions/video/tests/run.lua`: unit tests for scenes, durations, settings and the encoder.

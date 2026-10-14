@@ -80,4 +80,20 @@ return {
     end)
     h.contains(err, "video.output must end in .mp4", "error")
   end,
+
+  ["a missing setting has code E_SETTING_MISSING"] = function()
+    local fields = '  width: 1920\n  height: 1080\n  background: "#10131C"\n'
+    local diagnostic = h.code_is(function()
+      settings.read(h.doc("", front(fields)).meta)
+    end, "E_SETTING_MISSING", "missing fps")
+    h.eq(diagnostic.property, "video.fps", "property")
+  end,
+
+  ["an invalid setting has code E_SETTING_INVALID"] = function()
+    local fields = FULL .. "  output: ../clip.mp4\n"
+    local diagnostic = h.code_is(function()
+      settings.output(h.doc("", front(fields)).meta)
+    end, "E_SETTING_INVALID", "output")
+    h.eq(diagnostic.property, "video.output", "property")
+  end,
 }

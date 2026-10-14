@@ -1,8 +1,10 @@
 -- Collects `.scene` Divs into scene records (PRD §5.3).
 -- Scenes are top-level blocks in document order. A `.scene` anywhere else,
 -- or an attribute the filter does not know, is an error, never ignored.
--- Component names are not checked here (task 014).
+-- Component names are not checked here (task 014). Every bad scene is
+-- reported; the errors are diagnostics (lib/diagnostics.lua).
 local duration = require("lib.duration")
+local diagnostics = require("lib.diagnostics")
 
 local M = {}
 
@@ -23,16 +25,31 @@ end
 
 local function check_shape(div, id)
   if div.identifier ~= "" then
-    error(id .. ": a scene Div takes no identifier", 0)
+    diagnostics.fail(
+      "E_SCENE_SHAPE",
+      string.format('Scene "%s" must not have an identifier.', id),
+      { property = "id", suggestion = "Remove the #identifier from the scene." }
+    )
   end
   for _, class in ipairs(div.classes) do
     if class ~= "scene" then
-      error(string.format('%s: unknown class "%s" on a scene Div', id, class), 0)
+      diagnostics.fail(
+        "E_SCENE_SHAPE",
+        string.format('Scene "%s" has an unknown class "%s".', id, class),
+        { property = "class", suggestion = 'Use only the class "scene".' }
+      )
     end
   end
   for key in pairs(div.attributes) do
     if not ALLOWED_ATTRIBUTES[key] then
-      error(string.format('%s: unknown attribute "%s" (allowed: component, duration)', id, key), 0)
+      diagnostics.fail(
+        "E_SCENE_SHAPE",
+        string.format('Scene "%s" has an unknown attribute "%s".', id, key),
+        {
+          property = key,
+          suggestion = "Allowed attributes: component, duration.",
+        }
+      )
     end
   end
 end
@@ -49,16 +66,23 @@ local function plain_text(div)
   return table.concat(parts, "\n")
 end
 
-local function scene_record(div, index, fps)
-  local id = string.format("scene-%03d", index)
+local function scene_record(div, id, fps)
   check_shape(div, id)
   local component = div.attributes.component
   if component == nil or component == "" then
-    error(id .. ": the component attribute is required", 0)
+    diagnostics.fail(
+      "E_SCENE_NO_COMPONENT",
+      string.format('Scene "%s" has no component attribute.', id),
+      { property = "component", suggestion = 'Add component="<name>"' }
+    )
   end
   local text = div.attributes.duration
   if text == nil then
-    error(id .. ": the duration attribute is required (defaults arrive in task 010)", 0)
+    diagnostics.fail(
+      "E_SCENE_NO_DURATION",
+      string.format('Scene "%s" has no duration attribute.', id),
+      { property = "duration", suggestion = 'Add duration="<n>s", for example duration="4s".' }
+    )
   end
   return {
     id = id,
@@ -69,7 +93,9 @@ local function scene_record(div, index, fps)
 end
 
 --- Returns one record { id, component, durationFrames, text } per scene.
---- An empty list means the document has no scenes.
+--- An empty list means the document has no scenes. Raises every problem as
+--- one diagnostic error (lib/diagnostics.lua). `fps` may be a placeholder
+--- when settings failed: the frames are then discarded.
 function M.collect(doc, fps)
   local top = {}
   for _, block in ipairs(doc.blocks) do
@@ -86,13 +112,22 @@ function M.collect(doc, fps)
       return nil
     end,
   })
+  local found = {}
   if total ~= #top then
-    error("'.scene' Divs must be top-level blocks (nested scenes are not supported yet)", 0)
+    found[#found + 1] = diagnostics.new(
+      "E_SCENE_NESTED",
+      "'.scene' Divs must be top-level blocks (nested scenes are not supported yet).",
+      { property = "scene", suggestion = "Move the scene out of the enclosing block." }
+    )
   end
   local scenes = {}
   for i, div in ipairs(top) do
-    scenes[i] = scene_record(div, i, fps)
+    local id = string.format("scene-%03d", i)
+    scenes[i] = diagnostics.try(function()
+      return scene_record(div, id, fps)
+    end, found, { sceneId = id, component = div.attributes.component })
   end
+  diagnostics.raise(found)
   return scenes
 end
 

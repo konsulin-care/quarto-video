@@ -27,4 +27,13 @@ return {
     end)
     h.contains(err, "must be at least 1s", "error")
   end,
+
+  ["a bad form has code E_DURATION_SYNTAX and a range error E_DURATION_RANGE"] = function()
+    h.code_is(function()
+      duration.to_frames("1.5s", 30)
+    end, "E_DURATION_SYNTAX", "syntax")
+    h.code_is(function()
+      duration.to_frames("0s", 30)
+    end, "E_DURATION_RANGE", "range")
+  end,
 }
