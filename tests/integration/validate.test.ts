@@ -172,17 +172,22 @@ describe("video validate", () => {
     const run = video(["validate", project]);
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
-    assert.match(run.stderr, /^index\.qmd: front matter needs a video block/);
+    assert.equal(
+      run.stderr,
+      "ERROR index.qmd\nfront matter needs a video block with width, height, fps and background\n" +
+        "Add a video block with width, height, fps and background.\n",
+    );
   });
 
-  it("prints one <json-path>: <message> line per IR error and exits 1", () => {
+  it("prints the IR error under E_IR_SCHEMA with the JSON path and exits 1", () => {
     const project = copyProject("cli-validate-invalid-ir", "invalid-ir");
     const run = video(["validate", project]);
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      "/scenes/0/content/text: must NOT have fewer than 1 characters\n",
+      "ERROR .video-build/manifest.json\n" +
+        "/scenes/0/content/text: must NOT have fewer than 1 characters\n",
     );
   });
 
@@ -191,6 +196,9 @@ describe("video validate", () => {
     const run = video(["validate", "--print-ir", project]);
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
-    assert.match(run.stderr, /^\/scenes\/0\/content\/text: /);
+    assert.match(
+      run.stderr,
+      /^ERROR \.video-build\/manifest\.json\n\/scenes\/0\/content\/text: /,
+    );
   });
 });

@@ -6,13 +6,13 @@ import { runValidate } from "./commands/validate.js";
 import { selectRenderer } from "./renderer-port.js";
 
 const USAGE =
-  "usage: video validate <path> [--print-ir]\n" +
-  "       video render <path>\n";
+  "usage: video validate <path> [--print-ir | --json]\n" +
+  "       video render <path> [--json]\n";
 
 async function renderCommand(args: string[]): Promise<number> {
   const flags = args.filter((arg) => arg.startsWith("-"));
   const paths = args.filter((arg) => !arg.startsWith("-"));
-  if (flags.length > 0 || paths.length !== 1) {
+  if (flags.some((flag) => flag !== "--json") || paths.length !== 1) {
     process.stderr.write(USAGE);
     return EXIT_USAGE;
   }
@@ -29,6 +29,7 @@ async function renderCommand(args: string[]): Promise<number> {
     {
       path: paths[0] ?? "",
       browserExecutable: process.env["QV_BROWSER_EXECUTABLE"] ?? null,
+      json: flags.includes("--json"),
     },
     process.cwd(),
     renderer,
@@ -48,15 +49,15 @@ async function main(argv: string[]): Promise<number> {
   }
   const flags = rest.filter((arg) => arg.startsWith("-"));
   const paths = rest.filter((arg) => !arg.startsWith("-"));
-  const unknown = flags.filter((flag) => flag !== "--print-ir");
-  if (unknown.length > 0 || paths.length !== 1) {
+  const known = ["--print-ir", "--json"];
+  const unknown = flags.filter((flag) => !known.includes(flag));
+  const printIr = flags.includes("--print-ir");
+  const json = flags.includes("--json");
+  if (unknown.length > 0 || paths.length !== 1 || (printIr && json)) {
     process.stderr.write(USAGE);
     return EXIT_USAGE;
   }
-  return runValidate(
-    { path: paths[0] ?? "", printIr: flags.includes("--print-ir") },
-    process.cwd(),
-  );
+  return runValidate({ path: paths[0] ?? "", printIr, json }, process.cwd());
 }
 
 process.exitCode = await main(process.argv.slice(2));
