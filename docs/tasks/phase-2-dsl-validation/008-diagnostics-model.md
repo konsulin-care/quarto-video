@@ -26,9 +26,8 @@ Automated:
   (`packages/validator/test/format.test.ts`; block output in `validate-diagnostics.test.ts`)
 - [x] `--json` output validates against `schema/diagnostic.json`.
   (`validate-diagnostics.test.ts` parses stdout with the schema; `schema.test.ts`)
-- [ ] Only warnings → exit 0; any error → exit 1. Partial: the predicate
-  (`hasErrors`, `format.test.ts`) and the exit paths are covered; no check emits
-  a warning yet, so the end-to-end warnings case is not tested. See Notes.
+- [x] Only warnings → exit 0; any error → exit 1.
+  (`packages/cli/test/exit-status.test.ts`: `exitCodeFor`, used by `validate` and `render`)
 - [x] Every emitted code appears in the README table (test scans source).
   (`packages/validator/test/codes.test.ts`)
 
@@ -51,9 +50,9 @@ Human check:
 - Existing test expectations were updated to the new text: `ERROR <file>`
   headers, new scene messages (`Scene "scene-00N" has no component attribute.`),
   and the IR error now names `.video-build/manifest.json`.
-- Automated box 3 is open: no check emits a warning, so exit 0 with only
-  warnings is covered by the `hasErrors` test, not end to end. Add a warning
-  source (a new check) before relying on it.
+- Exit status is `exitCodeFor(diagnostics)` (`packages/cli/src/exit-status.ts`).
+  No shipped check emits a warning, so the warnings-only case is tested on the
+  mapping, not through a real command run. A warning source belongs to a later task.
 
 ## Completion log
 - 2026-10-14 · Implemented the diagnostic model (`packages/validator`), the
@@ -66,6 +65,9 @@ Human check:
   Human check 1 and 2 run and matched (see the report).
   Not run here: Quarto render and Remotion tests (no quarto, no Chromium).
   Filter tests ran with a `quarto pandoc` stand-in over pandoc 3.1.3.
-- Follow-ups: a warning-emitting check (box 3 end to end); line numbers (011);
+- 2026-10-14 · Added the exit-status mapping `exitCodeFor` (warnings-only → 0,
+  any error → 1) used by `validate` and `render`; ticked the warnings box.
+  Test: `packages/cli/test/exit-status.test.ts`.
+- Follow-ups: a warning-emitting check (end-to-end warnings exit); line numbers (011);
   the `E_FILTER_FAILED` case has no committed fixture (the test builds one in a
   scratch dir); verify against the pinned Quarto 1.10.19 with real `quarto pandoc`.
