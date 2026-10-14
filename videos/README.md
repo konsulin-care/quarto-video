@@ -1,5 +1,5 @@
 # videos/ — sample and acceptance video projects
-Status: Empty — `hello` (task 006), `gpu` (task 036), `demo` (task 047).
+Status: `hello` (task 006) renders with `video render`. `gpu` (task 036) and `demo` (task 047) come later.
 
 ## Purpose
 Real, renderable projects that show the DSL and prove the pipeline end to end
