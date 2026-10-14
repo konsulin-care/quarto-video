@@ -1,6 +1,6 @@
 # 008 — Diagnostics model and reporter
 
-Phase 2 · Status: todo · Depends on: 005 · PRD: §9.2 · ADR: —
+Phase 2 · Status: in-progress · Depends on: 005 · PRD: §9.2 · ADR: —
 
 ## Goal
 One diagnostic shape used by the filter, validator and CLI, printed in the
