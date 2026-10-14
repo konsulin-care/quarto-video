@@ -1,6 +1,6 @@
 # 019 — Theme tokens (`modern`)
 
-Phase 3 · Status: todo · Depends on: 018 · PRD: §5.2, §10, §12 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 018 · PRD: §5.2, §10, §12 · ADR: —
 
 ## Goal
 A named theme of design tokens, selected by `theme:` in front matter,
