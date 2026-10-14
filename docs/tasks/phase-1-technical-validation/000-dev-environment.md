@@ -1,6 +1,6 @@
 # 000 — Development environment and quality gates
 
-Phase 1 · Status: in-progress · Depends on: — · PRD: §11.1, §13, §14 · ADR: writes 0010
+Phase 1 · Status: done · Depends on: — · PRD: §11.1, §13, §14 · ADR: writes 0010
 
 ## Goal
 Every contributor and agent gets the same pinned toolchain from one command,
@@ -30,7 +30,7 @@ Automated:
 - [x] `mise run check` and `mise run test` exit 0 (TS/Lua steps skip).
 - [x] `scripts/tests/run.sh`: 300-line file passes, 301-line fails,
       non-code files ignored, missing runner skips.
-- [ ] CI workflow passes on the branch.
+- [x] CI workflow passes on the branch.
 
 Human check:
 1. Fresh clone → `mise install && mise run setup`.
@@ -43,8 +43,7 @@ Human check:
 - ffmpeg uses `conda:ffmpeg` (prebuilt binaries for Linux and macOS).
 - shfmt/stylua use explicit `aqua:` names: Renovate does not know the
   short registry names.
-- CI runs on PRs and `main`; the CI box is ticked, and Status set to
-  `done`, after the first green run on the PR for this branch.
+- CI runs on PRs and `main`.
 
 ## Completion log
 - 2026-10-14: mise.toml, renovate.json, lefthook.yml, scripts/ gates,
@@ -52,6 +51,6 @@ Human check:
   cases: line limit, scoping, skip, fail-fast, suite selection). Verified
   locally: Renovate extracts all 8 mise tools; actionlint clean; hooks
   reject a 301-line file and skip docs-only commits. GitHub-hosted tools
-  could not be downloaded in the authoring sandbox, so `mise install` of
-  quarto/lefthook/linters is first verified by CI. Follow-up: install the
+  could not be downloaded in the authoring sandbox; CI on PR #2 installed
+  all 8 tools via mise and passed check + test. Follow-up: install the
   Renovate GitHub App; make "Check and test" a required status check.
