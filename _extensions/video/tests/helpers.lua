@@ -49,6 +49,19 @@ function M.code_is(fn, code, label)
   return list[1]
 end
 
+--- The text of a scene record's default slot: its paragraphs, one per line.
+function M.default_text(record)
+  local lines = {}
+  for i, block in ipairs(record.slots.default or {}) do
+    local parts = {}
+    for _, inline in ipairs(block.inlines) do
+      parts[#parts + 1] = inline.text
+    end
+    lines[i] = table.concat(parts)
+  end
+  return table.concat(lines, "\n")
+end
+
 --- Fails with a readable message unless `actual == expected`.
 function M.eq(actual, expected, label)
   if actual ~= expected then

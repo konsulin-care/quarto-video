@@ -1,0 +1,17 @@
+---
+title: "Content: raw HTML"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+# Raw HTML in a scene
+
+::: {.scene component="title" duration="4s"}
+Intro.
+
+<div>x</div>
+
+:::

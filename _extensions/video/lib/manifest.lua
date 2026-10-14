@@ -1,4 +1,4 @@
--- Builds the Video IR 0.1 manifest and writes it to
+-- Builds the Video IR 0.2 manifest and writes it to
 -- <project>/.video-build/manifest.json, plus the render settings that stay
 -- outside the IR (<project>/.video-build/render.json). These are the only
 -- files the filter writes (see _extensions/video/README.md).
@@ -20,7 +20,7 @@ function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
---- Assembles the IR table. Field names follow schema/ir-0.1.json.
+--- Assembles the IR table. Field names follow schema/ir-0.2.json.
 function M.build(settings, scenes, source_file)
   local list = json.array({})
   for i, scene in ipairs(scenes) do
@@ -28,12 +28,12 @@ function M.build(settings, scenes, source_file)
       id = scene.id,
       component = scene.component,
       durationFrames = scene.durationFrames,
-      content = { text = scene.text },
+      content = { slots = scene.slots },
       source = { file = source_file, line = scene.line },
     }
   end
   return {
-    schemaVersion = "0.1",
+    schemaVersion = "0.2",
     type = "video",
     settings = settings,
     scenes = list,

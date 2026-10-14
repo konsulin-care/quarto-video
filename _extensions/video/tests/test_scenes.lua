@@ -34,7 +34,7 @@ return {
     local list = scenes.collect(h.doc(body), 30)
     h.eq(#list, 1, "scene count")
     h.eq(list[1].component, "title", "component")
-    h.eq(list[1].text, "Why GPUs Matter", "text")
+    h.eq(h.default_text(list[1]), "Why GPUs Matter", "text")
   end,
 
   ["scenes get ids in document order"] = function()
@@ -45,10 +45,11 @@ return {
     h.eq(list[2].component, "statement", "second component")
   end,
 
-  ["plain text keeps one paragraph per line"] = function()
+  ["loose paragraphs go to the default slot, one block each"] = function()
     local body = '::: {.scene component="title" duration="4s"}\nAlpha\n\nBeta\n:::\n'
     local list = scenes.collect(h.doc(body), 30)
-    h.eq(list[1].text, "Alpha\nBeta", "text")
+    h.eq(#list[1].slots.default, 2, "block count")
+    h.eq(h.default_text(list[1]), "Alpha\nBeta", "text")
   end,
 
   ["rejects a .scene nested inside another Div"] = function()

@@ -1,13 +1,14 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const schemaText = readFileSync(
-  new URL("../schema/ir-0.1.json", import.meta.url),
-  "utf8",
-);
+const SCHEMAS = ["ir-0.1.json", "ir-0.2.json"];
 
-describe("schema/ir-0.1.json", () => {
+describe.each(SCHEMAS)("schema/%s", (name) => {
   it("contains no renderer, React or CSS terms", () => {
+    const schemaText = readFileSync(
+      new URL(`../schema/${name}`, import.meta.url),
+      "utf8",
+    );
     expect(schemaText).not.toMatch(/remotion|react|css/i);
   });
 });

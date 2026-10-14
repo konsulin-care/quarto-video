@@ -124,7 +124,9 @@ local function marked_line(prefix, colons, after, n)
 end
 
 --- Scans the raw document text. Returns:
---- `openers`: { line, id } for each scene fence Pandoc can read (source order);
+--- `openers`: { line, id, close } for each scene fence Pandoc can read (source
+--- order); `close` is the line of its closing fence (nil when unclosed);
+--- `lines`: the raw lines; `prose`: per line, false inside fenced code and HTML comments;
 --- `problems`: diagnostics for scene fences whose attributes cannot be read;
 --- `marked`: the text with each opener's line added as a marker attribute.
 function M.scan(text)
@@ -134,10 +136,12 @@ function M.scan(text)
     marked[n] = line
   end
   local openers, problems = {}, {}
+  local prose, stack = {}, {}
   local fence, in_comment = nil, false
   for n = body_start(lines), #lines do
     local line = lines[n]
     local prefix, body = split_prefix(line)
+    prose[n] = fence == nil and not in_comment
     if fence ~= nil then
       if fence_closes(body, fence) then
         fence = nil
@@ -156,6 +160,7 @@ function M.scan(text)
         in_comment = true
       elseif colons and after ~= "" then
         local info = read_opener(after)
+        local record = nil
         if info and info.bad and info.id ~= nil and not locate.valid_id(info.id) then
           problems[#problems + 1] = locate.id_problem(info.id, n)
         elseif info and info.bad then
@@ -169,13 +174,27 @@ function M.scan(text)
             }
           )
         elseif info then
-          openers[#openers + 1] = { line = n, id = info.id }
+          record = { line = n, id = info.id }
+          openers[#openers + 1] = record
           marked[n] = marked_line(prefix, colons, after, n)
+        end
+        stack[#stack + 1] = { opener = record }
+      elseif colons then
+        -- A closing fence: its scene (if it was read) ends on this line.
+        local top = table.remove(stack)
+        if top and top.opener then
+          top.opener.close = n
         end
       end
     end
   end
-  return { openers = openers, problems = problems, marked = table.concat(marked, "\n") }
+  return {
+    openers = openers,
+    problems = problems,
+    marked = table.concat(marked, "\n"),
+    lines = lines,
+    prose = prose,
+  }
 end
 
 --- Reads and scans the document at `path`; nil when it cannot be read.

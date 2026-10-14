@@ -1,5 +1,7 @@
 // Plays the IR scenes in order with <Series>; each scene is one component.
 import type { IrVideo as IrManifest } from "@quarto-video/ir";
+// Subpath, not the package index: the index pulls in the validator (node:fs).
+import { plainText } from "@quarto-video/ir/text";
 import { AbsoluteFill, Series } from "remotion";
 import { COMPONENTS } from "./registry-map.js";
 
@@ -20,7 +22,7 @@ export function IrVideo({ ir }: IrVideoProps) {
               key={scene.id}
               durationInFrames={scene.durationFrames}
             >
-              <Component text={scene.content.text} />
+              <Component text={plainText(scene.content)} />
             </Series.Sequence>
           );
         })}

@@ -1,24 +1,36 @@
 {
-  "schemaVersion": "0.1",
-  "type": "video",
-  "settings": {
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "background": "#000000"
-  },
   "scenes": [
     {
-      "id": "scene-001",
       "component": "title",
-      "durationFrames": 60,
       "content": {
-        "text": "Every setting takes its default."
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Every setting takes its default.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
+      "durationFrames": 60,
+      "id": "scene-001",
       "source": {
         "file": "index.qmd",
         "line": 5
       }
     }
-  ]
+  ],
+  "schemaVersion": "0.2",
+  "settings": {
+    "background": "#000000",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920
+  },
+  "type": "video"
 }

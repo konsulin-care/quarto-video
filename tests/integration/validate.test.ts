@@ -190,7 +190,7 @@ describe("video validate", () => {
     assert.equal(
       run.stderr,
       "ERROR .video-build/manifest.json\n" +
-        "/scenes/0/content/text: must NOT have fewer than 1 characters\n",
+        "/scenes/0/content/slots: must NOT have fewer than 1 properties\n",
     );
   });
 
@@ -201,7 +201,7 @@ describe("video validate", () => {
     assert.equal(run.stdout, "");
     assert.match(
       run.stderr,
-      /^ERROR \.video-build\/manifest\.json\n\/scenes\/0\/content\/text: /,
+      /^ERROR \.video-build\/manifest\.json\n\/scenes\/0\/content\/slots: /,
     );
   });
 });

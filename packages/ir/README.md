@@ -1,20 +1,28 @@
 # packages/ir/ — Video IR schema, types, time rules
-Status: IR 0.1 schema, types, `validateIr()` and `ir:check` (task 002); duration → frames rule and shared vectors (task 009, ADR-0003). Content, timeline and v1 freeze: tasks 012, 015, 017.
+Status: IR 0.1 and 0.2 schemas, types, `validateIr()` and `ir:check` (tasks 002, 012); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004). Timeline and v1 freeze: tasks 015, 017.
 Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video/ir -- <file.json>`; tests: root `npm run test`.
 
 ## Layout
 | Path | Owns |
 | --- | --- |
-| `schema/ir-0.1.json` | JSON Schema, draft 2020-12, `additionalProperties: false` |
-| `src/types.ts` | Hand-written types for 0.1, `IrError`, `IrValidation` |
-| `src/validate.ts` | `validateIr(json)`: ajv, all errors, JSON Pointer paths |
+| `schema/ir-0.1.json`, `ir-0.2.json` | JSON Schemas, draft 2020-12, `additionalProperties: false` |
+| `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1 and 0.2 content nodes, `IrError`, `IrValidation` |
+| `src/validate.ts` | `validateIr(json)`: picks the schema from `schemaVersion` (0.1 or 0.2), all errors, JSON Pointer paths |
+| `src/text.ts` | `plainText(content)`: the `default` slot as text (subpath `@quarto-video/ir/text`) |
 | `src/check.ts` | File text → `OK` or `<path>: <message>` lines (pure) |
 | `src/cli.ts` | `ir:check` entry point (tsx); exit 0 valid, 1 otherwise |
 | `src/duration.ts` | `durationToFrames(text, fps)`: `"<n>s"`/`"<n>ms"` → frames (ADR-0003) |
 | `src/index.ts` | Package exports (`PACKAGE_NAME`, `validateIr`, `durationToFrames`, types) |
 | `test-vectors/durations.json` | Shared duration cases, run by TS and Lua (`{ input, fps, frames \| errorCode }`) |
-| `examples/minimal.json` | One 4 s title scene at 30 fps; must validate |
-| `test/` | `validate` (paths per rule), `schema` (no renderer terms), `cli`, `duration` (vectors), smoke |
+| `examples/minimal.json` | One 4 s title scene at 30 fps (IR 0.1); must validate |
+| `examples/content-nodes.json` | IR 0.2 with every content node type and two slots |
+| `test/` | `validate`, `content` (0.2 nodes, versions, `plainText`), `schema` (no renderer terms), `cli`, `duration`, smoke |
+
+## Decisions (task 012, ADR-0004)
+- IR 0.2 `content` is `{ slots }`: slot name → array of blocks (`default` for loose content). `content.text` is 0.1 only.
+- Nodes are lowercase `type` values: blocks `paragraph`, `heading`, `list`, `code-block`; inlines `text`, `strong`, `emphasis`, `quoted`, `code`, `line-break`.
+- The schema rejects an empty `slots` object and empty slot arrays. Unknown slot names fail `patternProperties` (names are `^[a-z][a-z0-9-]{0,63}$`).
+- Renderers call `plainText`, never the index: the index pulls in ajv, which the renderer bundle must not contain.
 
 ## Decisions (task 011)
 - `scenes[].source.line` is optional: the 1-based line of the scene's opening

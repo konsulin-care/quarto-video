@@ -4,12 +4,15 @@
 -- position among all scene Divs. Ids must be valid and unique. A `.scene`
 -- anywhere else, or an attribute the filter does not know, is an error,
 -- never ignored. Component names are not checked here (task 014). A scene
--- without a duration takes the front matter default (task 010). Every bad
--- scene is reported with its source line (lib/scan.lua, lib/locate.lua); the errors are
--- diagnostics (lib/diagnostics.lua).
+-- without a duration takes the front matter default (task 010). Its content is
+-- typed blocks in slots (lib/content.lua, ADR-0004). Every bad scene is
+-- reported with its source line (lib/scan.lua, lib/locate.lua,
+-- lib/content_lines.lua); the errors are diagnostics (lib/diagnostics.lua).
 local duration = require("lib.duration")
 local diagnostics = require("lib.diagnostics")
 local locate = require("lib.locate")
+local content = require("lib.content")
+local content_lines = require("lib.content_lines")
 
 local M = {}
 
@@ -41,18 +44,6 @@ local function check_shape(div, id)
   end
 end
 
--- One paragraph per line; text is plain (structured content is task 012).
-local function plain_text(div)
-  local parts = {}
-  for _, block in ipairs(div.content) do
-    local text = pandoc.utils.stringify(block)
-    if text ~= "" then
-      parts[#parts + 1] = text
-    end
-  end
-  return table.concat(parts, "\n")
-end
-
 -- An explicit duration wins; otherwise the front matter default applies
 -- (`default_frames`: nil when no default is set, false when the default is
 -- invalid and already reported, so the frames are discarded).
@@ -74,7 +65,7 @@ local function scene_frames(div, id, fps, default_frames)
   )
 end
 
-local function scene_record(div, id, fps, default_frames, line)
+local function scene_record(div, id, fps, default_frames, line, slots)
   check_shape(div, id)
   local component = div.attributes.component
   if component == nil or component == "" then
@@ -88,7 +79,7 @@ local function scene_record(div, id, fps, default_frames, line)
     id = id,
     component = component,
     durationFrames = scene_frames(div, id, fps, default_frames),
-    text = plain_text(div),
+    slots = slots,
     line = line,
   }
 end
@@ -130,7 +121,18 @@ local function in_document_order(list)
   return sorted
 end
 
---- Returns one record { id, component, durationFrames, text, line } per
+-- Converts the content of one scene. Each unsupported element becomes an
+-- E_CONTENT_UNSUPPORTED diagnostic in `found`, at its line when it is found.
+local function content_slots(div, id, line, scan, found)
+  local slots, unsupported = content.convert(div)
+  content_lines.assign(scan, content_lines.opener_at(scan, line), unsupported)
+  for _, finding in ipairs(unsupported) do
+    found[#found + 1] = content.problem(finding, id, div.attributes.component)
+  end
+  return slots
+end
+
+--- Returns one record { id, component, durationFrames, slots, line } per
 --- top-level scene. An empty list means the document has no scenes. Raises
 --- every problem as one diagnostic error (lib/diagnostics.lua), in document
 --- order. `fps` may be a placeholder when settings failed: the frames are
@@ -181,9 +183,10 @@ function M.collect(doc, fps, default_frames, scan)
         line = line,
       })
     else
+      local slots = content_slots(entry.div, id, line, scan, found)
       list[#list + 1] = diagnostics.try(
         function()
-          return scene_record(entry.div, id, fps, default_frames, line)
+          return scene_record(entry.div, id, fps, default_frames, line, slots)
         end,
         found,
         {

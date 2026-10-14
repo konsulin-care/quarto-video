@@ -1,0 +1,40 @@
+---
+title: "Content nodes"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+defaults:
+  scene:
+    duration: "4s"
+---
+
+::: {#comparison .scene component="comparison" duration="6s"}
+## Why GPUs
+
+::: {.left}
+**CPUs**
+
+Optimized for *general* tasks.
+
+Line one\
+line two.
+:::
+
+::: {.right}
+1. Massively parallel
+2. "Many cores" at once.
+
+- bullet one
+- `gpu.run()`
+:::
+
+```python
+gpu.run()
+```
+:::
+
+::: {.scene component="title"}
+Plain text.
+:::

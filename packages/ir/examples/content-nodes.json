@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "0.2",
+  "type": "video",
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#10131C"
+  },
+  "scenes": [
+    {
+      "id": "scene-001",
+      "component": "comparison",
+      "durationFrames": 180,
+      "content": {
+        "slots": {
+          "left": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "strong",
+                  "inlines": [{ "type": "text", "text": "CPUs" }]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "inlines": [
+                { "type": "text", "text": "Optimized for " },
+                {
+                  "type": "emphasis",
+                  "inlines": [{ "type": "text", "text": "general" }]
+                },
+                { "type": "text", "text": " tasks." }
+              ]
+            }
+          ],
+          "right": [
+            {
+              "type": "list",
+              "ordered": true,
+              "items": [
+                {
+                  "blocks": [
+                    {
+                      "type": "paragraph",
+                      "inlines": [
+                        { "type": "code", "text": "parallel" },
+                        { "type": "line-break" },
+                        {
+                          "type": "quoted",
+                          "quote": "double",
+                          "inlines": [{ "type": "text", "text": "massive" }]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "default": [
+            {
+              "type": "heading",
+              "level": 2,
+              "inlines": [{ "type": "text", "text": "Why GPUs" }]
+            },
+            {
+              "type": "code-block",
+              "text": "gpu.run()",
+              "language": "python"
+            }
+          ]
+        }
+      },
+      "source": { "file": "index.qmd", "line": 12 }
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Video IR 0.2",
+  "description": "Renderer-independent video manifest. Time values are integer frames. Scene content is typed blocks in named slots (ADR-0004).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "type", "settings", "scenes"],
+  "properties": {
+    "schemaVersion": { "const": "0.2" },
+    "type": { "const": "video" },
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "fps", "background"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "fps": { "type": "integer", "minimum": 1 },
+        "background": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/scene" }
+    }
+  },
+  "$defs": {
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "component", "durationFrames", "content", "source"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,63}$" },
+        "component": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "durationFrames": { "type": "integer", "minimum": 1 },
+        "content": { "$ref": "#/$defs/content" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["file"],
+          "properties": {
+            "file": { "type": "string", "pattern": "^(?![/\\\\]).+$" },
+            "line": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slots"],
+      "properties": {
+        "slots": {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-z][a-z0-9-]{0,63}$": { "$ref": "#/$defs/slot" }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "slot": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/block" }
+    },
+    "block": {
+      "oneOf": [
+        { "$ref": "#/$defs/paragraph" },
+        { "$ref": "#/$defs/heading" },
+        { "$ref": "#/$defs/list" },
+        { "$ref": "#/$defs/codeBlock" }
+      ]
+    },
+    "inline": {
+      "oneOf": [
+        { "$ref": "#/$defs/text" },
+        { "$ref": "#/$defs/strong" },
+        { "$ref": "#/$defs/emphasis" },
+        { "$ref": "#/$defs/quoted" },
+        { "$ref": "#/$defs/code" },
+        { "$ref": "#/$defs/lineBreak" }
+      ]
+    },
+    "inlines": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/inline" }
+    },
+    "paragraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "inlines"],
+      "properties": {
+        "type": { "const": "paragraph" },
+        "inlines": { "$ref": "#/$defs/inlines" }
+      }
+    },
+    "heading": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "level", "inlines"],
+      "properties": {
+        "type": { "const": "heading" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "inlines": { "$ref": "#/$defs/inlines" }
+      }
+    },
+    "list": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "ordered", "items"],
+      "properties": {
+        "type": { "const": "list" },
+        "ordered": { "type": "boolean" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["blocks"],
+            "properties": {
+              "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } }
+            }
+          }
+        }
+      }
+    },
+    "codeBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "code-block" },
+        "text": { "type": "string" },
+        "language": { "type": "string", "minLength": 1 }
+      }
+    },
+    "text": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "text" },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "strong": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "inlines"],
+      "properties": {
+        "type": { "const": "strong" },
+        "inlines": { "$ref": "#/$defs/inlines" }
+      }
+    },
+    "emphasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "inlines"],
+      "properties": {
+        "type": { "const": "emphasis" },
+        "inlines": { "$ref": "#/$defs/inlines" }
+      }
+    },
+    "quoted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "quote", "inlines"],
+      "properties": {
+        "type": { "const": "quoted" },
+        "quote": { "enum": ["double", "single"] },
+        "inlines": { "$ref": "#/$defs/inlines" }
+      }
+    },
+    "code": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "code" },
+        "text": { "type": "string" }
+      }
+    },
+    "lineBreak": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "line-break" }
+      }
+    }
+  }
+}

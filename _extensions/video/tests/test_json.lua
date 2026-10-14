@@ -7,6 +7,11 @@ return {
     h.contains(json.encode({ items = json.array({}) }), '"items": []', "output")
   end,
 
+  ["booleans encode as true and false"] = function()
+    h.contains(json.encode({ on = true, off = false }), '"off": false', "false")
+    h.contains(json.encode({ on = true }), '"on": true', "true")
+  end,
+
   ["object keys are written in sorted order"] = function()
     local text = json.encode({ b = 2, a = 1 })
     h.eq(text, '{\n  "a": 1,\n  "b": 2\n}\n', "output")

@@ -1,0 +1,20 @@
+---
+title: "Content: table"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+# A table in a scene
+
+::: {.scene component="comparison" duration="4s"}
+Compare the chips.
+
+| Chip | Cores |
+|------|-------|
+| CPU  | 8     |
+| GPU  | 5000  |
+
+:::

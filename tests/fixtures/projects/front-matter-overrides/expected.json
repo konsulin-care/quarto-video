@@ -1,36 +1,60 @@
 {
-  "schemaVersion": "0.1",
-  "type": "video",
-  "settings": {
-    "width": 1280,
-    "height": 720,
-    "fps": 24,
-    "background": "#10131C"
-  },
   "scenes": [
     {
-      "id": "scene-001",
       "component": "title",
-      "durationFrames": 36,
       "content": {
-        "text": "The default is 1.5 s, so 36 frames at 24 fps."
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "The default is 1.5 s, so 36 frames at 24 fps.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
+      "durationFrames": 36,
+      "id": "scene-001",
       "source": {
         "file": "index.qmd",
         "line": 16
       }
     },
     {
-      "id": "scene-002",
       "component": "title",
-      "durationFrames": 48,
       "content": {
-        "text": "Two seconds is 48 frames at 24 fps."
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Two seconds is 48 frames at 24 fps.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
+      "durationFrames": 48,
+      "id": "scene-002",
       "source": {
         "file": "index.qmd",
         "line": 20
       }
     }
-  ]
+  ],
+  "schemaVersion": "0.2",
+  "settings": {
+    "background": "#10131C",
+    "fps": 24,
+    "height": 720,
+    "width": 1280
+  },
+  "type": "video"
 }

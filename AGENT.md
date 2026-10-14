@@ -64,7 +64,7 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run typecheck -w @quarto-video/ir` — one workspace.
 - `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002).
 - `npm run test:lua` — Lua filter unit tests via `quarto pandoc` (task 003).
-- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the `video` CLI tests (validate: 005; render: 006) and `quarto render` through the post-render hook (007a).
+- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the content nodes test (task 012), the `video` CLI tests (validate: 005; render: 006) and `quarto render` through the post-render hook (007a).
 - `npm run test:visual` — placeholder until task 020.
 - `npx video validate <path> [--print-ir] [--json]` — filter + IR check; exit 0/1/2 (tasks 005, 008). From another directory: `npm exec --prefix <repo> -- video validate <path>`.
 - `npx video render <path> [--json]` — validate, render to `video.output` (tasks 006, 008). Progress on stdout; exit 0/1/2 as for validate. Set `QV_BROWSER_EXECUTABLE` to a Chromium headless shell.

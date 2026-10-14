@@ -7,7 +7,7 @@ export interface CheckOutput {
   lines: string[];
 }
 
-/** Parses JSON text and validates it against IR 0.1. */
+/** Parses JSON text and validates it against the IR version it declares. */
 export function checkIrText(text: string): CheckOutput {
   let json: unknown;
   try {

@@ -3,7 +3,19 @@
     {
       "component": "title",
       "content": {
-        "text": "Why GPUs Matter"
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Why GPUs Matter",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
       "durationFrames": 120,
       "id": "intro",
@@ -15,7 +27,24 @@
     {
       "component": "statement",
       "content": {
-        "text": "Code inside a scene:"
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Code inside a scene:",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            },
+            {
+              "language": "text",
+              "text": "::: {.scene component=\"title\" duration=\"9s\"}\nThis line is code, not a scene.\n:::",
+              "type": "code-block"
+            }
+          ]
+        }
       },
       "durationFrames": 60,
       "id": "scene-002",
@@ -27,7 +56,19 @@
     {
       "component": "end-card",
       "content": {
-        "text": "Thanks for watching."
+        "slots": {
+          "note": [
+            {
+              "inlines": [
+                {
+                  "text": "Thanks for watching.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
       "durationFrames": 90,
       "id": "closing",
@@ -37,7 +78,7 @@
       }
     }
   ],
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "settings": {
     "background": "#10131C",
     "fps": 30,

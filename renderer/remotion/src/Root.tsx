@@ -9,7 +9,7 @@ export const COMPOSITION_ID = "video";
 
 // Studio preview only; render() always passes the real manifest as input props.
 const PREVIEW_IR: IrManifest = {
-  schemaVersion: "0.1",
+  schemaVersion: "0.2",
   type: "video",
   settings: { width: 1920, height: 1080, fps: 30, background: "#10131C" },
   scenes: [
@@ -17,7 +17,13 @@ const PREVIEW_IR: IrManifest = {
       id: "scene-001",
       component: "title",
       durationFrames: 30,
-      content: { text: "Preview" },
+      content: {
+        slots: {
+          default: [
+            { type: "paragraph", inlines: [{ type: "text", text: "Preview" }] },
+          ],
+        },
+      },
       source: { file: "index.qmd" },
     },
   ],

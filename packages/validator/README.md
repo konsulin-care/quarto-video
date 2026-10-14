@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: Diagnostics model and formatters (task 008). Stage runner and asset, timeline and output checks: tasks 014, 015, 016, 018, 037–038.
+Status: Diagnostics model and formatters (task 008); content codes (012). Stage runner and asset, timeline and output checks: tasks 014, 015, 016, 018, 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -52,7 +52,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_SCENE_DUPLICATE_ID` | 1 filter | Two scenes have the same id (author ids or generated `scene-NNN`); the message names both lines | 011 |
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 |
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 |
-| `E_IR_SCHEMA` | 2 schema | The manifest fails IR 0.1 (`message` gives the JSON path) | 008 |
+| `E_CONTENT_UNSUPPORTED` | 1 filter | Scene content has Markdown the content model does not support (a table, raw HTML or comment, footnote, math, link, image, ...), a block with a bad or missing slot class, a duplicate or empty slot; the line is the element's (ADR-0004) | 012 |
+| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 or 0.2 (`message` gives the JSON path) | 008 (0.2 in 012) |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
 
 `E_SETTING_MISSING` (task 008) was retired in task 010: no setting is required
@@ -67,4 +68,4 @@ not be reused.
   `tests/fixtures/projects/diagnostics-*`.
 
 ## Related
-Tasks 008, 011, 014–018, 037–038, 044. ADR-0006, 0008. PRD §9.
+Tasks 008, 011, 012, 014–018, 037–038, 044. ADR-0004, 0006, 0008. PRD §9.

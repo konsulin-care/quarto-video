@@ -1,14 +1,28 @@
-// Structural IR validation with the JSON Schema in schema/ir-0.1.json.
-// Uses ajv (draft 2020-12). Pure: no network, no file access after load.
+// Structural IR validation with the JSON Schemas in schema/ (ajv, draft
+// 2020-12): IR 0.1 and IR 0.2 are both accepted (PRD §8.2). Pure: no network,
+// no file access after load.
 import { readFileSync } from "node:fs";
-import { Ajv2020, type ErrorObject } from "ajv/dist/2020.js";
+import {
+  Ajv2020,
+  type ErrorObject,
+  type ValidateFunction,
+} from "ajv/dist/2020.js";
 import type { IrError, IrValidation } from "./types.js";
 
-const SCHEMA_URL = new URL("../schema/ir-0.1.json", import.meta.url);
-const schema: unknown = JSON.parse(readFileSync(SCHEMA_URL, "utf8"));
-
 const ajv = new Ajv2020({ allErrors: true, strict: true });
-const compiled = ajv.compile(schema as object);
+
+function compile(file: string): ValidateFunction {
+  const url = new URL(`../schema/${file}`, import.meta.url);
+  return ajv.compile(JSON.parse(readFileSync(url, "utf8")) as object);
+}
+
+const SCHEMAS: Readonly<Record<string, ValidateFunction>> = {
+  "0.1": compile("ir-0.1.json"),
+  "0.2": compile("ir-0.2.json"),
+};
+
+/** The version a new manifest is written in; also checked for other input. */
+const LATEST = "0.2";
 
 /** Maps one ajv error to a JSON Pointer path and a readable message. */
 function toIrError(error: ErrorObject): IrError {
@@ -28,9 +42,31 @@ function toIrError(error: ErrorObject): IrError {
   return { path: base, message: error.message ?? "is invalid" };
 }
 
-/** Validates a parsed JSON value against IR 0.1. */
+/** The schemaVersion of a parsed value when it is a string, else undefined. */
+function versionOf(json: unknown): string | undefined {
+  if (typeof json !== "object" || json === null || Array.isArray(json)) {
+    return undefined;
+  }
+  const version = (json as Record<string, unknown>)["schemaVersion"];
+  return typeof version === "string" ? version : undefined;
+}
+
+/** Validates a parsed JSON value against the IR version it declares. */
 export function validateIr(json: unknown): IrValidation {
-  if (compiled(json)) return { ok: true, errors: [] };
-  const errors = (compiled.errors ?? []).map(toIrError);
+  const version = versionOf(json);
+  if (version !== undefined && SCHEMAS[version] === undefined) {
+    return {
+      ok: false,
+      errors: [
+        {
+          path: "/schemaVersion",
+          message: `is not a supported IR version "${version}"; use "0.1" or "0.2"`,
+        },
+      ],
+    };
+  }
+  const validate = SCHEMAS[version ?? LATEST] as ValidateFunction;
+  if (validate(json)) return { ok: true, errors: [] };
+  const errors = (validate.errors ?? []).map(toIrError);
   return { ok: false, errors };
 }

@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: `npm run test:lua` and `npm run test:integration` are real. `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell), the minimal-filter golden test (task 003), the CLI tests (`validate.test.ts`, task 005; `cli-render.test.ts`, task 006), the front matter defaults test (`front-matter.test.ts`, task 010), the scene ids and source lines test (`scene-lines.test.ts`, task 011), the Quarto-native spike check (`spike-quarto-native.test.ts`, task 007: script output equals ADR-0002's evidence), and `quarto-render.test.ts` (task 007a: `quarto render` of `videos/hello` in both forms writes the MP4, and a failing render exits non-zero), through the pinned Quarto. The quarto-render test writes `videos/hello` outputs in place and removes them afterwards. `test:visual` is still a placeholder until task 020.
+Status: `npm run test:lua` and `npm run test:integration` are real. `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell), the minimal-filter golden test (task 003), the CLI tests (`validate.test.ts`, task 005; `cli-render.test.ts`, task 006), the front matter defaults test (`front-matter.test.ts`, task 010), the scene ids and source lines test (`scene-lines.test.ts`, task 011), the content nodes test (`content-nodes.test.ts`, task 012: golden IR and `E_CONTENT_UNSUPPORTED` at its line), the Quarto-native spike check (`spike-quarto-native.test.ts`, task 007: script output equals ADR-0002's evidence), and `quarto-render.test.ts` (task 007a: `quarto render` of `videos/hello` in both forms writes the MP4, and a failing render exits non-zero), through the pinned Quarto. The quarto-render test writes `videos/hello` outputs in place and removes them afterwards. `test:visual` is still a placeholder until task 020.
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 
@@ -33,4 +33,4 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
   ≤ 640×360) unless the task requires otherwise.
 
 ## Related
-Tasks 001, 003, 005, 006, 007, 007a, 010, 020, 047, 048. PRD §13.
+Tasks 001, 003, 005, 006, 007, 007a, 010, 011, 012, 020, 047, 048. PRD §13.
