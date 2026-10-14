@@ -27,7 +27,7 @@ It writes `tests/fixtures/projects/minimal-filter/.video-build/manifest.json`. T
 Why this form:
 - `quarto pandoc` runs the Pandoc bundled with the pinned Quarto (mise pins Quarto 1.10.19, Pandoc 3.10, Lua 5.4; ADR-0010). Tests and users run the same Lua.
 - Plain Pandoc flags and no Quarto project or format resolution: deterministic, no dependency on undocumented Quarto internals (PRD §4.3).
-- `quarto render index.qmd` also works when the document lists `filters: [video]`. Verified with 1.10.19 on a scratch copy only. Quarto gives Pandoc a temporary copy of the file, so the filter takes the project path from `quarto.doc.input_file` and falls back to Pandoc's input list. Whether `quarto render` is a supported entry point is for ADR-0002 (task 007); until then the CLI is the reference.
+- `quarto render index.qmd` runs the filter when the document lists `filters: [video]` and writes the manifest, but no MP4 (ADR-0002). Quarto gives Pandoc a temporary copy of the file, so the filter takes the project path from `quarto.doc.input_file` and falls back to Pandoc's input list. An MP4 from `quarto render` needs the project post-render hook in ADR-0002, not this filter. The CLI is the reference entry point.
 
 `video validate` runs this same invocation (`packages/cli/src/filter.ts`).
 
@@ -62,4 +62,4 @@ Rules:
 - Duration conversion must pass `packages/ir/test-vectors/durations.json` once task 009 adds it.
 
 ## Related
-Tasks 003, 008–012, 015, 038. ADR-0002, 0003, 0004, 0005.
+Tasks 003, 007, 008–012, 015, 038. ADR-0002, 0003, 0004, 0005.
