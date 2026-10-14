@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -44,6 +44,19 @@ describe("ir:check", () => {
     const result = runCheck(file);
     expect(result.status).toBe(1);
     expect(result.stdout).toMatch(/^\/scenes\/0\/durationFrames: .+\n$/);
+  });
+
+  it("names E_IR_UNSUPPORTED_VERSION and the supported versions for schemaVersion 2.0, exit 1", () => {
+    const file = join(dir, "v2.json");
+    const json = JSON.parse(
+      readFileSync(new URL("../examples/v1.json", import.meta.url), "utf8"),
+    );
+    writeFileSync(file, JSON.stringify({ ...json, schemaVersion: "2.0" }));
+    expect(runCheck(file)).toEqual({
+      status: 1,
+      stdout:
+        '/schemaVersion: E_IR_UNSUPPORTED_VERSION "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0\n',
+    });
   });
 
   it("exits 1 when the file cannot be read", () => {

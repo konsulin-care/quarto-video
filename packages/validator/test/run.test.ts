@@ -72,7 +72,7 @@ describe("checkManifest", () => {
         severity: "error",
         code: "E_IR_SCHEMA",
         message:
-          '/schemaVersion: must be "0.2" or "0.3" for component contracts (scene slots); got "0.1"',
+          '/schemaVersion: must be "0.2" or newer for component contracts (scene slots); got "0.1"',
         file: "manifest.json",
         property: "/schemaVersion",
       },

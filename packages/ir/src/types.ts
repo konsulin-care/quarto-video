@@ -1,11 +1,11 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2 (ir-0.2.json) and 0.3 (ir-0.3.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3 and 1.0 (ir-1.0.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
 
-export type SchemaVersion = "0.1" | "0.2" | "0.3";
+export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0";
 
 export interface IrSettings {
   width: number;
@@ -83,13 +83,32 @@ export interface IrVideoV03 {
   timeline: IrTimeline;
 }
 
+/** Versions that the filter writes in (ADR-0007): the build that made the manifest. */
+export interface IrGenerator {
+  /** Version of the Quarto extension (`_extensions/video`), semver. */
+  extension: string;
+  /** Version of the `video` CLI package, semver. */
+  cli: string;
+}
+
+/** IR 1.0 (ADR-0007): IR 0.3 plus the required `generator` block. */
+export interface IrVideoV10 extends Omit<IrVideoV03, "schemaVersion"> {
+  schemaVersion: "1.0";
+  generator: IrGenerator;
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3 and 1.0). */
+export type IrVideoWithTimeline = IrVideoV03 | IrVideoV10;
+
 /** Any supported manifest. Renderers read every version through `plainText`. */
-export type IrVideo = IrVideoV01 | IrVideoV02 | IrVideoV03;
+export type IrVideo = IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {
   path: string;
   message: string;
+  /** A diagnostic code when the error has one, e.g. E_IR_UNSUPPORTED_VERSION. */
+  code?: "E_IR_UNSUPPORTED_VERSION";
 }
 
 export interface IrValid {

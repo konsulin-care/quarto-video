@@ -105,8 +105,9 @@ describe("IR 0.2 content", () => {
       errors: [
         {
           path: "/schemaVersion",
+          code: "E_IR_UNSUPPORTED_VERSION",
           message:
-            'is not a supported IR version "0.4"; use "0.1", "0.2" or "0.3"',
+            '"0.4" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0',
         },
       ],
     });

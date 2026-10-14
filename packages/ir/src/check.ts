@@ -19,7 +19,8 @@ export function checkIrText(text: string): CheckOutput {
   const result = validateIr(json);
   if (result.ok) return { ok: true, lines: ["OK"] };
   const lines = result.errors.map(
-    (e) => `${e.path === "" ? "(root)" : e.path}: ${e.message}`,
+    (e) =>
+      `${e.path === "" ? "(root)" : e.path}: ${e.code === undefined ? "" : `${e.code} `}${e.message}`,
   );
   return { ok: false, lines };
 }

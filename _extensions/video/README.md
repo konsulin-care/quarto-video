@@ -1,12 +1,12 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 0.3 manifest (tasks 003, 012, 015); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
+Status: `.scene` Divs → IR 1.0 manifest (tasks 003, 012, 015, 017; ADR-0007); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `scan.lua` (raw-text scan of scene fences), `locate.lua` (scene ids, Div pairing, source lines), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder), `content.lua` (scene content: slots, blocks, unsupported findings), `content_inlines.lua` (inline nodes), `content_lines.lua` (lines of unsupported content), `transitions.lua` (a scene's incoming transition, ADR-0005), `timeline.lua` (start frames and total, ADR-0005).
+- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `scan.lua` (raw-text scan of scene fences), `locate.lua` (scene ids, Div pairing, source lines), `manifest.lua` (IR table, JSON file), `generator.lua` (extension and CLI versions in `generator`, ADR-0007), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder), `content.lua` (scene content: slots, blocks, unsupported findings), `content_inlines.lua` (inline nodes), `content_lines.lua` (lines of unsupported content), `transitions.lua` (a scene's incoming transition, ADR-0005), `timeline.lua` (start frames and total, ADR-0005).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
 ## Does not own
@@ -65,11 +65,10 @@ Rules:
 
 ## Source lines (tasks 011, 012)
 Pandoc 3.10 has no `sourcepos`. `lib/scan.lua` reads the raw `.qmd` (skipping
-front matter, fenced code and HTML comments), marks each scene fence with its
-line and records each scene's closing fence. `lib/locate.lua` pairs marks with
-the scene Divs and keeps a line only when nesting, attributes and text agree.
-`lib/content_lines.lua` searches a scene's raw text, in order, for each
-unsupported element. No recognised text means no line, never a wrong one.
+front matter, fenced code and HTML comments) and marks each scene fence and its
+closing fence. `lib/locate.lua` pairs marks with the scene Divs and keeps a line
+only when nesting, attributes and text agree. `lib/content_lines.lua` finds the
+line of each unsupported element. No recognised text means no line, never a wrong one.
 
 ## Scene content (task 012, ADR-0004)
 | Markdown in a `.scene` | IR (`content.slots.<name>`) |
@@ -82,21 +81,18 @@ unsupported element. No recognised text means no line, never a wrong one.
 - Unsupported (error, line given when found): tables, raw HTML and comments, footnotes, math, links, images, quotes blocks, rules, spans and other inline styles, attributes on headings and code, a Div without a slot class, a second or empty slot, a nested block in a slot.
 
 ## Diagnostics (task 008)
-- Each stage collects its errors with `diagnostics.try` and raises them together.
-- On error the filter writes the diagnostics array, then fails Pandoc. The CLI reads the array and prints it (`packages/cli`).
-- Codes and their meaning: `packages/validator/README.md`.
+- Stages collect errors with `diagnostics.try`; on error the filter writes the array and fails Pandoc. Codes: `packages/validator/README.md`.
 
 ## Testing (both need `quarto` on `PATH`, provided by mise)
 - `npm run test:lua` runs `quarto pandoc lua _extensions/video/tests/run.lua`: unit tests for scenes, scene ids (`test_scene_ids.lua`), the source scan (`test_locate.lua`), durations, config, config keys and the encoder.
-- `test_content.lua` and `test_content_lines.lua`: nodes, slots, each unsupported kind, lines.
+- `test_content.lua`, `test_content_lines.lua`: nodes, slots, each unsupported kind, lines.
 - `tests/integration/scene-lines.test.ts` checks ids and lines through the CLI (fixtures `tests/fixtures/projects/scene-lines-*`).
 - `tests/integration/content-nodes.test.ts`: the golden `content-nodes` IR, read with the filter alone (its components are not registered yet), and `E_CONTENT_UNSUPPORTED` at the line (fixtures `content-unsupported-*`).
 - `test_transitions.lua` (each transition rule and error), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
 - `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
 
 ## Rules
-- Lua code must be pure: no `os.execute`, `io.popen`, network, or reading files other than the document being processed.
-- Attribute names are case-sensitive and passed through unchanged; unknown attributes are NOT dropped (they are errors here).
+- Lua code is pure: no `os.execute`, `io.popen`, network, or reading files other than the document. Attribute names are case-sensitive; unknown attributes are errors, never dropped.
 - Keep Pandoc inside this directory: IR nodes must not use Pandoc names (`Para`, `Str`, …).
 - Duration conversion must pass `packages/ir/test-vectors/durations.json` (ADR-0003).
 

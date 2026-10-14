@@ -58,7 +58,10 @@ export async function loadIr(irPath: string): Promise<IrVideo> {
   }
   const result = validateIr(json);
   if (!result.ok) {
-    const lines = result.errors.map((e) => `  ${e.path || "/"} ${e.message}`);
+    const lines = result.errors.map(
+      (e) =>
+        `  ${e.path || "/"} ${e.code === undefined ? "" : `${e.code} `}${e.message}`,
+    );
     throw new IrRenderError(`Invalid IR ${file}:\n${lines.join("\n")}`);
   }
   const ir = json as IrVideo;

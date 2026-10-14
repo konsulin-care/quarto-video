@@ -4,7 +4,7 @@
 // integer frames; the checks live in packages/validator (stage 4). The Lua
 // filter implements the same rule (_extensions/video/lib/timeline.lua); the
 // shared vectors in test-vectors/timeline.json drive both.
-import type { IrVideo, IrTimeline } from "./types.js";
+import type { IrVideo, IrTimeline, IrVideoWithTimeline } from "./types.js";
 
 /** The fields of a scene that decide its place on the timeline. */
 export interface TimedScene {
@@ -33,11 +33,16 @@ export function resolveTimeline(scenes: readonly TimedScene[]): IrTimeline {
   return { durationFrames: start + last, scenes: starts };
 }
 
+/** True for the versions that carry a `timeline` section (0.3 and 1.0). */
+export function hasTimeline(ir: IrVideo): ir is IrVideoWithTimeline {
+  return ir.schemaVersion === "0.3" || ir.schemaVersion === "1.0";
+}
+
 /**
- * The timeline of any supported manifest: the `timeline` section of IR 0.3,
- * or, for 0.1 and 0.2 (which have no transitions), the sequential timeline.
+ * The timeline of any supported manifest: the `timeline` section of IR 0.3
+ * and 1.0, or, for 0.1 and 0.2 (which have no transitions), the sequential timeline.
  */
 export function timelineOf(ir: IrVideo): IrTimeline {
-  if (ir.schemaVersion === "0.3") return ir.timeline;
+  if (hasTimeline(ir)) return ir.timeline;
   return resolveTimeline(ir.scenes);
 }

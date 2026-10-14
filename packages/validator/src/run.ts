@@ -8,7 +8,7 @@ import {
   type IrError,
   type IrVideo,
   type IrVideoV02,
-  type IrVideoV03,
+  type IrVideoWithTimeline,
 } from "@quarto-video/ir";
 import {
   listComponents,
@@ -45,12 +45,12 @@ export function runStages(
   return all;
 }
 
-/** One IR schema error, as an E_IR_SCHEMA diagnostic about `file`. */
+/** One IR schema error, as an E_IR_SCHEMA diagnostic (or its own code) about `file`. */
 export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
   const where = error.path === "" ? "(root)" : error.path;
   return {
     severity: "error",
-    code: "E_IR_SCHEMA",
+    code: error.code ?? "E_IR_SCHEMA",
     message: `${where}: ${error.message}`,
     file,
     ...(error.path === "" ? {} : { property: error.path }),
@@ -59,9 +59,10 @@ export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
 
 /**
  * Stages 2 to 4 for the manifest the filter wrote (`file`, project-relative).
- * Contracts read the slots of IR 0.2 or 0.3 (ADR-0004); a 0.1 manifest is an
- * error. Stage 3 checks `assets` when given (ADR-0006). Stage 4 checks
- * transitions and the timeline (ADR-0005; 0.3 only).
+ * An unsupported version is E_IR_UNSUPPORTED_VERSION (ADR-0007). Contracts read
+ * the slots of IR 0.2 or later (ADR-0004); a 0.1 manifest is an error. Stage 3
+ * checks `assets` when given (ADR-0006). Stage 4 checks transitions and the
+ * timeline (ADR-0005; 0.3 and 1.0).
  */
 export function checkManifest(
   json: unknown,
@@ -70,7 +71,7 @@ export function checkManifest(
   transitions: readonly string[] = listTransitions(),
   assets?: AssetCheck,
 ): ManifestCheck {
-  const state: { ir?: IrVideoV02 | IrVideoV03 } = {};
+  const state: { ir?: IrVideoV02 | IrVideoWithTimeline } = {};
   const diagnostics = runStages([
     () => {
       const result = validateIr(json);
@@ -83,13 +84,13 @@ export function checkManifest(
           schemaDiagnostic(
             {
               path: "/schemaVersion",
-              message: `must be "0.2" or "0.3" for component contracts (scene slots); got "${ir.schemaVersion}"`,
+              message: `must be "0.2" or newer for component contracts (scene slots); got "${ir.schemaVersion}"`,
             },
             file,
           ),
         ];
       }
-      state.ir = ir as IrVideoV02 | IrVideoV03;
+      state.ir = ir as IrVideoV02 | IrVideoWithTimeline;
       return [];
     },
     () => {

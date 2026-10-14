@@ -2,12 +2,13 @@
 // overlaps, and that the manifest's timeline is the one its scenes resolve to.
 // Pure: the transition names are passed in. Negative values never reach this
 // stage: the filter (ADR-0003) and the IR schema (minimum 0) reject them first.
-// IR 0.2 has no transitions or timeline, so there is nothing to check.
+// IR 0.1 and 0.2 have no transitions or timeline, so there is nothing to check.
 import {
+  hasTimeline,
   resolveTimeline,
   type IrSceneV03,
   type IrVideo,
-  type IrVideoV03,
+  type IrVideoWithTimeline,
 } from "@quarto-video/ir";
 import type { Diagnostic, DiagnosticCode } from "../diagnostic.js";
 import { seconds } from "./contract.js";
@@ -113,7 +114,7 @@ function checkScene(
 }
 
 /** The first place where the manifest's timeline differs from the resolved one. */
-function checkTimelineSection(ir: IrVideoV03): Diagnostic[] {
+function checkTimelineSection(ir: IrVideoWithTimeline): Diagnostic[] {
   const scenes = ir.scenes;
   const expected = resolveTimeline(scenes);
   const actual = ir.timeline;
@@ -163,7 +164,7 @@ export function checkTimeline(
   ir: IrVideo,
   transitions: readonly string[],
 ): Diagnostic[] {
-  if (ir.schemaVersion !== "0.3") return [];
+  if (!hasTimeline(ir)) return [];
   const fps = ir.settings.fps;
   const found = ir.scenes.flatMap((_scene, index) =>
     checkScene(ir.scenes, index, transitions, fps),

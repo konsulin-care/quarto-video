@@ -56,6 +56,16 @@ describe("render validation", () => {
     );
   });
 
+  it("rejects an unsupported schemaVersion with E_IR_UNSUPPORTED_VERSION and the supported versions", async () => {
+    const ir = await writeVariant("unsupported-version", (ir) => {
+      Object.assign(ir, { schemaVersion: "2.0" });
+    });
+    const out = join(dir, "unsupported-version.mp4");
+    await expect(render(ir, out, NO_BROWSER)).rejects.toThrow(
+      'E_IR_UNSUPPORTED_VERSION "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0',
+    );
+  });
+
   it("rejects a malformed JSON file without launching a browser", async () => {
     const path = join(dir, "broken.json");
     await writeFile(path, "{ not json");

@@ -10,9 +10,10 @@ export const COMPOSITION_ID = "video";
 
 // Studio preview only; render() always passes the real manifest as input props.
 const PREVIEW_IR: IrManifest = {
-  schemaVersion: "0.3",
+  schemaVersion: "1.0",
   type: "video",
   settings: { width: 1920, height: 1080, fps: 30, background: "#10131C" },
+  generator: { extension: "0.1.0", cli: "0.0.0" },
   scenes: [
     {
       id: "scene-001",

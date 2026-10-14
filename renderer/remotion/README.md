@@ -40,7 +40,7 @@ at the existing headless shell, never at its own download:
 - `render()` validates before anything else; invalid IR rejects with the JSON
   path (for example `/scenes/0/durationFrames`) and never starts a browser.
 - Unknown components are rejected the same way (`/scenes/<i>/component`).
-- Check `schemaVersion` on load: `validateIr` accepts `"0.1"`, `"0.2"` and `"0.3"` and rejects others. Length comes from `timelineOf(ir).durationFrames`, never a sum of scene lengths (transitions overlap).
+- Check `schemaVersion` on load: `validateIr` accepts `"0.1"`, `"0.2"`, `"0.3"` and `"1.0"` and rejects others with `E_IR_UNSUPPORTED_VERSION`, which names the supported versions (ADR-0007). Length comes from `timelineOf(ir).durationFrames`, never a sum of scene lengths (transitions overlap).
 - Visual state = f(IR, frame). Use `useCurrentFrame()`/props only. Banned:
   `Date`, `Math.random`, `performance.now`, timers, `fetch`, remote URLs
   (enforced by lint rule from task 021).

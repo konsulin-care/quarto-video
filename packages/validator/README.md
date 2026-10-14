@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: Diagnostics model and formatters (task 008); content codes (012); stage runner with stage 2 IR schema and component contracts (014); stage 4 transitions and timeline (015, ADR-0005); stage 3 asset references (016, ADR-0006). Output check: task 018; media metadata: tasks 037–038.
+Status: Diagnostics model and formatters (task 008); content codes (012); stage runner with stage 2 IR schema and component contracts (014); stage 4 transitions and timeline (015, ADR-0005); stage 3 asset references (016, ADR-0006); the IR version gate and `E_IR_UNSUPPORTED_VERSION` (017, ADR-0007). Output check: task 018; media metadata: tasks 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -60,7 +60,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 (widened 015) |
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 (widened 015) |
 | `E_CONTENT_UNSUPPORTED` | 1 filter | Scene content has Markdown the content model does not support (a table, raw HTML or comment, footnote, math, link, image, ...), a block with a bad or missing slot class, a duplicate or empty slot; the line is the element's (ADR-0004) | 012 |
-| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1, 0.2 or 0.3 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015) |
+| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.0 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017) |
+| `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3 or 1.0, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |
 | `E_SLOT_UNKNOWN` | 2 contract | A scene has content in a slot its component does not declare; the suggestion lists the slots | 014 |
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
@@ -80,9 +81,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
 
-`E_SETTING_MISSING` (task 008) was retired in task 010: no setting is required
-any more, because every setting has a default. The code is not emitted and must
-not be reused.
+`E_SETTING_MISSING` (task 008) was retired in task 010 (every setting has a default).
+It is not emitted and must not be reused.
 
 ## Testing
 - Unit tests per stage in `test/`: formats (snapshots of the human text), schema,

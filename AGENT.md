@@ -62,9 +62,9 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run check` — format:check, lint, typecheck, unit (root).
 - `npm run format` · `npm run lint` · `npm run typecheck` · `npm run test`.
 - `npm run typecheck -w @quarto-video/ir` — one workspace.
-- `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002).
+- `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002); an unsupported `schemaVersion` is `E_IR_UNSUPPORTED_VERSION`, exit 1 (task 017).
 - `npm run test:lua` — Lua filter unit tests via `quarto pandoc` (task 003).
-- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the content nodes test (task 012), the contract stage test (task 014), the timeline test (task 015), the `video` CLI tests (validate: 005; render: 006) and `quarto render` through the post-render hook (007a).
+- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the content nodes test (task 012), the contract stage test (task 014), the timeline test (task 015), the IR 1.0 golden manifests (task 017), the `video` CLI tests (validate: 005; render: 006) and `quarto render` through the post-render hook (007a).
 - `npm run test:visual` — placeholder until task 020.
 - `npx video validate <path> [--print-ir] [--json]` — filter, IR, contract and timeline check; exit 0/1/2 (tasks 005, 008, 014, 015). From another directory: `npm exec --prefix <repo> -- video validate <path>`.
 - `npx video components [--json]` — list the component contracts: id, version, slots, props, duration (task 013).
