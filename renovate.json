@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "schedule:weekly",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "enabledManagers": ["mise", "npm", "github-actions"],
+  "rangeStrategy": "pin",
+  "minimumReleaseAge": "3 days",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "Automerge non-major updates once CI is green",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest", "pinDigest"],
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Major updates always need human review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["major-update"]
+    },
+    {
+      "description": "One PR for non-major toolchain bumps",
+      "matchManagers": ["mise"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "toolchain"
+    }
+  ]
+}

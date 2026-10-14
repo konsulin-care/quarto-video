@@ -48,8 +48,8 @@ Option 2.
 
 ## Consequences
 - One bootstrap command on Linux and macOS; Windows uses WSL.
-- Tools whose mise backend Renovate cannot read (e.g. `conda:`) are
-  updated by hand; review them when Renovate updates the rest.
+- Tools use mise backends Renovate can read (core, aqua, github, conda);
+  a tool on any other backend must be bumped by hand.
 - Task 001 uses the mise Node pin and makes its npm scripts satisfy
   `scripts/check.sh` / `scripts/test.sh` instead of writing its own CI.
 

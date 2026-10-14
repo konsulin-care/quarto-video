@@ -1,0 +1,6 @@
+# Dependencies and builds
+node_modules/
+
+# Local mise overrides
+mise.local.toml
+.mise.local.toml

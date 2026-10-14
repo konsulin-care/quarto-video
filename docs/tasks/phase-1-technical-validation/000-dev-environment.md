@@ -16,7 +16,7 @@ hooks and CI before review.
 
 ## Deliverables
 - `mise.toml`: exact pins for node, quarto, ffmpeg, lefthook, shellcheck,
-  shfmt, stylua, selene, actionlint; tasks `setup`, `check`, `test`.
+  shfmt, stylua, selene; tasks `setup`, `check`, `test`.
 - `renovate.json`: weekly, automerge minor/patch/digest, majors reviewed.
 - `lefthook.yml`: `pre-commit` → `scripts/check.sh --staged`;
   `pre-push` → `scripts/check.sh --push`, `scripts/test.sh --push`.
@@ -40,7 +40,8 @@ Human check:
 
 ## Notes
 - Quarto is not in the mise registry; pinned via `github:quarto-dev/quarto-cli`.
-- ffmpeg uses `conda:ffmpeg` (prebuilt binaries for Linux and macOS);
-  Renovate may not read the `conda:` backend — bump it by hand.
+- ffmpeg uses `conda:ffmpeg` (prebuilt binaries for Linux and macOS).
+- shfmt/stylua use explicit `aqua:` names: Renovate does not know the
+  short registry names.
 
 ## Completion log
