@@ -7,3 +7,9 @@ mise.local.toml
 
 # Personal lefthook overrides
 lefthook-local.yml
+
+# Build and generated output (task 001)
+dist/
+.video-build/
+videos/*/output.*
+tests/visual/report/

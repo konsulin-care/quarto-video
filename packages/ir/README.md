@@ -1,5 +1,6 @@
 # packages/ir/ — Video IR schema, types, time rules
-Status: Not implemented — built by tasks 002, 009, 012, 015, 017.
+Status: Scaffold (task 001): `src/index.ts` and a smoke test. Schema and types: tasks 002, 009, 012, 015, 017.
+Run: `npm run typecheck -w @quarto-video/ir`; tests: root `npm run test`.
 
 ## Purpose
 The single, versioned, renderer-independent contract between authoring and

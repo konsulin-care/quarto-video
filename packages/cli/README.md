@@ -1,5 +1,6 @@
 # packages/cli/ — the `video` command
-Status: Not implemented — built by tasks 005, 006, 013, 018.
+Status: Scaffold (task 001): `src/index.ts` and a smoke test. Commands: tasks 005, 006, 013, 018.
+Run: `npm run typecheck -w @quarto-video/cli`; tests: root `npm run test`.
 
 ## Purpose
 The supported end-to-end entry point (PRD §4.2): resolve a project, run the

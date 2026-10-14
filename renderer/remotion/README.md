@@ -1,5 +1,6 @@
 # renderer/remotion/ — Remotion reference renderer
-Status: Not implemented — built by tasks 004, 019–035, 039–046.
+Status: Scaffold (task 001): `src/index.ts` and a smoke test, no Remotion dependency yet. Rendering: tasks 004, 019–035, 039–046.
+Run: `npm run typecheck -w @quarto-video/remotion`; tests: root `npm run test`.
 
 ## Purpose
 Render a valid Video IR manifest to frames and encode the output (PRD §8.4).

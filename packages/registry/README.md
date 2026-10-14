@@ -1,5 +1,6 @@
 # packages/registry/ — component contracts, presets, themes
-Status: Not implemented — built by tasks 013, 019, 021+, one entry per task.
+Status: Scaffold (task 001): `src/index.ts` and a smoke test. Contracts and presets: tasks 013, 019, 021+.
+Run: `npm run typecheck -w @quarto-video/registry`; tests: root `npm run test`.
 
 ## Purpose
 Declare the design system as data (PRD §5.4–5.6, §10): which components,
