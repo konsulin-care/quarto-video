@@ -1,5 +1,5 @@
 # docs/tasks/ — sequential development tasks
-Status: All tasks `todo`. Numbers are the execution order.
+Status: Task 000 done; all others `todo`. Numbers are the execution order.
 
 ## Picking work
 1. Take the lowest-numbered task whose `Status` is not `done` and whose
@@ -14,7 +14,7 @@ Sections: Goal, Scope (In/Out), Deliverables, Definition of done
 
 ## Definition of done (applies to every task)
 - Every Automated box is satisfied by a committed test that runs in
-  `npm run check` or `npm run test:integration` (or `test:visual`).
+  `mise run test` (see `docs/testing.md` for what needs a test).
 - The Human check can be followed verbatim by a person with a fresh clone
   and produces the stated observable result.
 - READMEs of touched directories and `AGENT.md` Commands are current.
@@ -32,7 +32,8 @@ Sections: Goal, Scope (In/Out), Deliverables, Definition of done
 | #   | Task                                   | Depends  |
 | --- | -------------------------------------- | -------- |
 | **Phase 1 — Technical validation** |  |  |
-| 001 | Workspace tooling + ADR-0001           | —        |
+| 000 | Dev environment, gates + ADR-0010      | —        |
+| 001 | Workspace tooling + ADR-0001           | 000      |
 | 002 | IR v0 schema and checker               | 001      |
 | 003 | Minimal Lua filter → IR                | 002      |
 | 004 | Minimal Remotion render of IR          | 002      |

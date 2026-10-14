@@ -1,0 +1,26 @@
+# Git hooks (ADR-0010). Install with `mise run setup`.
+# Hooks only look at code files; docs and data never trigger them.
+# The logic lives in scripts/ so CI runs exactly the same checks.
+# `mise exec` puts the pinned tools on PATH even without `mise activate`.
+
+pre-commit:
+  piped: true # fail fast: stop at the first failing command
+  skip:
+    - merge
+    - rebase
+  commands:
+    check:
+      glob: &code "*.{ts,tsx,js,mjs,cjs,lua,sh}"
+      run: mise exec -- scripts/check.sh --staged
+
+pre-push:
+  piped: true
+  commands:
+    check:
+      priority: 1
+      glob: *code
+      run: mise exec -- scripts/check.sh --push
+    test:
+      priority: 2
+      glob: *code
+      run: mise exec -- scripts/test.sh --push
