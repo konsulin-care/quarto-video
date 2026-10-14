@@ -46,15 +46,32 @@
       "source": {
         "file": "index.qmd",
         "line": 20
+      },
+      "transition": {
+        "durationFrames": 0,
+        "name": "cut"
       }
     }
   ],
-  "schemaVersion": "0.2",
+  "schemaVersion": "0.3",
   "settings": {
     "background": "#10131C",
     "fps": 24,
     "height": 720,
     "width": 1280
+  },
+  "timeline": {
+    "durationFrames": 84,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 36
+      }
+    ]
   },
   "type": "video"
 }

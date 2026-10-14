@@ -13,10 +13,16 @@ local diagnostics = require("lib.diagnostics")
 local locate = require("lib.locate")
 local content = require("lib.content")
 local content_lines = require("lib.content_lines")
+local transitions = require("lib.transitions")
 
 local M = {}
 
-local ALLOWED_ATTRIBUTES = { component = true, duration = true }
+local ALLOWED_ATTRIBUTES = {
+  component = true,
+  duration = true,
+  transition = true,
+  transitionDuration = true,
+}
 local NESTED_MESSAGE =
   "'.scene' Divs must be top-level blocks (nested scenes are not supported yet)."
 
@@ -37,7 +43,7 @@ local function check_shape(div, id)
         string.format('Scene "%s" has an unknown attribute "%s".', id, key),
         {
           property = key,
-          suggestion = "Allowed attributes: component, duration.",
+          suggestion = "Allowed attributes: component, duration, transition, transitionDuration.",
         }
       )
     end
@@ -65,7 +71,7 @@ local function scene_frames(div, id, fps, default_frames)
   )
 end
 
-local function scene_record(div, id, fps, default_frames, line, slots)
+local function scene_record(div, id, fps, default_frames, line, slots, transition)
   check_shape(div, id)
   local component = div.attributes.component
   if component == nil or component == "" then
@@ -79,6 +85,7 @@ local function scene_record(div, id, fps, default_frames, line, slots)
     id = id,
     component = component,
     durationFrames = scene_frames(div, id, fps, default_frames),
+    transition = transition,
     slots = slots,
     line = line,
   }
@@ -132,14 +139,16 @@ local function content_slots(div, id, line, scan, found)
   return slots
 end
 
---- Returns one record { id, component, durationFrames, slots, line } per
---- top-level scene. An empty list means the document has no scenes. Raises
---- every problem as one diagnostic error (lib/diagnostics.lua), in document
---- order. `fps` may be a placeholder when settings failed: the frames are
---- then discarded. `default_frames` is the frames of `defaults.scene.duration`
---- (see scene_frames). `scan` is lib/scan.lua's result, or nil when the
---- source text is unavailable (scenes then carry no line).
-function M.collect(doc, fps, default_frames, scan)
+--- Returns one record { id, component, durationFrames, transition, slots,
+--- line } per top-level scene. An empty list means the document has no scenes.
+--- Raises every problem as one diagnostic error (lib/diagnostics.lua), in
+--- document order. `fps` may be a placeholder when settings failed: the frames
+--- are then discarded. `default_frames` is the frames of
+--- `defaults.scene.duration` (see scene_frames); `default_transition` is the
+--- name of `defaults.scene.transition` (lib/transitions.lua). `scan` is
+--- lib/scan.lua's result, or nil when the source text is unavailable (scenes
+--- then carry no line).
+function M.collect(doc, fps, default_frames, scan, default_transition)
   local entries, complete = locate.scene_divs(doc)
   local lines, unread = locate.pair(scan, entries)
   local found = {}
@@ -184,17 +193,17 @@ function M.collect(doc, fps, default_frames, scan)
       })
     else
       local slots = content_slots(entry.div, id, line, scan, found)
-      list[#list + 1] = diagnostics.try(
-        function()
-          return scene_record(entry.div, id, fps, default_frames, line, slots)
-        end,
-        found,
-        {
-          sceneId = id,
-          component = entry.div.attributes.component,
-          line = line,
-        }
-      )
+      local context = {
+        sceneId = id,
+        component = entry.div.attributes.component,
+        line = line,
+      }
+      local transition = diagnostics.try(function()
+        return transitions.resolve(entry.div, id, fps, i, default_transition)
+      end, found, context)
+      list[#list + 1] = diagnostics.try(function()
+        return scene_record(entry.div, id, fps, default_frames, line, slots, transition)
+      end, found, context)
     end
   end
   diagnostics.raise(in_document_order(found))

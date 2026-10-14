@@ -1,0 +1,20 @@
+---
+video:
+  fps: 30
+---
+
+::: {.scene component="title" duration="4s" #opening}
+Plain.
+:::
+
+::: {.scene component="title" duration="4s" transition="fade" #second}
+Fade without a duration.
+:::
+
+::: {.scene component="title" duration="4s" transition="cut" transitionDuration="1s" #third}
+A cut with a duration.
+:::
+
+::: {.scene component="title" duration="4s" transitionDuration="1s" #fourth}
+A duration without a transition.
+:::

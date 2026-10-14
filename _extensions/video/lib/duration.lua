@@ -13,12 +13,13 @@ local MAX_WHOLE_DIGITS = 7
 
 -- Names the duration in messages and suggestions. `head` builds the start of
 -- the message from the value; `one` and `four` are example spellings.
-local function scene_context(scene_id)
+-- `attribute` is the scene attribute: "duration" or "transitionDuration".
+local function scene_context(scene_id, attribute)
   return {
     head = function(text)
-      return string.format('Scene "%s" has duration "%s"', scene_id, text)
+      return string.format('Scene "%s" has %s "%s"', scene_id, attribute, text)
     end,
-    property = "duration",
+    property = attribute,
     one = 'duration="1s"',
     four = 'duration="4s"',
     shorter = "Use a shorter scene, for example by splitting it.",
@@ -107,9 +108,10 @@ local function frames_of(text, ctx, fps)
 end
 
 --- Returns the number of frames for a scene's `text` at `fps` (a positive
---- integer). `scene_id` names the scene in the message.
-function M.to_frames(text, scene_id, fps)
-  return frames_of(text, scene_context(scene_id), fps)
+--- integer). `scene_id` names the scene in the message; `attribute` is the
+--- scene attribute the text came from (default "duration").
+function M.to_frames(text, scene_id, fps, attribute)
+  return frames_of(text, scene_context(scene_id, attribute or "duration"), fps)
 end
 
 --- Returns the frames of the front matter default `defaults.scene.duration`.

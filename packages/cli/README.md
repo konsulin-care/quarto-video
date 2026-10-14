@@ -1,5 +1,5 @@
 # packages/cli/ — the `video` command
-Status: `video validate` (task 005), `video render` (task 006, both with `--json`, task 008) and `video components` (task 013) are real. `doctor` arrives with task 018.
+Status: `video validate` (task 005), `video render` (task 006, both with `--json`, task 008) and `video components` (task 013) are real; validate and render run stages 1–4 (task 015, ADR-0005). `doctor` arrives with task 018.
 Run from the repo root (after `npm ci`): `npx video render videos/hello`. From any other directory: `npm exec --prefix <repo> -- video render <path>`. Tests: `npm run test:integration` (spawns the bin); unit tests run from the root with `npm run test`.
 
 ## Purpose
@@ -9,8 +9,8 @@ filter, validate, render, and report.
 ## Commands
 | Command | Task | Behaviour |
 | ------- | ---- | --------- |
-| `video validate <path> [--print-ir]` or `[--json]` | 005, 008, 014 | Stages 1–2: filter, then IR schema and component contracts. Done |
-| `video render <path> [--json]` | 006, 008 | Stages 1–2, then render to `video.output`. Done |
+| `video validate <path> [--print-ir]` or `[--json]` | 005, 008, 014, 015 | Stages 1–2 and 4: filter, IR schema, component contracts, timeline. Done |
+| `video render <path> [--json]` | 006, 008 | Stages 1–2 and 4, then render to `video.output`. Done |
 | `video components [--json]` | 013 | List registry component contracts. Done |
 | `video doctor` | 018 | Environment and version report |
 
@@ -31,7 +31,7 @@ Use `video.output` in front matter to choose the destination.
 - A missing path, a directory without `index.qmd`, or a file that is not `.qmd` → exit 2, message names the path.
 
 ## `validate` output (`src/commands/validate.ts`)
-- Success: `OK <name> (<n> scenes, <frames> frames)` on stdout.
+- Success: `OK <name> (<n> scenes, <frames> frames)` on stdout; frames is the timeline total (overlaps counted once).
 - `--print-ir`: the validated IR JSON alone on stdout; the OK line moves to stderr.
 - Errors and warnings: diagnostics as text on stderr (`ERROR <file>`, message, suggestion; `src/report.ts`). An IR schema error is `E_IR_SCHEMA` about `.video-build/manifest.json`.
 - `--json`: the diagnostics as a JSON array on stdout, with nothing else on stdout (no OK line). A valid project prints `[]`.

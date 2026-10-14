@@ -62,6 +62,7 @@ function Pandoc(doc)
     return config.scene_defaults(doc.meta, fps)
   end, found)
   local default_frames = defaults and defaults.frames
+  local default_transition = defaults and defaults.transition
   if defaults == nil and #found > before then
     -- The default block is invalid; it is already reported. Scenes then skip
     -- the missing-duration check.
@@ -70,7 +71,7 @@ function Pandoc(doc)
   -- The raw text gives scene source lines and reads openers Pandoc drops.
   local scan = source_scan.read_scan(input)
   local list = diagnostics.try(function()
-    return scenes.collect(doc, fps, default_frames, scan)
+    return scenes.collect(doc, fps, default_frames, scan, default_transition)
   end, found)
 
   diagnostics.attach_file(found, file_name)

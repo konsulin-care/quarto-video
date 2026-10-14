@@ -1,0 +1,17 @@
+[
+  {
+    "code": "E_TRANSITION_DURATION",
+    "line": 10,
+    "sceneId": "second"
+  },
+  {
+    "code": "E_TRANSITION_DURATION",
+    "line": 14,
+    "sceneId": "third"
+  },
+  {
+    "code": "E_TRANSITION_DURATION",
+    "line": 18,
+    "sceneId": "fourth"
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "durationFrames": 345,
+  "scenes": [
+    {
+      "id": "opening",
+      "startFrame": 0
+    },
+    {
+      "id": "second",
+      "startFrame": 105
+    },
+    {
+      "id": "third",
+      "startFrame": 165
+    },
+    {
+      "id": "fourth",
+      "startFrame": 225
+    }
+  ]
+}

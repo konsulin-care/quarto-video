@@ -10,7 +10,7 @@ video:
 defaults:
   scene:
     duration: 1.5s
-    transition: fade
+    transition: cut
 ---
 
 ::: {.scene component="title"}

@@ -1,11 +1,11 @@
-// Types for IR 0.1 (schema/ir-0.1.json) and IR 0.2 (schema/ir-0.2.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2 (ir-0.2.json) and 0.3 (ir-0.3.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
 
-export type SchemaVersion = "0.1" | "0.2";
+export type SchemaVersion = "0.1" | "0.2" | "0.3";
 
 export interface IrSettings {
   width: number;
@@ -42,6 +42,25 @@ export interface IrSceneV02 extends IrSceneBase {
   content: IrContentV02;
 }
 
+/** Incoming transition of a scene (ADR-0005). Absent on the first scene. */
+export interface IrTransition {
+  /** A transition name from the registry, e.g. "cut" or "fade". */
+  name: string;
+  /** Frames the scene overlaps the previous one; 0 for "cut". */
+  durationFrames: number;
+}
+
+export interface IrSceneV03 extends IrSceneV02 {
+  transition?: IrTransition;
+}
+
+/** Resolved timeline (ADR-0005): where each scene starts and the total length. */
+export interface IrTimeline {
+  durationFrames: number;
+  /** Same order as `scenes`. */
+  scenes: { id: string; startFrame: number }[];
+}
+
 export interface IrVideoV01 {
   schemaVersion: "0.1";
   type: "video";
@@ -56,8 +75,16 @@ export interface IrVideoV02 {
   scenes: IrSceneV02[];
 }
 
-/** Any supported manifest. Renderers read both versions through `plainText`. */
-export type IrVideo = IrVideoV01 | IrVideoV02;
+export interface IrVideoV03 {
+  schemaVersion: "0.3";
+  type: "video";
+  settings: IrSettings;
+  scenes: IrSceneV03[];
+  timeline: IrTimeline;
+}
+
+/** Any supported manifest. Renderers read every version through `plainText`. */
+export type IrVideo = IrVideoV01 | IrVideoV02 | IrVideoV03;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

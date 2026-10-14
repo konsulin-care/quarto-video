@@ -1,12 +1,12 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 0.2 manifest (tasks 003, 012); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004).
+Status: `.scene` Divs → IR 0.3 manifest (tasks 003, 012, 015); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `scan.lua` (raw-text scan of scene fences), `locate.lua` (scene ids, Div pairing, source lines), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder), `content.lua` (scene content: slots, blocks, unsupported findings), `content_inlines.lua` (inline nodes), `content_lines.lua` (lines of unsupported content).
+- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `scan.lua` (raw-text scan of scene fences), `locate.lua` (scene ids, Div pairing, source lines), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder), `content.lua` (scene content: slots, blocks, unsupported findings), `content_inlines.lua` (inline nodes), `content_lines.lua` (lines of unsupported content), `transitions.lua` (a scene's incoming transition, ADR-0005), `timeline.lua` (start frames and total, ADR-0005).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
 ## Does not own
@@ -38,12 +38,12 @@ Every value that is present must be valid. Omitted values take the default. An e
 | `title` | text | none | no | Stored; not in the IR yet. |
 | `theme` | text | none | no | Stored; resolved by task 019. Absent means no theme yet. |
 | `defaults.scene.duration` | `<n>s` or `<n>ms` (ADR-0003) | none | no | Applies to every `.scene` without `duration`. An explicit scene `duration` wins. |
-| `defaults.scene.transition` | text | none | no | Stored; resolved by task 015. |
+| `defaults.scene.transition` | transition name (`[a-z][a-z0-9-]*`) | none | no | Applies to every scene after the first that has no `transition`; a non-cut default needs `transitionDuration` on each scene it reaches. Registry check: validator stage 4. |
 
 Rules:
 - Unknown keys under `video` and `defaults` are `E_CONFIG_UNKNOWN_KEY`, with a "did you mean" suggestion when a known key is close. Top-level keys are shared with Quarto and are not checked here.
 - `codec` and `container` are rejected as not supported yet (PRD §5.2).
-- Settings the IR does not carry (`title`, `theme`, transition) are validated here and stored until their tasks use them.
+- Settings the IR does not carry (`title`, `theme`) are validated here and stored until their tasks use them.
 - A scene without a duration and without a default is `E_SCENE_NO_DURATION`.
 
 ## Scenes and durations
@@ -51,6 +51,8 @@ Rules:
 | --- | --- | --- | --- | --- |
 | `component` | `.scene` | non-empty string, not checked | none, required | 003 |
 | `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | `defaults.scene.duration`, else required | 003 (form 009, default 010) |
+| `transition` | `.scene` | a transition name; `cut` takes no time | `defaults.scene.transition` for scenes after the first, else none | 015 (ADR-0005) |
+| `transitionDuration` | `.scene` | as `duration` (> 0, rounds to frames); required for a non-cut transition, forbidden for `cut` or without a transition | none | 015 |
 
 Rules:
 - Scene ids: the author's `#id`, else `scene-NNN` where NNN is the scene's position among all scene Divs (1-based, document order). An author id does not renumber the others. A document with no scenes gives `"scenes": []`.
@@ -58,6 +60,7 @@ Rules:
 - Each scene's `source.line` in the IR is the 1-based line of its opening fence in `index.qmd`.
 - Content is typed blocks in slots (ADR-0004; table below). Each Markdown element outside the node set is `E_CONTENT_UNSUPPORTED` at its line.
 - Any other attribute or class on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error (with its line).
+- Transitions (ADR-0005): a transition belongs to the scene it enters and overlaps the previous scene by its length. The first scene takes none (`E_TRANSITION_FIRST_SCENE` for `fade`). Errors: `E_TRANSITION_DURATION` (missing, or on a cut), `E_TRANSITION_UNKNOWN` (bad syntax here; unknown names in stage 4). Lengths and overlaps are checked by the validator (stage 4).
 - Every bad setting and every bad scene is reported in one run. Scene and duration problems carry their scene id; a bad default names the setting.
 
 ## Source lines (tasks 011, 012)
@@ -88,6 +91,7 @@ unsupported element. No recognised text means no line, never a wrong one.
 - `test_content.lua` and `test_content_lines.lua`: nodes, slots, each unsupported kind, lines.
 - `tests/integration/scene-lines.test.ts` checks ids and lines through the CLI (fixtures `tests/fixtures/projects/scene-lines-*`).
 - `tests/integration/content-nodes.test.ts`: the golden `content-nodes` IR, read with the filter alone (its components are not registered yet), and `E_CONTENT_UNSUPPORTED` at the line (fixtures `content-unsupported-*`).
+- `test_transitions.lua` (each transition rule and error), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
 - `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
 
 ## Rules

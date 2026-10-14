@@ -128,9 +128,9 @@ function checkDuration(
   ];
 }
 
-/** Every contract error in `ir`, scene by scene in document order. */
+/** Every contract error in `ir`, scene by scene in document order (0.2 and 0.3). */
 export function checkContracts(
-  ir: IrVideoV02,
+  ir: Pick<IrVideoV02, "settings" | "scenes">,
   components: readonly ComponentContract[],
 ): Diagnostic[] {
   const known = new Map(components.map((contract) => [contract.id, contract]));

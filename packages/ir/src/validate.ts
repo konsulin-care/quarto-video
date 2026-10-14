@@ -1,5 +1,5 @@
 // Structural IR validation with the JSON Schemas in schema/ (ajv, draft
-// 2020-12): IR 0.1 and IR 0.2 are both accepted (PRD §8.2). Pure: no network,
+// 2020-12): IR 0.1, 0.2 and 0.3 are accepted (PRD §8.2). Pure: no network,
 // no file access after load.
 import { readFileSync } from "node:fs";
 import {
@@ -19,10 +19,11 @@ function compile(file: string): ValidateFunction {
 const SCHEMAS: Readonly<Record<string, ValidateFunction>> = {
   "0.1": compile("ir-0.1.json"),
   "0.2": compile("ir-0.2.json"),
+  "0.3": compile("ir-0.3.json"),
 };
 
 /** The version a new manifest is written in; also checked for other input. */
-const LATEST = "0.2";
+const LATEST = "0.3";
 
 /** Maps one ajv error to a JSON Pointer path and a readable message. */
 function toIrError(error: ErrorObject): IrError {
@@ -60,7 +61,7 @@ export function validateIr(json: unknown): IrValidation {
       errors: [
         {
           path: "/schemaVersion",
-          message: `is not a supported IR version "${version}"; use "0.1" or "0.2"`,
+          message: `is not a supported IR version "${version}"; use "0.1", "0.2" or "0.3"`,
         },
       ],
     };

@@ -78,12 +78,29 @@
       }
     }
   ],
-  "schemaVersion": "0.2",
+  "schemaVersion": "0.3",
   "settings": {
     "background": "#10131C",
     "fps": 30,
     "height": 1080,
     "width": 1920
+  },
+  "timeline": {
+    "durationFrames": 270,
+    "scenes": [
+      {
+        "id": "intro",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 120
+      },
+      {
+        "id": "closing",
+        "startFrame": 180
+      }
+    ]
   },
   "type": "video"
 }

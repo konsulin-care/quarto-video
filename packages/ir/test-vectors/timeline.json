@@ -1,0 +1,62 @@
+[
+  {
+    "name": "no transitions: scenes follow each other",
+    "scenes": [
+      { "durationFrames": 120 },
+      { "durationFrames": 120 },
+      { "durationFrames": 120 }
+    ],
+    "startFrames": [0, 120, 240],
+    "durationFrames": 360
+  },
+  {
+    "name": "all overlapping: each fade overlaps its predecessor",
+    "scenes": [
+      { "durationFrames": 120 },
+      { "durationFrames": 120, "transitionFrames": 30 },
+      { "durationFrames": 120, "transitionFrames": 30 }
+    ],
+    "startFrames": [0, 90, 180],
+    "durationFrames": 300
+  },
+  {
+    "name": "mixed: a cut between two scenes, then a fade",
+    "scenes": [
+      { "durationFrames": 120 },
+      { "durationFrames": 60, "transitionFrames": 0 },
+      { "durationFrames": 120, "transitionFrames": 30 }
+    ],
+    "startFrames": [0, 120, 150],
+    "durationFrames": 270
+  },
+  {
+    "name": "first and last scene: a transition on the last scene shortens the total",
+    "scenes": [
+      { "durationFrames": 120 },
+      { "durationFrames": 120, "transitionFrames": 30 }
+    ],
+    "startFrames": [0, 90],
+    "durationFrames": 210
+  },
+  {
+    "name": "transition equal to the scene length is allowed",
+    "scenes": [
+      { "durationFrames": 120 },
+      { "durationFrames": 30, "transitionFrames": 30 }
+    ],
+    "startFrames": [0, 90],
+    "durationFrames": 120
+  },
+  {
+    "name": "one scene has no transition to resolve",
+    "scenes": [{ "durationFrames": 45 }],
+    "startFrames": [0],
+    "durationFrames": 45
+  },
+  {
+    "name": "no scenes: an empty timeline",
+    "scenes": [],
+    "startFrames": [],
+    "durationFrames": 0
+  }
+]

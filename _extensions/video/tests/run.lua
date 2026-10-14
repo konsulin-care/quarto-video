@@ -17,6 +17,8 @@ local SUITES = {
   "tests.test_config_keys",
   "tests.test_json",
   "tests.test_diagnostics",
+  "tests.test_transitions",
+  "tests.test_timeline",
 }
 
 local passed, failed = 0, 0

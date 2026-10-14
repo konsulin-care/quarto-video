@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E_DURATION_RANGE",
+    "line": 10,
+    "sceneId": "second"
+  },
+  {
+    "code": "E_DURATION_RANGE",
+    "line": 14,
+    "sceneId": "third"
+  }
+]

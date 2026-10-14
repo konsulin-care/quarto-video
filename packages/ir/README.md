@@ -1,22 +1,31 @@
 # packages/ir/ — Video IR schema, types, time rules
-Status: IR 0.1 and 0.2 schemas, types, `validateIr()` and `ir:check` (tasks 002, 012); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004). Timeline and v1 freeze: tasks 015, 017.
+Status: IR 0.1, 0.2 and 0.3 schemas, types, `validateIr()` and `ir:check` (tasks 002, 012, 015); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004); timeline and transitions (015, ADR-0005). v1 freeze: task 017.
 Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video/ir -- <file.json>`; tests: root `npm run test`.
 
 ## Layout
 | Path | Owns |
 | --- | --- |
-| `schema/ir-0.1.json`, `ir-0.2.json` | JSON Schemas, draft 2020-12, `additionalProperties: false` |
-| `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1 and 0.2 content nodes, `IrError`, `IrValidation` |
-| `src/validate.ts` | `validateIr(json)`: picks the schema from `schemaVersion` (0.1 or 0.2), all errors, JSON Pointer paths |
+| `schema/ir-0.1.json`, `ir-0.2.json`, `ir-0.3.json` | JSON Schemas, draft 2020-12, `additionalProperties: false` |
+| `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1, 0.2 and 0.3 (transitions, timeline), content nodes, `IrError`, `IrValidation` |
+| `src/validate.ts` | `validateIr(json)`: picks the schema from `schemaVersion` (0.1, 0.2 or 0.3), all errors, JSON Pointer paths |
 | `src/text.ts` | `plainText(content)`: the `default` slot as text (subpath `@quarto-video/ir/text`) |
 | `src/check.ts` | File text → `OK` or `<path>: <message>` lines (pure) |
 | `src/cli.ts` | `ir:check` entry point (tsx); exit 0 valid, 1 otherwise |
 | `src/duration.ts` | `durationToFrames(text, fps)`: `"<n>s"`/`"<n>ms"` → frames (ADR-0003) |
+| `src/timeline.ts` | `resolveTimeline(scenes)`: start frames and total (ADR-0005); `timelineOf(ir)` (subpath `@quarto-video/ir/timeline`, no ajv) |
 | `src/index.ts` | Package exports (`PACKAGE_NAME`, `validateIr`, `durationToFrames`, types) |
 | `test-vectors/durations.json` | Shared duration cases, run by TS and Lua (`{ input, fps, frames \| errorCode }`) |
+| `test-vectors/timeline.json` | Shared timeline cases, run by TS and Lua (`{ scenes, startFrames, durationFrames }`) |
 | `examples/minimal.json` | One 4 s title scene at 30 fps (IR 0.1); must validate |
 | `examples/content-nodes.json` | IR 0.2 with every content node type and two slots |
-| `test/` | `validate`, `content` (0.2 nodes, versions, `plainText`), `schema` (no renderer terms), `cli`, `duration`, smoke |
+| `examples/timeline.json` | IR 0.3: three scenes with 1 s fades (the ADR-0005 example; 300 frames) |
+| `test/` | `validate`, `content` (0.2 nodes, versions, `plainText`), `timeline` (vectors, 0.3 schema, `timelineOf`), `schema` (no renderer terms), `cli`, `duration`, smoke |
+
+## Decisions (task 015, ADR-0005)
+- IR 0.3 is a new file (`ir-0.3.json`); 0.2 is unchanged. The filter emits 0.3. `validateIr` still accepts 0.1 and 0.2.
+- Scene `transition` (optional) is `{ name, durationFrames }`: the overlap with the previous scene. No `transition` means no transition (a cut on the first scene).
+- Top-level `timeline` (required in 0.3): `durationFrames` and `scenes: [{ id, startFrame }]` in scene order. Overlaps are frames shared by two scenes; the total is the end of the last scene.
+- `resolveTimeline` is the TS rule; `lib/timeline.lua` is its twin. Both pass `test-vectors/timeline.json`.
 
 ## Decisions (task 012, ADR-0004)
 - IR 0.2 `content` is `{ slots }`: slot name → array of blocks (`default` for loose content). `content.text` is 0.1 only.

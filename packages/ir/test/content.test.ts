@@ -98,14 +98,15 @@ describe("IR 0.2 content", () => {
   it("names an unsupported schema version at /schemaVersion", () => {
     const result = validateIr({
       ...load("content-nodes.json"),
-      schemaVersion: "0.3",
+      schemaVersion: "0.4",
     });
     expect(result).toEqual({
       ok: false,
       errors: [
         {
           path: "/schemaVersion",
-          message: 'is not a supported IR version "0.3"; use "0.1" or "0.2"',
+          message:
+            'is not a supported IR version "0.4"; use "0.1", "0.2" or "0.3"',
         },
       ],
     });

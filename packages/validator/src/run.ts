@@ -7,10 +7,16 @@ import {
   type IrError,
   type IrVideo,
   type IrVideoV02,
+  type IrVideoV03,
 } from "@quarto-video/ir";
-import { listComponents, type ComponentContract } from "@quarto-video/registry";
+import {
+  listComponents,
+  listTransitions,
+  type ComponentContract,
+} from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkContracts } from "./stages/contract.js";
+import { checkTimeline } from "./stages/timeline.js";
 
 export interface ManifestCheck {
   /** The manifest when it passed every stage; null when any stage failed. */
@@ -44,15 +50,17 @@ export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
 }
 
 /**
- * Stage 2 for the manifest the filter wrote (`file`, project-relative).
- * Contracts read the slots of IR 0.2 (ADR-0004); a 0.1 manifest is an error.
+ * Stages 2 and 4 for the manifest the filter wrote (`file`, project-relative).
+ * Contracts read the slots of IR 0.2 or 0.3 (ADR-0004); a 0.1 manifest is an
+ * error. Stage 4 checks transitions and the timeline (ADR-0005; 0.3 only).
  */
 export function checkManifest(
   json: unknown,
   file: string,
   components: readonly ComponentContract[] = listComponents(),
+  transitions: readonly string[] = listTransitions(),
 ): ManifestCheck {
-  const state: { ir?: IrVideoV02 } = {};
+  const state: { ir?: IrVideoV02 | IrVideoV03 } = {};
   const diagnostics = runStages([
     () => {
       const result = validateIr(json);
@@ -60,23 +68,27 @@ export function checkManifest(
         return result.errors.map((error) => schemaDiagnostic(error, file));
       }
       const ir = json as IrVideo;
-      if (ir.schemaVersion !== "0.2") {
+      if (ir.schemaVersion === "0.1") {
         return [
           schemaDiagnostic(
             {
               path: "/schemaVersion",
-              message: `must be "0.2" for component contracts (scene slots); got "${ir.schemaVersion}"`,
+              message: `must be "0.2" or "0.3" for component contracts (scene slots); got "${ir.schemaVersion}"`,
             },
             file,
           ),
         ];
       }
-      state.ir = ir;
+      state.ir = ir as IrVideoV02 | IrVideoV03;
       return [];
     },
     () => {
       const ir = state.ir;
       return ir === undefined ? [] : checkContracts(ir, components);
+    },
+    () => {
+      const ir = state.ir;
+      return ir === undefined ? [] : checkTimeline(ir, transitions);
     },
   ]);
   return {

@@ -1,5 +1,5 @@
 # packages/registry/ — component contracts, presets, themes
-Status: Component contracts (task 013): `components/title.json` is the only entry. `listComponents()`, `getComponent(id)` and `video components` read it. Presets and themes: tasks 019, 021+.
+Status: Component contracts (task 013): `components/title.json` is the only entry. `listComponents()`, `getComponent(id)` and `video components` read it. Transition names (task 015): `transitions.json`, read by `listTransitions()`. Presets and themes: tasks 019, 021+.
 Run: `npm run typecheck -w @quarto-video/registry`; tests: root `npm run check` (unit) and `npm run test:integration` (`video components`).
 
 ## Purpose
@@ -11,7 +11,8 @@ accepts. The validator enforces it; the renderer implements it.
 - `schema/contract.json`: JSON Schema (draft 2020-12) of one component contract. Unknown fields are errors.
 - `components/<id>.json`: one contract per component. Only `<id>.json` files belong there.
 - `src/load.ts` (checks files against the schema), `src/components.ts` (lookups), `src/types.ts`.
-- Planned, not yet present: presets `animations/`, `transitions/`; `frames/`; `themes/` (tasks 019+).
+- `transitions.json`: `{ "transitions": [...] }`, the transition names an author may use (PRD §5.6; ADR-0005). `cut` must be listed. `src/transitions.ts` (`listTransitions`, `parseTransitions`) checks it at load.
+- Planned, not yet present: animation presets `animations/`, transition presets with motion (task 022); `frames/`; `themes/` (tasks 019+).
 
 ## Contract fields (task 013, PRD §5.5)
 | Field | Rule |
@@ -49,8 +50,9 @@ Numeric props, pixel or CSS values and functions are not allowed (PRD §5.5, AGE
 ## Testing
 - `test/contract.test.ts`: every shipped contract validates; each rule above rejects its bad input (missing `slots`, unknown field, numeric prop, enum without list, bad id, inverted bounds, non-JSON, stray file).
 - `test/components.test.ts`: lookups, copies, unknown id.
+- `test/transitions.test.ts`: the shipped names, and each rule that rejects a bad file.
 - `renderer/remotion/test/registry-parity.test.ts`: registry ids ⇔ `src/registry-map.ts`.
 - `tests/integration/components.test.ts`: `video components` table and `--json`.
 
 ## Related
-Tasks 013, 014, 019, 021–035, 040–043. PRD §5.5, §10. ADR-0004 (slot block kinds).
+Tasks 013, 014, 015, 019, 021–035, 040–043. PRD §5.5, §5.6, §10. ADR-0004 (slot block kinds), ADR-0005 (transitions).

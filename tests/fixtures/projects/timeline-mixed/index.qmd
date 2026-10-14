@@ -1,0 +1,23 @@
+---
+defaults:
+  scene:
+    transition: fade
+video:
+  fps: 30
+---
+
+::: {.scene component="title" duration="4s" #opening}
+The first scene takes no transition.
+:::
+
+::: {.scene component="title" duration="2s" transitionDuration="500ms" #second}
+The default fade applies.
+:::
+
+::: {.scene component="title" duration="3s" transition="cut" #third}
+An explicit cut wins.
+:::
+
+::: {.scene component="title" duration="4s" transition="fade" transitionDuration="1s" #fourth}
+An explicit fade.
+:::

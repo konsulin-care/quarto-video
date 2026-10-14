@@ -6,6 +6,7 @@
 local diagnostics = require("lib.diagnostics")
 local duration = require("lib.duration")
 local shapes = require("lib.meta")
+local transitions = require("lib.transitions")
 
 local M = {}
 
@@ -173,10 +174,24 @@ local function stored_text(value, property)
   return text
 end
 
+-- A transition name (lib/transitions.lua): lowercase, digits and hyphens.
+-- Whether the registry knows it is checked by the validator (stage 4).
+local function transition_name(value)
+  local text = stored_text(value, "defaults.scene.transition")
+  if text ~= nil and not transitions.valid_name(text) then
+    invalid(
+      "defaults.scene.transition",
+      string.format('defaults.scene.transition must be a transition name, got "%s"', text),
+      'Use a name such as "fade" or "cut".'
+    )
+  end
+  return text
+end
+
 --- Returns { frames, transition } from `defaults.scene`: `frames` is the
 --- length of `defaults.scene.duration` at `fps` (nil when not set), and
---- `transition` is the stored transition text (nil when not set). Invalid
---- values raise (ADR-0003 for the duration).
+--- `transition` is the transition name (nil when not set). Invalid values
+--- raise (ADR-0003 for the duration, ADR-0005 for the transition).
 function M.scene_defaults(meta, fps)
   local defaults = block(meta, "defaults", "defaults")
   local scene = block(defaults, "scene", "defaults.scene")
@@ -189,7 +204,7 @@ function M.scene_defaults(meta, fps)
     return nil
   end, found)
   local transition = diagnostics.try(function()
-    return stored_text(scene and scene.transition, "defaults.scene.transition")
+    return transition_name(scene and scene.transition)
   end, found)
   diagnostics.raise(found)
   return { frames = frames, transition = transition }
