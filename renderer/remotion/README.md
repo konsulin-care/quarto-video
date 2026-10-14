@@ -29,7 +29,7 @@ what is valid.
 ## Browser (no downloads)
 Chromium is preinstalled; do not run `playwright install`. Remotion is pointed
 at the existing headless shell, never at its own download:
-- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell` (`npm run render` and `video render` both read it).
+- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell` (`npm run render` and `video render` both read it). `video render` refuses to start without it (preflight, task 018).
 - API: `render(ir, out, { browserExecutable })`. Unset means Remotion downloads its own browser.
 - The integration test finds `chromium_headless_shell-*` under `PLAYWRIGHT_BROWSERS_PATH`
   (or honours `QV_BROWSER_EXECUTABLE`); it fails if none exists.

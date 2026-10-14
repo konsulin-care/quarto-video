@@ -2,6 +2,7 @@
 // Usage errors exit 2; the commands themselves set their own exit codes.
 import { EXIT_USAGE } from "./exit-codes.js";
 import { runComponents } from "./commands/components.js";
+import { runDoctor } from "./commands/doctor.js";
 import { runRender } from "./commands/render.js";
 import { runValidate } from "./commands/validate.js";
 import { selectRenderer } from "./renderer-port.js";
@@ -9,7 +10,8 @@ import { selectRenderer } from "./renderer-port.js";
 const USAGE =
   "usage: video validate <path> [--print-ir | --json]\n" +
   "       video render <path> [--json]\n" +
-  "       video components [--json]\n";
+  "       video components [--json]\n" +
+  "       video doctor [--json]\n";
 
 async function renderCommand(args: string[]): Promise<number> {
   const flags = args.filter((arg) => arg.startsWith("-"));
@@ -46,6 +48,14 @@ function componentsCommand(args: string[]): number {
   return runComponents({ json: args.includes("--json") });
 }
 
+function doctorCommand(args: string[]): number {
+  if (args.some((arg) => arg !== "--json")) {
+    process.stderr.write(USAGE);
+    return EXIT_USAGE;
+  }
+  return runDoctor({ json: args.includes("--json") });
+}
+
 async function main(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
   if (command === "--help" || command === "-h") {
@@ -54,6 +64,7 @@ async function main(argv: string[]): Promise<number> {
   }
   if (command === "render") return renderCommand(rest);
   if (command === "components") return componentsCommand(rest);
+  if (command === "doctor") return doctorCommand(rest);
   if (command !== "validate") {
     process.stderr.write(USAGE);
     return EXIT_USAGE;

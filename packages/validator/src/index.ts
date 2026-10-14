@@ -8,5 +8,7 @@ export type { AssetCheck, ManifestCheck } from "./run.js";
 export { checkContracts } from "./stages/contract.js";
 export { checkAssets } from "./stages/assets.js";
 export type { AssetRef } from "./stages/assets.js";
+export { checkOutput } from "./stages/output.js";
+export type { OutputFacts, VideoFacts } from "./stages/output.js";
 export { resolveAsset } from "./assets/resolve.js";
 export type { AssetResolution } from "./assets/resolve.js";

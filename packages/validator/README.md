@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: Diagnostics model and formatters (task 008); content codes (012); stage runner with stage 2 IR schema and component contracts (014); stage 4 transitions and timeline (015, ADR-0005); stage 3 asset references (016, ADR-0006); the IR version gate and `E_IR_UNSUPPORTED_VERSION` (017, ADR-0007). Output check: task 018; media metadata: tasks 037–038.
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); stage 6 output check (018). Media metadata: tasks 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -16,29 +16,27 @@ form humans and AI agents can act on (PRD §9).
   (`src/stages/timeline.ts`: transition names, lengths, overlaps, and that the
   manifest's timeline is the resolved one; ADR-0005). Stage 3 (`src/assets/`,
   `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
-  carries none yet, so `video validate` does not run it. Stage 6 output check comes later. Stage 1 is the Lua filter; stage 5 preflight lives in the CLI.
+  carries none yet, so `video validate` does not run it. Stage 6 (`src/stages/output.ts`,
+  `checkOutput`) judges the rendered file from facts the CLI probes. Stage 1 is the Lua
+  filter; stage 5 preflight is in the CLI.
 - Depends on `@quarto-video/ir` (IR types, schema, `resolveTimeline`) and `@quarto-video/registry`
   (contracts). Nothing depends on it except the CLI.
 - Asset resolution and the security boundary (ADR-0006): `src/assets/syntax.ts` (the text of a path), `src/assets/resolve.ts` (the file system: exact names, realpath inside the root).
 - Media metadata via `ffprobe`, cached in `.video-build/media.json` (task 037).
 
 ## Does not own
-- Parsing Markdown → `_extensions/video`. Process orchestration → `cli`.
-- Writing `.video-build/diagnostics.json` → the filter (`_extensions/video/lib/diagnostics.lua`).
+- Parsing Markdown and writing `.video-build/diagnostics.json` → `_extensions/video`; orchestration → `cli`.
 
 ## Diagnostic shape
 `{ severity: "error"|"warning", code, message, file?, line?, sceneId?,
    component?, property?, assetPath?, suggestion? }`
-- Only `severity`, `code` and `message` are always set. `line` is set for scene
-  problems when the source text can be paired with the scenes (task 011).
+- Only `severity`, `code`, `message` are always set; `line` when the source pairs (task 011).
 - Human format (PRD §9.2): a header `ERROR <file>[:<line>]`, the message, then
   the suggestion; blocks are separated by a blank line.
-- `--json` (and `.video-build/diagnostics.json`): a JSON array of these objects,
-  validated by `schema/diagnostic.json`.
+- `--json` and `.video-build/diagnostics.json`: a JSON array, per `schema/diagnostic.json`.
 
 ## Rules
-- Stop after the first stage that produced an error; report all errors of that
-  stage, not just the first. Stage 1 collects every settings and scene error.
+- Stop after the first stage with an error; report all of that stage's errors.
 - Warnings never change the exit status (`hasErrors` is the only test).
 - Never execute project code, never use the network, never print environment
   variables or absolute paths outside the project root.
@@ -79,22 +77,24 @@ form humans and AI agents can act on (PRD §9).
 | `E_ASSET_SYMLINK` | 3 assets | An asset resolves, through a symlink, to a file outside the project root. The target is not printed | 016 |
 | `E_ASSET_URL` | 3 assets | An asset path has a URL scheme (`https:`, `file:`, `data:`, ...). Remote assets are not supported | 016 |
 | `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
+| `E_OUTPUT_MISSING` | 6 output | No file at `video.output` after the render, or an empty one; the render fails and nothing is renamed into place | 018 |
+| `E_OUTPUT_UNREADABLE` | 6 output | The rendered file has no readable video stream | 018 |
+| `E_OUTPUT_MISMATCH` | 6 output | The rendered width, height, fps or frame count differs from the IR; `property` names it | 018 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
 
 `E_SETTING_MISSING` (task 008) was retired in task 010 (every setting has a default).
 It is not emitted and must not be reused.
 
 ## Testing
-- Unit tests per stage in `test/`: formats (snapshots of the human text), schema,
-  exit predicate, and the code table (`codes.test.ts` scans the sources).
-- Lua: `_extensions/video/tests/test_diagnostics.lua` and the per-module tests.
-- Stage 4: `test/timeline.test.ts` (each rule, the DoD cases, the mismatch code, IR 0.2 untouched); fixtures `tests/fixtures/projects/timeline-*` through `tests/integration/timeline.test.ts`.
+- Unit tests per stage in `test/`: formats, schema, exit predicate, the code table
+  (`codes.test.ts`). Lua: `_extensions/video/tests/test_diagnostics.lua`.
+- Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`).
+- Stage 6: `test/output.test.ts` (each rule); `tests/integration/preflight-output.test.ts` (wrong frame count).
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`
   (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure).
 - Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects, symlinks created per test), `test/assets-stage.test.ts` (diagnostic shape, runner), `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`).
-- Fixture-driven tests: `tests/integration/validate.test.ts`, fixtures in
-  `tests/fixtures/projects/diagnostics-*`.
+- Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`).
 
 ## Related
 Tasks 008, 011, 012, 014–018, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.

@@ -1,0 +1,12 @@
+---
+title: "CLI render small"
+video:
+  width: 640
+  height: 360
+  fps: 30
+  background: "#10131C"
+---
+
+::: {.scene component="title" duration="1s"}
+Small render
+:::
