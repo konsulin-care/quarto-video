@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: Placeholders (task 001): `npm run test:lua|test:integration|test:visual` print "no tests yet". Harness built by tasks 003, 005, 020.
+Status: Integration suite live (task 004: `tests/integration/render.test.ts`, needs a Chromium headless shell). `npm run test:lua|test:visual` still print "no tests yet" until tasks 003 and 020 (005 for CLI integration).
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 

@@ -18,7 +18,7 @@
     "lint": "eslint --max-warnings 0 .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "vitest run",
-    "test:integration": "echo 'no tests yet'",
+    "test:integration": "vitest run --config vitest.integration.config.mjs",
     "test:lua": "echo 'no tests yet'",
     "test:visual": "echo 'no tests yet'"
   },
