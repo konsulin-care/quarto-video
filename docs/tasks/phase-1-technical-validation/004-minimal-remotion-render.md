@@ -1,6 +1,6 @@
 # 004 — Minimal Remotion render of IR
 
-Phase 1 · Status: in-progress · Depends on: 002 · PRD: §8.4, §11.1 · ADR: reads 0001
+Phase 1 · Status: done · Depends on: 002 · PRD: §8.4, §11.1 · ADR: reads 0001
 
 ## Goal
 A Remotion package that renders any valid IR v0.1 manifest to an MP4 whose
@@ -33,5 +33,21 @@ Human check:
 2. Play `/tmp/minimal.mp4`: 4 s, 1920×1080, title text centred on `#10131C`.
 
 ## Notes
+- Remotion, `@remotion/bundler`, `@remotion/renderer` 4.0.530 (2026-09-29, two weeks old);
+  react and react-dom 19.2.8 (latest 19.2.x older than two weeks); lockfile from npm 11.6.2.
+- Bundle sources use `./x.js` imports; webpack maps them via `extensionAlias`.
+- Browser: existing `chromium_headless_shell-1194` through `QV_BROWSER_EXECUTABLE`.
+  Human-check step 1 without that variable makes Remotion download a browser.
+- `tests/integration/` is not typechecked (no tsconfig there); see renderer README.
 
 ## Completion log
+- 2026-10-14: Minimal Remotion renderer. `render(irPath, outPath)` validates the IR
+  first (rejects with the JSON path before any browser starts), bundles `src/entry.ts`,
+  and encodes the `video` composition sized from the IR, with scenes played by `<Series>`
+  and a placeholder `title` component. Covered by `renderer/remotion/test/pinning.test.ts`,
+  `renderer/remotion/test/render-validation.test.ts`, and
+  `tests/integration/render.test.ts` (640×360 minimal: 30 frames probed by ffprobe;
+  two scenes 20+10 give 30 frames). Full `minimal.json` renders 1920×1080, 30 fps, 120 frames.
+  `npm run check`, `npm run test`, `scripts/check.sh --all`, `scripts/test.sh --all` exit 0.
+- Follow-ups: CI not verified (no mise or CI run here); human check pending (play the
+  full render and confirm the centred title on `#10131C`); typecheck for `tests/integration/`.
