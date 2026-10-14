@@ -1,0 +1,28 @@
+---
+title: "Contract fixture"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+
+::: {#first .scene component="hero-title" duration="2s"}
+Hello
+:::
+
+::: {#second .scene component="title" duration="2s"}
+::: {.left}
+Side
+:::
+:::
+
+::: {#third .scene component="title" duration="2s"}
+1. one
+2. two
+:::
+
+::: {#fourth .scene component="title" duration="0.5s"}
+Short
+:::

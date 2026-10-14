@@ -9,7 +9,7 @@ filter, validate, render, and report.
 ## Commands
 | Command | Task | Behaviour |
 | ------- | ---- | --------- |
-| `video validate <path> [--print-ir]` or `[--json]` | 005, 008 | Stages 1–2 (filter, IR schema). Done |
+| `video validate <path> [--print-ir]` or `[--json]` | 005, 008, 014 | Stages 1–2: filter, then IR schema and component contracts. Done |
 | `video render <path> [--json]` | 006, 008 | Stages 1–2, then render to `video.output`. Done |
 | `video components [--json]` | 013 | List registry component contracts. Done |
 | `video doctor` | 018 | Environment and version report |
@@ -78,7 +78,7 @@ Environment:
   listed in `--help` and is not documented for authors.
 
 ## Dependencies (`packages/cli/package.json`)
-- `@quarto-video/ir` (IR types, `validateIr`), `@quarto-video/validator` (the `Diagnostic` type, formatters, `parseDiagnostics`) and `@quarto-video/remotion`
+- `@quarto-video/ir` (IR types), `@quarto-video/validator` (`checkManifest` for stage 2, the `Diagnostic` type, formatters, `parseDiagnostics`) and `@quarto-video/remotion`
   (its `src/index.ts` public API: `render`, `loadIr`, `IrRenderError`, types).
 - The CLI imports only those indexes. The renderer never imports `cli` or `validator`.
 
@@ -89,7 +89,7 @@ Environment:
 
 ## Testing
 - `tests/integration/components.test.ts` (table, `--json`, usage errors) and `test/components.test.ts` (table layout).
-- `tests/integration/validate.test.ts` (validate, through the bin),
+- `tests/integration/validate.test.ts` (validate, through the bin), `tests/integration/contract.test.ts` (task 014: contract fixtures, no render on stage 2 failure),
   `tests/integration/validate-diagnostics.test.ts` (one fixture per error family, `--json`),
   and `tests/integration/cli-render.test.ts` (render, through the bin, node:test under
   tsx). The render tests check the size, fps and frame count with ffprobe, exit

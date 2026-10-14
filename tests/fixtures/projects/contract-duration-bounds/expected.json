@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E_DURATION_BOUNDS",
+    "line": 11,
+    "sceneId": "short"
+  },
+  {
+    "code": "E_DURATION_BOUNDS",
+    "line": 15,
+    "sceneId": "long"
+  }
+]

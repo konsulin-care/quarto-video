@@ -34,7 +34,7 @@ Numeric props, pixel or CSS values and functions are not allowed (PRD §5.5, AGE
 - `loadComponentDir(dir)`, `parseContract(text, file)`: the checks behind the two calls. A bad file throws `RegistryError` naming the file and JSON path, e.g. `title.json: (root): must have required property 'slots'`.
 
 ## Does not own
-- Rendering code → `renderer/remotion`. Validation of projects → `validator`. Presence of slots in a scene → task 014.
+- Rendering code → `renderer/remotion`. Checks of scenes against these contracts → `validator` (stage 2, task 014).
 
 ## Rules
 - Registry content is static data; no functions in contract files.

@@ -1,0 +1,12 @@
+[
+  {
+    "code": "E_SLOT_UNKNOWN",
+    "line": 11,
+    "sceneId": "intro"
+  },
+  {
+    "code": "E_SLOT_REQUIRED",
+    "line": 11,
+    "sceneId": "intro"
+  }
+]

@@ -1,0 +1,17 @@
+---
+title: "Contract fixture"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+
+::: {.scene component="title" duration="2s"}
+Hello
+:::
+
+::: {#intro .scene component="hero-title" duration="2s"}
+Hello from quarto-video
+:::

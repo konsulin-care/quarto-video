@@ -1,8 +1,9 @@
 // Scene ids and source lines through the real `video` bin (task 011): the IR
 // and the diagnostics carry the line of each scene's opening fence
-// (_extensions/video/README.md, "Scene ids and source lines"). Fixtures are
-// copied to a scratch dir, so the filter's .video-build never lands in
-// tests/fixtures.
+// (_extensions/video/README.md, "Scene ids and source lines"). The golden IR of
+// scene-lines-ok is read with the filter alone: its components are not in the
+// registry, so `video validate` rejects it (task 014). Fixtures are copied to a
+// scratch dir, so the filter's .video-build never lands in tests/fixtures.
 import { spawnSync } from "node:child_process";
 import {
   copyFileSync,
@@ -17,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import { after, describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { parseDiagnostics, type Diagnostic } from "@quarto-video/validator";
+import { filterOnly } from "./support/filter-only.js";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const BIN_DIR = join(ROOT, "node_modules", ".bin");
@@ -65,11 +67,7 @@ after(() => rmSync(SCRATCH, { recursive: true, force: true }));
 
 describe("scene ids and source lines", () => {
   it("writes the IR that expected.json describes, with a line per scene", () => {
-    const run = video([
-      "validate",
-      "--print-ir",
-      copyProject("scene-lines-ok"),
-    ]);
+    const run = filterOnly(copyProject("scene-lines-ok"));
     assert.equal(run.status, 0, run.stderr);
     const expected: unknown = JSON.parse(
       readFileSync(join(FIXTURES, "scene-lines-ok", "expected.json"), "utf8"),
@@ -78,11 +76,7 @@ describe("scene ids and source lines", () => {
   });
 
   it("keeps author ids and generates the others in document order", () => {
-    const run = video([
-      "validate",
-      "--print-ir",
-      copyProject("scene-lines-ok"),
-    ]);
+    const run = filterOnly(copyProject("scene-lines-ok"));
     const ir = JSON.parse(run.stdout) as {
       scenes: { id: string; source: { line?: number } }[];
     };

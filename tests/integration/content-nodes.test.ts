@@ -1,9 +1,10 @@
 // Scene content as typed blocks and slots through the real `video` bin
-// (task 012; ADR-0004). The golden test compares the IR of
-// tests/fixtures/projects/content-nodes with expected.json; the other tests
-// check that unsupported Markdown is an error at its own line. Fixtures are
-// copied to a scratch dir, so the filter's .video-build never lands in
-// tests/fixtures.
+// (task 012; ADR-0004). The golden tests read the stage-1 IR of
+// tests/fixtures/projects/content-nodes with the filter alone: its components
+// are not in the registry yet, so `video validate` rejects it (task 014). The
+// other tests check that unsupported Markdown is an error at its own line.
+// Fixtures are copied to a scratch dir, so the filter's .video-build never
+// lands in tests/fixtures.
 import { spawnSync } from "node:child_process";
 import {
   copyFileSync,
@@ -19,6 +20,7 @@ import { after, describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { validateIr } from "@quarto-video/ir";
 import { parseDiagnostics, type Diagnostic } from "@quarto-video/validator";
+import { filterOnly } from "./support/filter-only.js";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const BIN_DIR = join(ROOT, "node_modules", ".bin");
@@ -118,7 +120,7 @@ after(() => rmSync(SCRATCH, { recursive: true, force: true }));
 
 describe("scene content nodes", () => {
   it("writes the IR that expected.json describes, and it validates", () => {
-    const run = video(["validate", "--print-ir", copyProject("content-nodes")]);
+    const run = filterOnly(copyProject("content-nodes"));
     assert.equal(run.status, 0, run.stderr);
     const expected: unknown = JSON.parse(
       readFileSync(join(FIXTURES, "content-nodes", "expected.json"), "utf8"),
@@ -128,7 +130,7 @@ describe("scene content nodes", () => {
   });
 
   it("keeps Pandoc element names out of the IR keys and node types", () => {
-    const run = video(["validate", "--print-ir", copyProject("content-nodes")]);
+    const run = filterOnly(copyProject("content-nodes"));
     const found = names(JSON.parse(run.stdout)).filter((n) =>
       PANDOC_NAMES.has(n),
     );
@@ -136,7 +138,7 @@ describe("scene content nodes", () => {
   });
 
   it("puts the CPUs paragraph of the left slot first, as a strong node", () => {
-    const run = video(["validate", "--print-ir", copyProject("content-nodes")]);
+    const run = filterOnly(copyProject("content-nodes"));
     const ir = JSON.parse(run.stdout) as {
       scenes: {
         content: {
