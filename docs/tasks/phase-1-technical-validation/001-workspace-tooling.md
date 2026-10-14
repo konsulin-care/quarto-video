@@ -1,6 +1,6 @@
 # 001 — Workspace tooling
 
-Phase 1 · Status: todo · Depends on: 000 · PRD: §11.1, §11.3 · ADR: writes 0001, reads 0010
+Phase 1 · Status: in-progress · Depends on: 000 · PRD: §11.1, §11.3 · ADR: writes 0001, reads 0010
 
 ## Goal
 A TypeScript monorepo where every package builds, lints and runs a unit test
