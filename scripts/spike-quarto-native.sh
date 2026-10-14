@@ -50,7 +50,10 @@ new_project() {
   local work="$tmp/$1"
   mkdir -p "$work/videos" "$work/videos/hello/_extensions"
   cp -r "$repo/videos/hello" "$work/videos/"
-  rm -rf "$work/videos/hello/.video-build" "$work/videos/hello/output.mp4"
+  # Quarto outputs too: the render tests write them into the live project.
+  rm -rf "$work/videos/hello/.video-build" "$work/videos/hello/output.mp4" \
+    "$work/videos/hello/index.html" "$work/videos/hello/index_files" \
+    "$work/videos/hello/.quarto"
   rm -f "$work/videos/hello/_quarto.yml" "$work/videos/hello/render-video.sh"
   cp -r "$repo/_extensions/video" "$work/videos/hello/_extensions/"
   printf '%s' "$work"
