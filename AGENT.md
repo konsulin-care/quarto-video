@@ -62,6 +62,7 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run check` — format:check, lint, typecheck, unit (root).
 - `npm run format` · `npm run lint` · `npm run typecheck` · `npm run test`.
 - `npm run typecheck -w @quarto-video/ir` — one workspace.
+- `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002).
 - `npm run test:lua|test:integration|test:visual` — placeholders until tasks 003, 005, 020.
 - `video validate|render` arrive with 005/006.
 
