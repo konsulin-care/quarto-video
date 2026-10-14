@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "0.1",
+  "type": "video",
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#10131C"
+  },
+  "scenes": [
+    {
+      "id": "scene-001",
+      "component": "title",
+      "durationFrames": 120,
+      "content": {
+        "text": "Why GPUs Matter"
+      },
+      "source": {
+        "file": "index.qmd"
+      }
+    },
+    {
+      "id": "scene-002",
+      "component": "title",
+      "durationFrames": 120,
+      "content": {
+        "text": "Parallel work changes everything."
+      },
+      "source": {
+        "file": "index.qmd"
+      }
+    }
+  ]
+}

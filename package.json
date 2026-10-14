@@ -18,8 +18,8 @@
     "lint": "eslint --max-warnings 0 .",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "vitest run",
-    "test:integration": "echo 'no tests yet'",
-    "test:lua": "echo 'no tests yet'",
+    "test:integration": "tsx --test tests/integration/minimal-filter.test.ts",
+    "test:lua": "quarto pandoc lua _extensions/video/tests/run.lua",
     "test:visual": "echo 'no tests yet'"
   },
   "devDependencies": {
