@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Diagnostics",
+  "description": "A JSON array of diagnostics: the output of `video validate --json` and `.video-build/diagnostics.json`. Field meanings: packages/validator/README.md.",
+  "type": "array",
+  "items": { "$ref": "#/$defs/diagnostic" },
+  "$defs": {
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "code", "message"],
+      "properties": {
+        "severity": { "enum": ["error", "warning"] },
+        "code": { "type": "string", "pattern": "^E_[A-Z][A-Z0-9_]*$" },
+        "message": { "type": "string", "minLength": 1 },
+        "file": { "type": "string", "minLength": 1 },
+        "line": { "type": "integer", "minimum": 1 },
+        "sceneId": { "type": "string", "minLength": 1 },
+        "component": { "type": "string", "minLength": 1 },
+        "property": { "type": "string", "minLength": 1 },
+        "assetPath": { "type": "string", "minLength": 1 },
+        "suggestion": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

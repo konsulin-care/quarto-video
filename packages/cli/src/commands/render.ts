@@ -10,6 +10,7 @@ import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { manifestPath } from "../filter.js";
 import { outputPath } from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
+import { report } from "../report.js";
 
 /** Partial output, inside the build dir; never left behind (see the CLI README). */
 const TEMP_RELATIVE = join(".video-build", "render.partial.mp4");
@@ -19,6 +20,8 @@ export interface RenderOptions {
   path: string;
   /** Existing Chromium headless shell (QV_BROWSER_EXECUTABLE); null lets Remotion decide. */
   browserExecutable: string | null;
+  /** Diagnostics as a JSON array on stdout (report.ts). */
+  json: boolean;
 }
 
 /** Prints each whole-percent change once: `42%`. */
@@ -61,9 +64,11 @@ export async function runRender(
     return EXIT_USAGE;
   }
   if (check.kind === "invalid") {
-    for (const line of check.lines) process.stderr.write(`${line}\n`);
+    report(check.diagnostics, options.json);
     return EXIT_INVALID;
   }
+  // Warnings do not stop the render; with --json they are printed first.
+  report(check.diagnostics, options.json);
 
   const temp = join(project.root, TEMP_RELATIVE);
   try {

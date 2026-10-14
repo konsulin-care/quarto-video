@@ -27,6 +27,22 @@ function M.error_of(fn)
   return tostring(err)
 end
 
+--- Returns the list of diagnostics raised by `fn` (empty when it does not raise).
+function M.diagnostics_of(fn)
+  local ok, err = pcall(fn)
+  if ok or type(err) ~= "table" or not err.diagnostics then
+    return {}
+  end
+  return err.diagnostics
+end
+
+--- Fails unless the first diagnostic raised by `fn` has the given code.
+function M.code_is(fn, code, label)
+  local list = M.diagnostics_of(fn)
+  M.eq(list[1] and list[1].code, code, label .. " code")
+  return list[1]
+end
+
 --- Fails with a readable message unless `actual == expected`.
 function M.eq(actual, expected, label)
   if actual ~= expected then

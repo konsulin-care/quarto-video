@@ -1,15 +1,18 @@
-// `video validate <path> [--print-ir]`: stages 1–2 (check.ts). Exit codes:
-// 0 OK, 1 validation errors, 2 usage/path problems.
+// `video validate <path> [--print-ir | --json]`: stages 1–2 (check.ts). Exit
+// codes: 0 OK, 1 validation errors, 2 usage/path problems.
 // Output: the OK line on stdout (on stderr with --print-ir, which keeps stdout
-// for the IR JSON only); errors as `<json-path>: <message>` lines on stderr.
+// for the IR JSON only). Diagnostics go to stderr as text, or with --json to
+// stdout as a JSON array (report.ts); with --json nothing else is printed.
 import { checkProject } from "../check.js";
 import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { ProjectError, resolveProject } from "../project.js";
+import { report } from "../report.js";
 
 export interface ValidateOptions {
   /** The path as the user typed it (directory or `.qmd` file). */
   path: string;
   printIr: boolean;
+  json: boolean;
 }
 
 /** Runs validation for one project and writes the result. Returns the exit code. */
@@ -29,10 +32,15 @@ export function runValidate(options: ValidateOptions, cwd: string): number {
     return EXIT_USAGE;
   }
   if (check.kind === "invalid") {
-    for (const line of check.lines) process.stderr.write(`${line}\n`);
+    report(check.diagnostics, options.json);
     return EXIT_INVALID;
   }
+  if (options.json) {
+    report(check.diagnostics, true);
+    return EXIT_OK;
+  }
 
+  report(check.diagnostics, false);
   const ir = check.ir;
   const frames = ir.scenes.reduce(
     (sum, scene) => sum + scene.durationFrames,

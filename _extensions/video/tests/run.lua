@@ -10,6 +10,7 @@ local SUITES = {
   "tests.test_duration",
   "tests.test_settings",
   "tests.test_json",
+  "tests.test_diagnostics",
 }
 
 local passed, failed = 0, 0

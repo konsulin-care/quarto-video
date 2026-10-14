@@ -1,5 +1,5 @@
 # packages/cli/ — the `video` command
-Status: `video validate` (task 005) and `video render` (task 006) are real. `components` and `doctor` arrive with tasks 013 and 018.
+Status: `video validate` (task 005) and `video render` (task 006) are real, both with `--json` (task 008). `components` and `doctor` arrive with tasks 013 and 018.
 Run from the repo root (after `npm ci`): `npx video render videos/hello`. From any other directory: `npm exec --prefix <repo> -- video render <path>`. Tests: `npm run test:integration` (spawns the bin); unit tests run from the root with `npm run test`.
 
 ## Purpose
@@ -9,12 +9,12 @@ filter, validate, render, and report.
 ## Commands
 | Command | Task | Behaviour |
 | ------- | ---- | --------- |
-| `video validate <path> [--print-ir]` | 005 | Stages 1–2 (filter, IR schema). Done |
-| `video render <path>` | 006 | Stages 1–2, then render to `video.output`. Done |
+| `video validate <path> [--print-ir]` or `[--json]` | 005, 008 | Stages 1–2 (filter, IR schema). Done |
+| `video render <path> [--json]` | 006, 008 | Stages 1–2, then render to `video.output`. Done |
 | `video components [--json]` | 013 | List registered components |
 | `video doctor` | 018 | Environment and version report |
 
-`--output <path>` and `--json` (task 008 events) are not implemented yet.
+`--print-ir` and `--json` cannot be combined (exit 2). `--output <path>` is not implemented yet.
 Use `video.output` in front matter to choose the destination.
 
 ## Entry point
@@ -31,7 +31,8 @@ Use `video.output` in front matter to choose the destination.
 ## `validate` output (`src/commands/validate.ts`)
 - Success: `OK <name> (<n> scenes, <frames> frames)` on stdout.
 - `--print-ir`: the validated IR JSON alone on stdout; the OK line moves to stderr.
-- Errors: one `<json-path>: <message>` line per IR error, or one filter message, on stderr.
+- Errors and warnings: diagnostics as text on stderr (`ERROR <file>`, message, suggestion; `src/report.ts`). An IR schema error is `E_IR_SCHEMA` about `.video-build/manifest.json`.
+- `--json`: the diagnostics as a JSON array on stdout, with nothing else on stdout (no OK line). A valid project prints `[]`.
 
 ## `render` output and orchestration (`src/commands/render.ts`)
 1. Resolve the project, then run the same stages 1–2 as `validate` (`src/check.ts`).
@@ -44,7 +45,8 @@ Use `video.output` in front matter to choose the destination.
 
 Streams (chosen so stdout is parseable):
 - stdout: `NN%` progress lines, one per whole percent of encoded frames, then `Wrote <path>` (path relative to the cwd, e.g. `Wrote videos/hello/output.mp4`).
-- stderr: validation lines, and `video: render failed: <message>` on failure.
+- With `--json`, stdout first gets the diagnostics array (errors, or warnings before a render), then the progress and `Wrote` lines on success.
+- stderr: diagnostics as text, and `video: render failed: <message>` on failure.
 
 Environment:
 - `QV_BROWSER_EXECUTABLE`: an existing Chromium headless shell (`renderer/remotion/README.md`). Unset, Remotion downloads its own browser.
@@ -58,9 +60,10 @@ Environment:
 | --- | --- | --- | --- |
 | `manifest.json` (IR) | written by filter | kept | kept (diagnosis) |
 | `render.json` (output path) | written by filter | kept | kept (diagnosis) |
+| `diagnostics.json` (filter errors and warnings) | written by filter | kept (`[]`) | kept (diagnosis) |
 | `render.partial.mp4` | written by renderer | renamed to output, gone | deleted |
 
-- Each run removes the previous manifest and render settings before it starts, so a rejected document never leaves a stale IR. The temp file is also removed before each render.
+- Each run removes the previous manifest, render settings and diagnostics before it starts, so a rejected document never leaves a stale IR. The temp file is also removed before each render.
 - Nothing else is written. Only `<root>/<video.output>` (default `output.mp4`) is a deliverable.
 - `.video-build/` is gitignored and safe to delete at any time.
 
@@ -73,18 +76,19 @@ Environment:
   listed in `--help` and is not documented for authors.
 
 ## Dependencies (`packages/cli/package.json`)
-- `@quarto-video/ir` (IR types, `validateIr`) and `@quarto-video/remotion`
+- `@quarto-video/ir` (IR types, `validateIr`), `@quarto-video/validator` (the `Diagnostic` type, formatters, `parseDiagnostics`) and `@quarto-video/remotion`
   (its `src/index.ts` public API: `render`, `loadIr`, `IrRenderError`, types).
-- The CLI imports only that index. The renderer never imports `cli` or `validator`.
+- The CLI imports only those indexes. The renderer never imports `cli` or `validator`.
 
 ## Rules
-- The CLI never parses Markdown or interprets component rules itself. The filter reads front matter and writes `manifest.json` and `render.json`.
+- The CLI never parses Markdown or interprets component rules itself. The filter reads front matter and writes `manifest.json`, `render.json` and `diagnostics.json`.
 - Never start the renderer when any stage reported an error.
 - Show progress during render (percent of encoded frames).
 
 ## Testing
-- `tests/integration/validate.test.ts` (validate, through the bin) and
-  `tests/integration/cli-render.test.ts` (render, through the bin, node:test under
+- `tests/integration/validate.test.ts` (validate, through the bin),
+  `tests/integration/validate-diagnostics.test.ts` (one fixture per error family, `--json`),
+  and `tests/integration/cli-render.test.ts` (render, through the bin, node:test under
   tsx). The render tests check the size, fps and frame count with ffprobe, exit
   codes, the renderer seam, the temp file and the previous output, directory and
   `.qmd` input, and cwd independence. Fixtures are copied to a scratch dir.
