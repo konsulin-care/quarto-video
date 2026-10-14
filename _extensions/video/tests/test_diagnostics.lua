@@ -63,6 +63,14 @@ return {
     h.eq(err, "first message\nsecond message", "error text")
   end,
 
+  ["messages lists every message in order"] = function()
+    local list = {
+      diagnostics.new("E_SETTING_MISSING", "first"),
+      diagnostics.new("E_SCENE_SHAPE", "second"),
+    }
+    h.eq(diagnostics.messages(list), "first\nsecond", "messages")
+  end,
+
   ["attach_file sets file only where it is missing"] = function()
     local list = {
       diagnostics.new("E_SETTING_MISSING", "a"),

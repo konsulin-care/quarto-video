@@ -10,15 +10,20 @@ local M = {}
 local BUILD_DIR = ".video-build"
 local FILE_NAME = "diagnostics.json"
 
+--- The messages of a list, one per line: the text Quarto shows on stderr.
+function M.messages(list)
+  local lines = {}
+  for i, diagnostic in ipairs(list) do
+    lines[i] = diagnostic.message
+  end
+  return table.concat(lines, "\n")
+end
+
 -- Raised values carry their diagnostics; tostring() gives the messages, so
 -- plain-text callers and tests read the same wording as the JSON file.
 local ERROR_META = {
   __tostring = function(err)
-    local lines = {}
-    for i, diagnostic in ipairs(err.diagnostics) do
-      lines[i] = diagnostic.message
-    end
-    return table.concat(lines, "\n")
+    return M.messages(err.diagnostics)
   end,
 }
 

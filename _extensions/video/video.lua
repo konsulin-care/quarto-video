@@ -55,7 +55,8 @@ function Pandoc(doc)
   diagnostics.attach_file(found, file_name)
   if #found > 0 then
     diagnostics.write(diagnostics_path, found)
-    error(string.format("%d video error(s); see .video-build/diagnostics.json", #found), 0)
+    -- Quarto shows this on stderr; the full list is in diagnostics.json.
+    error(diagnostics.messages(found), 0)
   end
   diagnostics.write(diagnostics_path, {})
   manifest.write(path, manifest.build(video, list, file_name))
