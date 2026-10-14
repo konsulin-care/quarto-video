@@ -41,5 +41,14 @@ export interface IrError {
   message: string;
 }
 
-export type IrValidation =
-  { ok: true; errors: [] } | { ok: false; errors: IrError[] };
+export interface IrValid {
+  ok: true;
+  errors: [];
+}
+
+export interface IrInvalid {
+  ok: false;
+  errors: IrError[];
+}
+
+export type IrValidation = IrValid | IrInvalid;
