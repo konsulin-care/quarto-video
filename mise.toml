@@ -12,7 +12,7 @@ shellcheck = "0.11.0"
 # Explicit backends so Renovate can resolve them.
 "aqua:mvdan/sh" = "3.14.1"
 "aqua:JohnnyMorganz/StyLua" = "2.6.0"
-"github:Kampfkarren/selene" = "0.32.0"
+"aqua:Kampfkarren/selene" = "0.32.0"
 
 [env]
 _.path = ["{{config_root}}/node_modules/.bin"]

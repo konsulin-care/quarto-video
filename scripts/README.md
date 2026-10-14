@@ -8,6 +8,7 @@ Status: Gates in place (task 000). Decision: ADR-0010. Policy: `docs/testing.md`
 | `test.sh [scope] [--suite NAME]...` | pre-push, `mise run test` | suites `scripts unit lua integration visual` |
 | `check-line-limit.sh FILE...` | `check.sh` | fails on code files over 300 lines |
 | `tests/run.sh` | `test.sh --suite scripts` | self-tests of these scripts |
+| `spike-quarto-native.sh` | nobody (not a gate) | task 007: runs Quarto forms on a temp copy; output = ADR-0002 evidence |
 
 Scopes: `--staged` = staged files, `--push` = files changed since the
 upstream (or remote default branch), `--all` = every tracked file.

@@ -36,5 +36,10 @@ jobs:
       - name: Check
         run: mise run check
 
+      # The render tests look for chromium_headless_shell-1194 in the default
+      # Playwright cache; revision 1194 is what Playwright 1.56.1 installs.
+      - name: Install headless Chromium for render tests
+        run: npx --yes playwright@1.56.1 install --with-deps chromium-headless-shell
+
       - name: Test
         run: mise run test

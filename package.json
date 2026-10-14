@@ -1,0 +1,36 @@
+{
+  "name": "quarto-video",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Quarto extension and video CLI (see docs/prd.md)",
+  "type": "module",
+  "engines": {
+    "node": "24.21.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "renderer/remotion"
+  ],
+  "scripts": {
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs}\"",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.mjs && tsx --test tests/integration/minimal-filter.test.ts tests/integration/validate.test.ts tests/integration/cli-render.test.ts tests/integration/spike-quarto-native.test.ts",
+    "test:lua": "quarto pandoc lua _extensions/video/tests/run.lua",
+    "test:visual": "echo 'no tests yet'"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.0",
+    "eslint": "10.12.0",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "4.1.11"
+  }
+}

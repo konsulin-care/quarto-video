@@ -1,0 +1,16 @@
+---
+title: "Hello"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+::: {.scene component="title" duration="2s"}
+Hello from quarto-video
+:::
+
+::: {.scene component="title" duration="2s"}
+One document, one MP4.
+:::

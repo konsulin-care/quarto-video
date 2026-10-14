@@ -23,6 +23,8 @@ mise run check      # static checks on all code
 mise run test       # all test suites
 ```
 
+Then `npm ci` installs the workspace (Node 24.21.0; ADR-0001). `npm run check` and `npm run test` run the TypeScript gates directly.
+
 Renovate keeps the pins current; see ADR-0010.
 
 Target workflow (once implemented):

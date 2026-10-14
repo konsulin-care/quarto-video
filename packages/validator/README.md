@@ -1,5 +1,6 @@
 # packages/validator/ — staged validation and diagnostics
-Status: Not implemented — built by tasks 008, 014, 015, 016, 018, 037–038.
+Status: Scaffold (task 001): `src/index.ts` and a smoke test. Stages and diagnostics: tasks 008, 014, 015, 016, 018, 037–038.
+Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
 Decide whether an IR manifest may be rendered, and explain every problem in a

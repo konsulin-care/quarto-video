@@ -55,11 +55,19 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 
 ## Commands
 - `mise install && mise run setup` — pinned tools + git hooks (ADR-0010).
-- `mise run check` — line limit, format, lint, typecheck on all code.
-- `mise run test` — all test suites. Narrow with
+- `npm ci` — install workspace dependencies from `package-lock.json` (ADR-0001).
+- `mise run check` — `scripts/check.sh --all`: line limit, format, lint, typecheck.
+- `mise run test` — `scripts/test.sh --all`: all suites. Narrow with
   `scripts/test.sh --all --suite scripts|unit|lua|integration|visual`.
-- npm scripts arrive with task 001; `video validate|render` with 005/006.
-Do not invent commands that are not listed here or in a directory README.
+- `npm run check` — format:check, lint, typecheck, unit (root).
+- `npm run format` · `npm run lint` · `npm run typecheck` · `npm run test`.
+- `npm run typecheck -w @quarto-video/ir` — one workspace.
+- `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002).
+- `npm run test:lua` — Lua filter unit tests via `quarto pandoc` (task 003).
+- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003) and the `video` CLI tests (validate: 005; render: 006).
+- `npm run test:visual` — placeholder until task 020.
+- `npx video validate <path> [--print-ir]` — filter + IR check; exit 0/1/2 (task 005). From another directory: `npm exec --prefix <repo> -- video validate <path>`.
+- `npx video render <path>` — validate, render to `video.output` (task 006). Progress on stdout; exit 0/1/2 as for validate. Set `QV_BROWSER_EXECUTABLE` to a Chromium headless shell.
 
 ## Working rules
 - One task per change set. Commits use Conventional Commits

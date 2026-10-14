@@ -1,0 +1,24 @@
+{
+  "name": "@quarto-video/remotion",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "render": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@quarto-video/ir": "0.0.0",
+    "@remotion/bundler": "4.0.530",
+    "@remotion/renderer": "4.0.530",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.530"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18"
+  }
+}
