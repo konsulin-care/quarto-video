@@ -12,10 +12,25 @@ import { IrRenderError } from "./errors.js";
 
 export { IrRenderError } from "./errors.js";
 
+/** Encoding progress: frames written so far out of the composition length. */
+export interface RenderProgress {
+  encodedFrames: number;
+  totalFrames: number;
+}
+
 export interface RenderOptions {
   /** Existing Chromium headless-shell binary. Unset: Remotion's own download. */
   browserExecutable?: string | null;
+  /** Called as frames are encoded (may be called many times). */
+  onProgress?: (progress: RenderProgress) => void;
 }
+
+/** Signature of render(); the CLI depends on this shape, not the module. */
+export type RenderFn = (
+  irPath: string,
+  outPath: string,
+  options?: RenderOptions,
+) => Promise<void>;
 
 const ENTRY_POINT = fileURLToPath(new URL("./entry.ts", import.meta.url));
 
@@ -67,6 +82,7 @@ export async function render(
   const ir = await loadIr(irPath);
   const browserExecutable = options.browserExecutable ?? null;
   const inputProps = { ir };
+  const onProgress = options.onProgress;
   const serveUrl = await bundle(bundleOptions);
   const composition = await selectComposition({
     serveUrl,
@@ -84,5 +100,10 @@ export async function render(
     inputProps,
     browserExecutable,
     logLevel: "error",
+    onProgress: ({ encodedFrames }) =>
+      onProgress?.({
+        encodedFrames,
+        totalFrames: composition.durationInFrames,
+      }),
   });
 }

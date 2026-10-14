@@ -13,7 +13,8 @@ what is valid.
   input props via `calculateMetadata`.
 - `src/IrVideo.tsx` — plays scenes in order with `<Series>` on `settings.background`.
 - `src/registry-map.ts` — registry id → implementation (`title` only).
-- `src/render.ts` — `render(irPath, outPath, opts)`: validate, bundle, encode.
+- `src/index.ts` — public API used by `packages/cli`: `render`, `loadIr`, `IrRenderError`, types `RenderFn`, `RenderOptions`, `RenderProgress`.
+- `src/render.ts` — `render(irPath, outPath, opts)`: validate, bundle, encode. `opts.onProgress({ encodedFrames, totalFrames })` is called while encoding.
 - `src/cli.ts` — `render` script entry (exit 0 on success, 1 on error, 2 on usage).
 - `src/errors.ts` — `IrRenderError`, thrown for rejected input.
 - `components/title/` — placeholder centred title; `components/<id>/` for the rest.
@@ -28,13 +29,14 @@ what is valid.
 ## Browser (no downloads)
 Chromium is preinstalled; do not run `playwright install`. Remotion is pointed
 at the existing headless shell, never at its own download:
-- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell`.
+- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell` (`npm run render` and `video render` both read it).
 - API: `render(ir, out, { browserExecutable })`. Unset means Remotion downloads its own browser.
 - The integration test finds `chromium_headless_shell-*` under `PLAYWRIGHT_BROWSERS_PATH`
   (or honours `QV_BROWSER_EXECUTABLE`); it fails if none exists.
 
 ## Rules
 - Input is IR only. Never import `packages/validator` or `packages/cli`.
+- The CLI calls `render()` through `src/index.ts`; the renderer knows nothing about the CLI (ADR-0001, AGENT.md).
 - `render()` validates before anything else; invalid IR rejects with the JSON
   path (for example `/scenes/0/durationFrames`) and never starts a browser.
 - Unknown components are rejected the same way (`/scenes/<i>/component`).
