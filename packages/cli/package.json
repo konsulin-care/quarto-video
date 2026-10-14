@@ -3,10 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "video": "./bin/video.mjs"
+  },
   "exports": {
     ".": "./src/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@quarto-video/ir": "0.0.0"
   }
 }
