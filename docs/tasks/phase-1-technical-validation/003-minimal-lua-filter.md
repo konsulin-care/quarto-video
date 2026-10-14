@@ -1,6 +1,6 @@
 # 003 — Minimal Lua filter → IR
 
-Phase 1 · Status: todo · Depends on: 002 · PRD: §4.3, §5.3, §8.1 · ADR: —
+Phase 1 · Status: in-progress · Depends on: 002 · PRD: §4.3, §5.3, §8.1 · ADR: —
 
 ## Goal
 A Quarto extension whose Lua filter turns a `.qmd` with `.scene` Divs into an
