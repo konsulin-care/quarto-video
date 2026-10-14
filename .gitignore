@@ -4,3 +4,6 @@ node_modules/
 # Local mise overrides
 mise.local.toml
 .mise.local.toml
+
+# Personal lefthook overrides
+lefthook-local.yml

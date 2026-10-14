@@ -1,0 +1,2 @@
+# shellcheck config (ADR-0010). Follow `source` directives across files.
+external-sources=true
