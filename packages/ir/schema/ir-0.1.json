@@ -62,7 +62,8 @@
               "file": {
                 "type": "string",
                 "pattern": "^(?![/\\\\]).+$"
-              }
+              },
+              "line": { "type": "integer", "minimum": 1 }
             }
           }
         }

@@ -233,7 +233,6 @@ describe("video render", () => {
     });
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
-    assert.match(run.stderr, /index\.qmd: duration "0s" must be at least 1s/);
     assert.equal(existsSync(log), false, "the renderer must not be invoked");
     assert.equal(existsSync(join(project, "output.mp4")), false);
   });
@@ -266,6 +265,7 @@ describe("video render", () => {
     assert.equal(readFileSync(previous, "utf8"), "previous video bytes");
     assert.equal(statSync(previous).mtimeMs, beforeStat.mtimeMs);
     assert.deepEqual(readdirSync(join(project, ".video-build")).sort(), [
+      "diagnostics.json",
       "manifest.json",
       "render.json",
     ]);

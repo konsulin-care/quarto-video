@@ -1,0 +1,17 @@
+{
+  "durationFrames": 300,
+  "scenes": [
+    {
+      "id": "intro",
+      "startFrame": 0
+    },
+    {
+      "id": "parallel",
+      "startFrame": 90
+    },
+    {
+      "id": "memory",
+      "startFrame": 180
+    }
+  ]
+}

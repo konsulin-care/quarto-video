@@ -15,6 +15,12 @@ local function scene(component, duration, text)
   )
 end
 
+local function collect_fn(body)
+  return function()
+    scenes.collect(h.doc(body), 30)
+  end
+end
+
 return {
   ["no scenes give an empty scenes list"] = function()
     local list = scenes.collect(h.doc("Just prose, no scenes.\n"), 30)
@@ -28,7 +34,7 @@ return {
     local list = scenes.collect(h.doc(body), 30)
     h.eq(#list, 1, "scene count")
     h.eq(list[1].component, "title", "component")
-    h.eq(list[1].text, "Why GPUs Matter", "text")
+    h.eq(h.default_text(list[1]), "Why GPUs Matter", "text")
   end,
 
   ["scenes get ids in document order"] = function()
@@ -39,41 +45,82 @@ return {
     h.eq(list[2].component, "statement", "second component")
   end,
 
-  ["plain text keeps one paragraph per line"] = function()
+  ["loose paragraphs go to the default slot, one block each"] = function()
     local body = '::: {.scene component="title" duration="4s"}\nAlpha\n\nBeta\n:::\n'
     local list = scenes.collect(h.doc(body), 30)
-    h.eq(list[1].text, "Alpha\nBeta", "text")
+    h.eq(#list[1].slots.default, 2, "block count")
+    h.eq(h.default_text(list[1]), "Alpha\nBeta", "text")
   end,
 
   ["rejects a .scene nested inside another Div"] = function()
     local body = "::: {.note}\n" .. scene("title", "4s", "Hidden") .. ":::\n"
-    local err = h.error_of(function()
-      scenes.collect(h.doc(body), 30)
-    end)
+    local err = h.error_of(collect_fn(body))
     h.contains(err, "top-level", "error")
+    h.code_is(collect_fn(body), "E_SCENE_NESTED", "nested")
   end,
 
   ["rejects an unknown scene attribute"] = function()
     local body = '::: {.scene component="title" duration="4s" animation="reveal"}\nX\n:::\n'
-    local err = h.error_of(function()
-      scenes.collect(h.doc(body), 30)
-    end)
+    local err = h.error_of(collect_fn(body))
     h.contains(err, 'unknown attribute "animation"', "error")
+    h.code_is(collect_fn(body), "E_SCENE_SHAPE", "shape")
   end,
 
   ["requires the component attribute"] = function()
-    local body = '::: {.scene duration="4s"}\nX\n:::\n'
-    local err = h.error_of(function()
-      scenes.collect(h.doc(body), 30)
-    end)
-    h.contains(err, "component attribute is required", "error")
+    local body = scene("title", "4s", "First") .. '::: {.scene duration="4s"}\nX\n:::\n'
+    local err = h.error_of(collect_fn(body))
+    h.contains(err, 'Scene "scene-002" has no component attribute.', "error")
+    local diagnostic = h.code_is(collect_fn(body), "E_SCENE_NO_COMPONENT", "component")
+    h.eq(diagnostic.sceneId, "scene-002", "sceneId")
+    h.eq(diagnostic.suggestion, 'Add component="<name>"', "suggestion")
   end,
 
-  ["requires the duration attribute until defaults exist"] = function()
+  ["requires the duration attribute"] = function()
     local body = '::: {.scene component="title"}\nX\n:::\n'
-    local err = h.error_of(function()
-      scenes.collect(h.doc(body), 30)
+    local err = h.error_of(collect_fn(body))
+    h.contains(err, 'Scene "scene-001" has no duration attribute.', "error")
+    h.code_is(collect_fn(body), "E_SCENE_NO_DURATION", "duration")
+  end,
+
+  ["reports a bad duration with its scene id and component"] = function()
+    local body = '::: {.scene component="title" duration="2 seconds"}\nX\n:::\n'
+    local diagnostic = h.code_is(collect_fn(body), "E_DURATION_SYNTAX", "duration")
+    h.eq(diagnostic.sceneId, "scene-001", "sceneId")
+    h.eq(diagnostic.component, "title", "component")
+    h.eq(diagnostic.property, "duration", "property")
+  end,
+
+  ["reports every bad scene in one pass"] = function()
+    local body = '::: {.scene component="title"}\nA\n:::\n\n'
+      .. '::: {.scene component="title" duration="2 seconds"}\nB\n:::\n\n'
+      .. '::: {.scene component="title" duration="4s" animation="x"}\nC\n:::\n'
+    local list = h.diagnostics_of(collect_fn(body))
+    h.eq(#list, 3, "diagnostic count")
+    h.eq(list[1].code, "E_SCENE_NO_DURATION", "first code")
+    h.eq(list[2].code, "E_DURATION_SYNTAX", "second code")
+    h.eq(list[3].code, "E_SCENE_SHAPE", "third code")
+  end,
+
+  ["a scene without duration takes the default frames"] = function()
+    local list = scenes.collect(h.doc(scene("title", "4s", "")), 30)
+    h.eq(list[1].durationFrames, 120, "explicit frames")
+    local body = '::: {.scene component="title"}\nNo duration\n:::\n'
+    local defaulted = scenes.collect(h.doc(body), 30, 45)
+    h.eq(defaulted[1].durationFrames, 45, "default frames")
+  end,
+
+  ["an explicit scene duration wins over the default"] = function()
+    local body = scene("statement", "2s", "Explicit")
+    local list = scenes.collect(h.doc(body), 30, 45)
+    h.eq(list[1].durationFrames, 60, "explicit frames")
+  end,
+
+  ["an invalid default adds no missing-duration error per scene"] = function()
+    local body = '::: {.scene component="title"}\nA\n:::\n\n'
+      .. '::: {.scene component="title"}\nB\n:::\n'
+    local list = h.diagnostics_of(function()
+      scenes.collect(h.doc(body), 30, false)
     end)
-    h.contains(err, "duration attribute is required", "error")
+    h.eq(#list, 0, "scene diagnostics (the default error is raised by config)")
   end,
 }

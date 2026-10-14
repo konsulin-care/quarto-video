@@ -1,10 +1,13 @@
 // Runs the task-003 Lua filter with the documented Pandoc invocation
-// (_extensions/video/README.md) and reads the manifest it writes. The filter
-// writes only <project>/.video-build/manifest.json; nothing else runs here.
+// (_extensions/video/README.md) and reads the manifest and diagnostics it
+// writes. The filter writes only files under <project>/.video-build/; nothing
+// else runs here.
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { hasErrors, type Diagnostic } from "@quarto-video/validator";
+import { filterFailure, readFilterDiagnostics } from "./filter-diagnostics.js";
 import type { Project } from "./project.js";
 
 const FILTER = fileURLToPath(
@@ -13,10 +16,10 @@ const FILTER = fileURLToPath(
 const MANIFEST_RELATIVE = join(".video-build", "manifest.json");
 
 export type FilterOutcome =
-  /** The filter ran and its manifest parsed as JSON (not yet schema-checked). */
-  | { kind: "manifest"; json: unknown }
-  /** The document was rejected by the filter (a validation error, exit 1). */
-  | { kind: "rejected"; message: string }
+  /** The filter ran; `diagnostics` hold warnings only. The manifest is not yet schema-checked. */
+  | { kind: "manifest"; json: unknown; diagnostics: Diagnostic[] }
+  /** The document was rejected (exit 1); `diagnostics` hold at least one error. */
+  | { kind: "rejected"; diagnostics: Diagnostic[] }
   /** Quarto could not be started (a usage or environment error, exit 2). */
   | { kind: "environment"; message: string };
 
@@ -36,7 +39,7 @@ export function manifestPath(project: Project): string {
   return join(project.root, MANIFEST_RELATIVE);
 }
 
-/** Runs the filter on `project.document` and returns the parsed manifest. */
+/** Runs the filter on `project.document` and returns what it wrote. */
 export function runFilter(project: Project): FilterOutcome {
   const result = spawnSync(
     "quarto",
@@ -62,21 +65,42 @@ export function runFilter(project: Project): FilterOutcome {
       message: `cannot run quarto (${result.error.message}); install the version pinned in mise.toml`,
     };
   }
+  const document = relative(project.root, project.document);
+  const written = readFilterDiagnostics(project);
+  if (written !== null && hasErrors(written)) {
+    return { kind: "rejected", diagnostics: written };
+  }
   if (result.status !== 0) {
-    const document = relative(project.root, project.document);
+    const message = filterMessage(result.stderr);
     return {
       kind: "rejected",
-      message: `${document}: ${filterMessage(result.stderr)}`,
+      diagnostics: [filterFailure(document, message)],
+    };
+  }
+  if (written === null) {
+    return {
+      kind: "rejected",
+      diagnostics: [
+        filterFailure(
+          document,
+          "the filter did not write readable diagnostics",
+        ),
+      ],
     };
   }
   try {
     const text = readFileSync(manifestPath(project), "utf8");
-    return { kind: "manifest", json: JSON.parse(text) as unknown };
+    return {
+      kind: "manifest",
+      json: JSON.parse(text) as unknown,
+      diagnostics: written,
+    };
   } catch {
-    const document = relative(project.root, project.document);
     return {
       kind: "rejected",
-      message: `${document}: the filter did not write a readable manifest`,
+      diagnostics: [
+        filterFailure(document, "the filter did not write a readable manifest"),
+      ],
     };
   }
 }

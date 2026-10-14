@@ -1,0 +1,13 @@
+---
+title: "Diagnostics: settings"
+video:
+  width: 1920
+  height: 1080
+  fps: 0
+  background: "#10131C"
+  output: ../clip.mp4
+---
+
+::: {.scene component="title" duration="4s"}
+Settings are wrong.
+:::

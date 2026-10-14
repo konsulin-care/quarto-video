@@ -13,3 +13,13 @@ dist/
 .video-build/
 videos/*/output.*
 tests/visual/report/
+
+# Quarto render output in videos/* (task 007a): quarto writes these next to
+# index.qmd when `quarto render` runs the post-render hook.
+videos/*/index.html
+videos/*/index_files/
+videos/*/.quarto/
+videos/*/.gitignore
+
+# Harness worktrees for delegated agents (local state, never committed)
+.claude/worktrees/

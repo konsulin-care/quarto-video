@@ -1,0 +1,27 @@
+[
+  {
+    "code": "E_COMPONENT_UNKNOWN",
+    "line": 11,
+    "sceneId": "first"
+  },
+  {
+    "code": "E_SLOT_UNKNOWN",
+    "line": 15,
+    "sceneId": "second"
+  },
+  {
+    "code": "E_SLOT_REQUIRED",
+    "line": 15,
+    "sceneId": "second"
+  },
+  {
+    "code": "E_SLOT_BLOCK_KIND",
+    "line": 21,
+    "sceneId": "third"
+  },
+  {
+    "code": "E_DURATION_BOUNDS",
+    "line": 26,
+    "sceneId": "fourth"
+  }
+]

@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@quarto-video/ir": "0.0.0",
-    "@quarto-video/remotion": "0.0.0"
+    "@quarto-video/registry": "0.0.0",
+    "@quarto-video/remotion": "0.0.0",
+    "@quarto-video/validator": "0.0.0"
   }
 }

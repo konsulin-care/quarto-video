@@ -1,0 +1,14 @@
+---
+title: "Diagnostics: nested scene"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+::: {.note}
+::: {.scene component="title" duration="4s"}
+Hidden in a note.
+:::
+:::

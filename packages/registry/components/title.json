@@ -1,0 +1,20 @@
+{
+  "id": "title",
+  "version": "1.0.0",
+  "purpose": "Opening title and subtitle for a video or a chapter.",
+  "slots": {
+    "default": {
+      "required": true,
+      "accepts": ["paragraph", "heading"]
+    }
+  },
+  "props": {},
+  "placements": [],
+  "compatibleAnimations": [],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "accessibility": "The text is the only content. Its colour and size come from the theme (task 019)."
+}

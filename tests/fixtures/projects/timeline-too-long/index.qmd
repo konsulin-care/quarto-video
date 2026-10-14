@@ -1,0 +1,12 @@
+---
+video:
+  fps: 30
+---
+
+::: {.scene component="title" duration="4s" #opening}
+Plain.
+:::
+
+::: {.scene component="title" duration="2s" transition="fade" transitionDuration="3s" #second}
+Longer than itself.
+:::

@@ -1,6 +1,6 @@
 # 008 — Diagnostics model and reporter
 
-Phase 2 · Status: todo · Depends on: 005 · PRD: §9.2 · ADR: —
+Phase 2 · Status: done · Depends on: 005 · PRD: §9.2 · ADR: —
 
 ## Goal
 One diagnostic shape used by the filter, validator and CLI, printed in the
@@ -22,10 +22,14 @@ PRD §9.2 human format or as JSON, with stable error codes.
 
 ## Definition of done
 Automated:
-- [ ] Snapshot tests of the human format for an error and a warning.
-- [ ] `--json` output validates against `schema/diagnostic.json`.
-- [ ] Only warnings → exit 0; any error → exit 1.
-- [ ] Every emitted code appears in the README table (test scans source).
+- [x] Snapshot tests of the human format for an error and a warning.
+  (`packages/validator/test/format.test.ts`; block output in `validate-diagnostics.test.ts`)
+- [x] `--json` output validates against `schema/diagnostic.json`.
+  (`validate-diagnostics.test.ts` parses stdout with the schema; `schema.test.ts`)
+- [x] Only warnings → exit 0; any error → exit 1.
+  (`packages/cli/test/exit-status.test.ts`: `exitCodeFor`, used by `validate` and `render`)
+- [x] Every emitted code appears in the README table (test scans source).
+  (`packages/validator/test/codes.test.ts`)
 
 Human check:
 1. `npx video validate tests/fixtures/projects/diagnostics-no-component`
@@ -36,5 +40,34 @@ Human check:
    `sceneId`, `suggestion`.
 
 ## Notes
+- Codes are listed in `packages/validator/README.md`. The CLI adds
+  `E_IR_SCHEMA` (IR schema errors) and `E_FILTER_FAILED` (a filter run with
+  no usable diagnostics).
+- Filter errors are raised as values carrying diagnostics (`lib/diagnostics.lua`).
+  Each stage collects all its errors. A scene stops at its first error.
+- `--json` writes the array to stdout only. `render --json` prints warnings
+  before progress. `--print-ir` and `--json` cannot be combined.
+- Existing test expectations were updated to the new text: `ERROR <file>`
+  headers, new scene messages (`Scene "scene-00N" has no component attribute.`),
+  and the IR error now names `.video-build/manifest.json`.
+- Exit status is `exitCodeFor(diagnostics)` (`packages/cli/src/exit-status.ts`).
+  No shipped check emits a warning, so the warnings-only case is tested on the
+  mapping, not through a real command run. A warning source belongs to a later task.
 
 ## Completion log
+- 2026-10-14 · Implemented the diagnostic model (`packages/validator`), the
+  filter's coded errors and `diagnostics.json`, CLI printing and `--json` for
+  `validate` and `render`.
+  Tests: `packages/validator/test/{format,schema,codes}.test.ts`;
+  `_extensions/video/tests/test_diagnostics.lua` plus updated `test_scenes`,
+  `test_settings`, `test_duration`; `tests/integration/validate-diagnostics.test.ts`;
+  updated `validate.test.ts` and `cli-render.test.ts`.
+  Human check 1 and 2 run and matched (see the report).
+  Not run here: Quarto render and Remotion tests (no quarto, no Chromium).
+  Filter tests ran with a `quarto pandoc` stand-in over pandoc 3.1.3.
+- 2026-10-14 · Added the exit-status mapping `exitCodeFor` (warnings-only → 0,
+  any error → 1) used by `validate` and `render`; ticked the warnings box.
+  Test: `packages/cli/test/exit-status.test.ts`.
+- Follow-ups: a warning-emitting check (end-to-end warnings exit); line numbers (011);
+  the `E_FILTER_FAILED` case has no committed fixture (the test builds one in a
+  scratch dir); verify against the pinned Quarto 1.10.19 with real `quarto pandoc`.

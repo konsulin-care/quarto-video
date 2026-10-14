@@ -1,7 +1,7 @@
 -- Minimal deterministic JSON encoder for the manifest (no dependencies).
 -- Objects are plain tables with string keys, written in sorted key order.
 -- Arrays must be built with json.array(); an empty array encodes as [].
--- Only strings, integers, arrays and objects are supported.
+-- Only strings, integers, booleans, arrays and objects are supported.
 local M = {}
 
 local ARRAY = {}
@@ -70,6 +70,8 @@ encode = function(value, depth)
       error("json: only integers are supported, got " .. tostring(value), 0)
     end
     return string.format("%d", value)
+  elseif kind == "boolean" then
+    return value and "true" or "false"
   elseif kind == "table" then
     if getmetatable(value) == ARRAY then
       return encode_array(value, depth)

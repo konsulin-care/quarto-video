@@ -1,6 +1,6 @@
 # 007a — Quarto-native render via post-render hook
 
-Phase 1 · Status: todo · Depends on: 007 · PRD: §1.3, §4.3, §16, §18.1 · ADR: reads 0002
+Phase 1 · Status: done · Depends on: 007 · PRD: §1.3, §4.3, §16, §18.1 · ADR: reads 0002
 
 ## Goal
 Make `quarto render videos/hello/index.qmd` and `quarto render videos/hello`
@@ -44,5 +44,33 @@ Human check:
 - The hook must use `./name` in `post-render:` (a bare name failed to spawn).
 - `quarto render` also writes `index.html` and `.quarto/` into the project;
   decide whether to keep or ignore them (`.gitignore`).
+- Decided: the hook finds the CLI with `video` on PATH, else
+  `npm exec --prefix <repo> -- video` (documented in `packages/cli/README.md`).
+  Generated `index.html`, `index_files/`, `.quarto/` and `.gitignore` are
+  gitignored under `videos/*/`.
 
 ## Completion log
+- 2026-10-14. Implemented. `videos/hello/_quarto.yml` (`project: post-render:
+  ./render-video.sh`) and `videos/hello/render-video.sh` (runs `video render` on
+  the project and exits with its status). Documented in `videos/README.md`.
+  ADR-0002 Decision unchanged; Consequences point at the test.
+- Spike fix: `scripts/spike-quarto-native.sh` copies `videos/hello`, so its
+  temp projects now drop `_quarto.yml` and `render-video.sh`. Without that the
+  extension forms rendered (`WORKS`) and the ADR-0002 evidence test failed.
+- Tests: `tests/integration/quarto-render.test.ts` (3: file form, directory
+  form, failing `video render` exits 1 with no output.mp4 on a copy with
+  `duration="0s"`), added to `test:integration`. Spike test passes again.
+  Full `npm run test:integration` (before the spike fix): 4 of 5 files passed,
+  spike failed as above; after the fix the spike passes alone.
+- Automated, local (Quarto 1.10.19 from the release tarball, Node 22, not the
+  pinned 24.21.0, headless shell from the Playwright cache): `test:integration`
+  quarto-render 3/3; `shellcheck` on both shell scripts; ESLint and Prettier on
+  the new test; line limit. Not run: `mise run check`/`mise run test` (mise not
+  installed here), so CI is not verified.
+- Human check: 1 done in place: `quarto render videos/hello/index.qmd` prints
+  `Wrote output.mp4`; ffprobe 1920×1080, 30/1, 120 frames. Playback by a person
+  is pending. 2 done on a copy without `_quarto.yml`: `quarto render videos/hello`
+  exits 0 and writes no `output.mp4` (matches ADR-0002). Run on a copy, not in
+  the repo.
+- Follow-ups: the hook is specific to `videos/hello`; other projects copy the two
+  files. PRD §16 wording for `quarto render` is for a human to decide.

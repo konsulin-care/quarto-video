@@ -1,0 +1,213 @@
+{
+  "generator": {
+    "cli": "0.0.0",
+    "extension": "0.1.0"
+  },
+  "scenes": [
+    {
+      "component": "comparison",
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Why GPUs",
+                  "type": "text"
+                }
+              ],
+              "level": 2,
+              "type": "heading"
+            },
+            {
+              "language": "python",
+              "text": "gpu.run()",
+              "type": "code-block"
+            }
+          ],
+          "left": [
+            {
+              "inlines": [
+                {
+                  "inlines": [
+                    {
+                      "text": "CPUs",
+                      "type": "text"
+                    }
+                  ],
+                  "type": "strong"
+                }
+              ],
+              "type": "paragraph"
+            },
+            {
+              "inlines": [
+                {
+                  "text": "Optimized for ",
+                  "type": "text"
+                },
+                {
+                  "inlines": [
+                    {
+                      "text": "general",
+                      "type": "text"
+                    }
+                  ],
+                  "type": "emphasis"
+                },
+                {
+                  "text": " tasks.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            },
+            {
+              "inlines": [
+                {
+                  "text": "Line one",
+                  "type": "text"
+                },
+                {
+                  "type": "line-break"
+                },
+                {
+                  "text": "line two.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ],
+          "right": [
+            {
+              "items": [
+                {
+                  "blocks": [
+                    {
+                      "inlines": [
+                        {
+                          "text": "Massively parallel",
+                          "type": "text"
+                        }
+                      ],
+                      "type": "paragraph"
+                    }
+                  ]
+                },
+                {
+                  "blocks": [
+                    {
+                      "inlines": [
+                        {
+                          "inlines": [
+                            {
+                              "text": "Many cores",
+                              "type": "text"
+                            }
+                          ],
+                          "quote": "double",
+                          "type": "quoted"
+                        },
+                        {
+                          "text": " at once.",
+                          "type": "text"
+                        }
+                      ],
+                      "type": "paragraph"
+                    }
+                  ]
+                }
+              ],
+              "ordered": true,
+              "type": "list"
+            },
+            {
+              "items": [
+                {
+                  "blocks": [
+                    {
+                      "inlines": [
+                        {
+                          "text": "bullet one",
+                          "type": "text"
+                        }
+                      ],
+                      "type": "paragraph"
+                    }
+                  ]
+                },
+                {
+                  "blocks": [
+                    {
+                      "inlines": [
+                        {
+                          "text": "gpu.run()",
+                          "type": "code"
+                        }
+                      ],
+                      "type": "paragraph"
+                    }
+                  ]
+                }
+              ],
+              "ordered": false,
+              "type": "list"
+            }
+          ]
+        }
+      },
+      "durationFrames": 180,
+      "id": "comparison",
+      "source": {
+        "file": "index.qmd",
+        "line": 13
+      }
+    },
+    {
+      "component": "title",
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Plain text.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
+      },
+      "durationFrames": 120,
+      "id": "scene-002",
+      "source": {
+        "file": "index.qmd",
+        "line": 38
+      }
+    }
+  ],
+  "schemaVersion": "1.0",
+  "settings": {
+    "background": "#10131C",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920
+  },
+  "timeline": {
+    "durationFrames": 300,
+    "scenes": [
+      {
+        "id": "comparison",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 180
+      }
+    ]
+  },
+  "type": "video"
+}

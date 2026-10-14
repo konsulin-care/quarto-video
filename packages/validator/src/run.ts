@@ -1,0 +1,110 @@
+// The stage runner for a parsed manifest (PRD §9.1). Stage 2 is the IR schema,
+// then the component contracts; stage 3 is the asset references (ADR-0006);
+// stage 4 is the timeline. A stage that reports an error stops the run: later
+// stages never see a manifest that is not valid yet. Stage 1 (the Lua filter)
+// and stage 5 (preflight) run in the CLI.
+import {
+  validateIr,
+  type IrError,
+  type IrVideo,
+  type IrVideoV02,
+  type IrVideoWithTimeline,
+} from "@quarto-video/ir";
+import {
+  listComponents,
+  listTransitions,
+  type ComponentContract,
+} from "@quarto-video/registry";
+import { hasErrors, type Diagnostic } from "./diagnostic.js";
+import { checkAssets, type AssetRef } from "./stages/assets.js";
+import { checkContracts } from "./stages/contract.js";
+import { checkTimeline } from "./stages/timeline.js";
+
+/** Stage 3 input: the asset references to check, and the absolute project root they resolve in. */
+export interface AssetCheck {
+  root: string;
+  refs: readonly AssetRef[];
+}
+
+export interface ManifestCheck {
+  /** The manifest when it passed every stage; null when any stage failed. */
+  ir: IrVideo | null;
+  diagnostics: Diagnostic[];
+}
+
+/** Runs each stage in order and stops after the first one that reports an error. */
+export function runStages(
+  stages: ReadonlyArray<() => Diagnostic[]>,
+): Diagnostic[] {
+  const all: Diagnostic[] = [];
+  for (const stage of stages) {
+    const found = stage();
+    all.push(...found);
+    if (hasErrors(found)) break;
+  }
+  return all;
+}
+
+/** One IR schema error, as an E_IR_SCHEMA diagnostic (or its own code) about `file`. */
+export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
+  const where = error.path === "" ? "(root)" : error.path;
+  return {
+    severity: "error",
+    code: error.code ?? "E_IR_SCHEMA",
+    message: `${where}: ${error.message}`,
+    file,
+    ...(error.path === "" ? {} : { property: error.path }),
+  };
+}
+
+/**
+ * Stages 2 to 4 for the manifest the filter wrote (`file`, project-relative).
+ * An unsupported version is E_IR_UNSUPPORTED_VERSION (ADR-0007). Contracts read
+ * the slots of IR 0.2 or later (ADR-0004); a 0.1 manifest is an error. Stage 3
+ * checks `assets` when given (ADR-0006). Stage 4 checks transitions and the
+ * timeline (ADR-0005; 0.3 and 1.0).
+ */
+export function checkManifest(
+  json: unknown,
+  file: string,
+  components: readonly ComponentContract[] = listComponents(),
+  transitions: readonly string[] = listTransitions(),
+  assets?: AssetCheck,
+): ManifestCheck {
+  const state: { ir?: IrVideoV02 | IrVideoWithTimeline } = {};
+  const diagnostics = runStages([
+    () => {
+      const result = validateIr(json);
+      if (!result.ok) {
+        return result.errors.map((error) => schemaDiagnostic(error, file));
+      }
+      const ir = json as IrVideo;
+      if (ir.schemaVersion === "0.1") {
+        return [
+          schemaDiagnostic(
+            {
+              path: "/schemaVersion",
+              message: `must be "0.2" or newer for component contracts (scene slots); got "${ir.schemaVersion}"`,
+            },
+            file,
+          ),
+        ];
+      }
+      state.ir = ir as IrVideoV02 | IrVideoWithTimeline;
+      return [];
+    },
+    () => {
+      const ir = state.ir;
+      return ir === undefined ? [] : checkContracts(ir, components);
+    },
+    () => (assets === undefined ? [] : checkAssets(assets.refs, assets.root)),
+    () => {
+      const ir = state.ir;
+      return ir === undefined ? [] : checkTimeline(ir, transitions);
+    },
+  ]);
+  return {
+    ir: hasErrors(diagnostics) ? null : (state.ir ?? null),
+    diagnostics,
+  };
+}

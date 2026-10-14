@@ -1,0 +1,49 @@
+{
+  "generator": {
+    "cli": "0.0.0",
+    "extension": "0.1.0"
+  },
+  "scenes": [
+    {
+      "component": "title",
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Every setting takes its default.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
+      },
+      "durationFrames": 60,
+      "id": "scene-001",
+      "source": {
+        "file": "index.qmd",
+        "line": 5
+      }
+    }
+  ],
+  "schemaVersion": "1.0",
+  "settings": {
+    "background": "#000000",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920
+  },
+  "timeline": {
+    "durationFrames": 60,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      }
+    ]
+  },
+  "type": "video"
+}

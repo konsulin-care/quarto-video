@@ -1,5 +1,5 @@
 # renderer/remotion/ — Remotion reference renderer
-Status: Minimal render (task 004): any valid IR 0.1 renders to MP4 with a placeholder `title` scene. Themes, presets and the other components: tasks 019–035, 039–046.
+Status: Minimal render (task 004): any valid IR renders to MP4 with a placeholder `title` scene; the title shows the `default` slot's text (task 012). Scenes play on the IR timeline; overlaps are hard cuts until task 022 (task 015, ADR-0005). Themes, presets and the other components: tasks 019–035, 039–046.
 Run: `npm run render -w renderer/remotion -- <ir.json> <out.mp4>`; typecheck: `npm run typecheck -w @quarto-video/remotion`; unit tests: root `npm run test`; render tests: root `npm run test:integration`.
 
 ## Purpose
@@ -11,7 +11,7 @@ what is valid.
 - `src/entry.ts` — Remotion bundle entry (`registerRoot`).
 - `src/Root.tsx` — `video` composition; size, fps and length come from the IR
   input props via `calculateMetadata`.
-- `src/IrVideo.tsx` — plays scenes in order with `<Series>` on `settings.background`.
+- `src/IrVideo.tsx` — plays each scene with `<Sequence>` at its `startFrame` (`timelineOf`, `@quarto-video/ir/timeline`), on `settings.background`; a scene shows until the next one starts. Scene text comes from `plainText` (`@quarto-video/ir/text`).
 - `src/registry-map.ts` — registry id → implementation (`title` only).
 - `src/index.ts` — public API used by `packages/cli`: `render`, `loadIr`, `IrRenderError`, types `RenderFn`, `RenderOptions`, `RenderProgress`.
 - `src/render.ts` — `render(irPath, outPath, opts)`: validate, bundle, encode. `opts.onProgress({ encodedFrames, totalFrames })` is called while encoding.
@@ -29,7 +29,7 @@ what is valid.
 ## Browser (no downloads)
 Chromium is preinstalled; do not run `playwright install`. Remotion is pointed
 at the existing headless shell, never at its own download:
-- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell` (`npm run render` and `video render` both read it).
+- CLI: `QV_BROWSER_EXECUTABLE=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell` (`npm run render` and `video render` both read it). `video render` refuses to start without it (preflight, task 018).
 - API: `render(ir, out, { browserExecutable })`. Unset means Remotion downloads its own browser.
 - The integration test finds `chromium_headless_shell-*` under `PLAYWRIGHT_BROWSERS_PATH`
   (or honours `QV_BROWSER_EXECUTABLE`); it fails if none exists.
@@ -40,7 +40,7 @@ at the existing headless shell, never at its own download:
 - `render()` validates before anything else; invalid IR rejects with the JSON
   path (for example `/scenes/0/durationFrames`) and never starts a browser.
 - Unknown components are rejected the same way (`/scenes/<i>/component`).
-- Check `schemaVersion` on load: `validateIr` already enforces `"0.1"`.
+- Check `schemaVersion` on load: `validateIr` accepts `"0.1"`, `"0.2"`, `"0.3"` and `"1.0"` and rejects others with `E_IR_UNSUPPORTED_VERSION`, which names the supported versions (ADR-0007). Length comes from `timelineOf(ir).durationFrames`, never a sum of scene lengths (transitions overlap).
 - Visual state = f(IR, frame). Use `useCurrentFrame()`/props only. Banned:
   `Date`, `Math.random`, `performance.now`, timers, `fetch`, remote URLs
   (enforced by lint rule from task 021).
@@ -63,6 +63,7 @@ add it to `src/registry-map.ts`. 3. Add visual cases in `tests/visual/cases/`.
 - Integration (`npm run test:integration`): renders `packages/ir/examples/minimal.json`
   shrunk to 640×360 and 1 s, and a two-scene IR; ffprobe checks size, 30 fps and
   frame count = sum of `durationFrames`.
+- Parity (root `npm run check`): `test/registry-parity.test.ts` checks that `src/registry-map.ts` maps exactly the registry's component ids (task 013). The only runtime-free use of `@quarto-video/registry` here; `src` never imports it.
 - Not yet covered: `tsc` does not check `tests/integration/` (no tsconfig there).
 
 ## Related

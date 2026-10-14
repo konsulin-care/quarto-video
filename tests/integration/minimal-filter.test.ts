@@ -89,13 +89,16 @@ describe("minimal filter golden test", () => {
   it("removes a stale manifest when the document is rejected", () => {
     const project = mkdtempSync(join(tmpdir(), "video-filter-"));
     try {
-      // No video block: the filter must fail and must not leave the old manifest.
-      writeFileSync(join(project, "index.qmd"), "# No video block\n");
+      // An invalid setting: the filter must fail and must not leave the old manifest.
+      writeFileSync(
+        join(project, "index.qmd"),
+        "---\nvideo:\n  fps: 0\n---\n\n# Rejected\n",
+      );
       mkdirSync(join(project, BUILD_DIR));
       writeFileSync(join(project, BUILD_DIR, "manifest.json"), "{}\n");
       assert.throws(
         () => runFilter(project),
-        /front matter needs a video block/,
+        /video\.fps must be a whole number of at least 1/,
       );
       assert.equal(
         existsSync(join(project, BUILD_DIR, "manifest.json")),

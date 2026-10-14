@@ -8,5 +8,10 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@quarto-video/ir": "0.0.0",
+    "@quarto-video/registry": "0.0.0",
+    "ajv": "8.20.0"
   }
 }

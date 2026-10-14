@@ -1,0 +1,10 @@
+[
+  {
+    "severity": "error",
+    "code": "E_CONFIG_UNKNOWN_KEY",
+    "message": "Unknown front matter key \"video.widht\".",
+    "file": "index.qmd",
+    "property": "video.widht",
+    "suggestion": "Did you mean \"width\"?"
+  }
+]

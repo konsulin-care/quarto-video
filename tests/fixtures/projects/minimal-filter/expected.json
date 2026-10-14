@@ -1,34 +1,77 @@
 {
-  "schemaVersion": "0.1",
-  "type": "video",
-  "settings": {
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "background": "#10131C"
+  "generator": {
+    "cli": "0.0.0",
+    "extension": "0.1.0"
   },
   "scenes": [
     {
-      "id": "scene-001",
       "component": "title",
-      "durationFrames": 120,
       "content": {
-        "text": "Why GPUs Matter"
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Why GPUs Matter",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
+      "durationFrames": 120,
+      "id": "scene-001",
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 10
       }
     },
     {
-      "id": "scene-002",
       "component": "title",
-      "durationFrames": 120,
       "content": {
-        "text": "Parallel work changes everything."
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Parallel work changes everything.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
       },
+      "durationFrames": 120,
+      "id": "scene-002",
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 14
       }
     }
-  ]
+  ],
+  "schemaVersion": "1.0",
+  "settings": {
+    "background": "#10131C",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920
+  },
+  "timeline": {
+    "durationFrames": 240,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 120
+      }
+    ]
+  },
+  "type": "video"
 }

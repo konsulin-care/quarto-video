@@ -1,0 +1,19 @@
+---
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+::: {.scene component="title" duration="4s"}
+First scene, valid generated id.
+:::
+
+::: {#Intro .scene component="title" duration="4s"}
+Uppercase letters are not allowed in an id.
+:::
+
+::: {#1 bad .scene component="title" duration="4s"}
+A space splits the attributes, so the id is "1".
+:::

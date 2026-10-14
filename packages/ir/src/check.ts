@@ -7,7 +7,7 @@ export interface CheckOutput {
   lines: string[];
 }
 
-/** Parses JSON text and validates it against IR 0.1. */
+/** Parses JSON text and validates it against the IR version it declares. */
 export function checkIrText(text: string): CheckOutput {
   let json: unknown;
   try {
@@ -19,7 +19,8 @@ export function checkIrText(text: string): CheckOutput {
   const result = validateIr(json);
   if (result.ok) return { ok: true, lines: ["OK"] };
   const lines = result.errors.map(
-    (e) => `${e.path === "" ? "(root)" : e.path}: ${e.message}`,
+    (e) =>
+      `${e.path === "" ? "(root)" : e.path}: ${e.code === undefined ? "" : `${e.code} `}${e.message}`,
   );
   return { ok: false, lines };
 }

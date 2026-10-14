@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@quarto-video/ir": "0.0.0",
+    "@quarto-video/registry": "0.0.0",
     "@remotion/bundler": "4.0.530",
     "@remotion/renderer": "4.0.530",
     "react": "19.2.8",

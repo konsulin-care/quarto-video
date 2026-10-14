@@ -1,0 +1,77 @@
+{
+  "generator": {
+    "cli": "0.0.0",
+    "extension": "0.1.0"
+  },
+  "scenes": [
+    {
+      "component": "title",
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Takes the default duration.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
+      },
+      "durationFrames": 45,
+      "id": "scene-001",
+      "source": {
+        "file": "index.qmd",
+        "line": 8
+      }
+    },
+    {
+      "component": "title",
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "An explicit duration wins.",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
+      },
+      "durationFrames": 60,
+      "id": "scene-002",
+      "source": {
+        "file": "index.qmd",
+        "line": 12
+      }
+    }
+  ],
+  "schemaVersion": "1.0",
+  "settings": {
+    "background": "#000000",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920
+  },
+  "timeline": {
+    "durationFrames": 105,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 45
+      }
+    ]
+  },
+  "type": "video"
+}

@@ -1,0 +1,12 @@
+---
+title: "Diagnostics: zero duration"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+---
+
+::: {.scene component="title" duration="0s"}
+Zero seconds.
+:::

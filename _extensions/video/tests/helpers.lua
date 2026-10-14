@@ -13,9 +13,15 @@ local FRONT_MATTER = table.concat({
   "",
 }, "\n")
 
+--- The source text of a document: the standard front matter (or `front`)
+--- followed by `body`. This is what the filter scans for source lines.
+function M.text(body, front)
+  return (front or FRONT_MATTER) .. body
+end
+
 --- Parses `body` after the standard front matter (or `front` when given).
 function M.doc(body, front)
-  return pandoc.read((front or FRONT_MATTER) .. body, "markdown")
+  return pandoc.read(M.text(body, front), "markdown")
 end
 
 --- Returns the error message raised by `fn`, or nil when it does not raise.
@@ -25,6 +31,35 @@ function M.error_of(fn)
     return nil
   end
   return tostring(err)
+end
+
+--- Returns the list of diagnostics raised by `fn` (empty when it does not raise).
+function M.diagnostics_of(fn)
+  local ok, err = pcall(fn)
+  if ok or type(err) ~= "table" or not err.diagnostics then
+    return {}
+  end
+  return err.diagnostics
+end
+
+--- Fails unless the first diagnostic raised by `fn` has the given code.
+function M.code_is(fn, code, label)
+  local list = M.diagnostics_of(fn)
+  M.eq(list[1] and list[1].code, code, label .. " code")
+  return list[1]
+end
+
+--- The text of a scene record's default slot: its paragraphs, one per line.
+function M.default_text(record)
+  local lines = {}
+  for i, block in ipairs(record.slots.default or {}) do
+    local parts = {}
+    for _, inline in ipairs(block.inlines) do
+      parts[#parts + 1] = inline.text
+    end
+    lines[i] = table.concat(parts)
+  end
+  return table.concat(lines, "\n")
 end
 
 --- Fails with a readable message unless `actual == expected`.

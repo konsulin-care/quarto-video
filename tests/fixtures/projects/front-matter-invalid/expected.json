@@ -1,0 +1,26 @@
+[
+  {
+    "severity": "error",
+    "code": "E_SETTING_INVALID",
+    "message": "video.height must be even for H.264, got 1081",
+    "file": "index.qmd",
+    "property": "video.height",
+    "suggestion": "Use an even number, for example 1080."
+  },
+  {
+    "severity": "error",
+    "code": "E_SETTING_INVALID",
+    "message": "video.fps must be a whole number of at least 1, got \"0\"",
+    "file": "index.qmd",
+    "property": "video.fps",
+    "suggestion": "Use a whole number of at least 1, for example 30."
+  },
+  {
+    "severity": "error",
+    "code": "E_DURATION_RANGE",
+    "message": "The default scene duration \"-1s\" (defaults.scene.duration), which must be greater than zero.",
+    "file": "index.qmd",
+    "property": "defaults.scene.duration",
+    "suggestion": "Use a positive duration, for example defaults.scene.duration: 1s."
+  }
+]

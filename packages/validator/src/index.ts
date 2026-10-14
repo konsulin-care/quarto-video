@@ -1,1 +1,14 @@
 export const PACKAGE_NAME = "@quarto-video/validator";
+export { DIAGNOSTIC_CODES, hasErrors } from "./diagnostic.js";
+export type { Diagnostic, DiagnosticCode, Severity } from "./diagnostic.js";
+export { formatHuman, formatJson } from "./format.js";
+export { parseDiagnostics } from "./schema.js";
+export { checkManifest, runStages, schemaDiagnostic } from "./run.js";
+export type { AssetCheck, ManifestCheck } from "./run.js";
+export { checkContracts } from "./stages/contract.js";
+export { checkAssets } from "./stages/assets.js";
+export type { AssetRef } from "./stages/assets.js";
+export { checkOutput } from "./stages/output.js";
+export type { OutputFacts, VideoFacts } from "./stages/output.js";
+export { resolveAsset } from "./assets/resolve.js";
+export type { AssetResolution } from "./assets/resolve.js";

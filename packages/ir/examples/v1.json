@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0",
+  "type": "video",
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#10131C"
+  },
+  "generator": {
+    "extension": "0.1.0",
+    "cli": "0.0.0"
+  },
+  "scenes": [
+    {
+      "id": "scene-001",
+      "component": "title",
+      "durationFrames": 120,
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Why GPUs Matter"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 5
+      }
+    },
+    {
+      "id": "scene-002",
+      "component": "title",
+      "durationFrames": 120,
+      "transition": {
+        "name": "fade",
+        "durationFrames": 30
+      },
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Parallel work"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 11
+      }
+    },
+    {
+      "id": "scene-003",
+      "component": "title",
+      "durationFrames": 120,
+      "transition": {
+        "name": "fade",
+        "durationFrames": 30
+      },
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Memory bandwidth"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 17
+      }
+    }
+  ],
+  "timeline": {
+    "durationFrames": 300,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 90
+      },
+      {
+        "id": "scene-003",
+        "startFrame": 180
+      }
+    ]
+  }
+}

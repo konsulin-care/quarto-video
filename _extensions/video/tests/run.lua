@@ -7,9 +7,19 @@ package.path = root .. "?.lua;" .. package.path
 
 local SUITES = {
   "tests.test_scenes",
+  "tests.test_scene_ids",
+  "tests.test_content",
+  "tests.test_content_lines",
+  "tests.test_locate",
   "tests.test_duration",
-  "tests.test_settings",
+  "tests.test_duration_vectors",
+  "tests.test_config",
+  "tests.test_config_keys",
   "tests.test_json",
+  "tests.test_diagnostics",
+  "tests.test_transitions",
+  "tests.test_timeline",
+  "tests.test_generator",
 }
 
 local passed, failed = 0, 0

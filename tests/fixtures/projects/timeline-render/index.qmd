@@ -1,0 +1,18 @@
+---
+video:
+  width: 320
+  height: 180
+  fps: 30
+---
+
+::: {.scene component="title" duration="1s" #one}
+One.
+:::
+
+::: {.scene component="title" duration="1s" transition="fade" transitionDuration="500ms" #two}
+Two.
+:::
+
+::: {.scene component="title" duration="1s" transition="fade" transitionDuration="500ms" #three}
+Three.
+:::

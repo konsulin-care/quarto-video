@@ -1,0 +1,15 @@
+---
+title: "Front matter invalid"
+video:
+  width: 1920
+  height: 1081
+  fps: 0
+  background: "#10131C"
+defaults:
+  scene:
+    duration: -1s
+---
+
+::: {.scene component="title"}
+No duration, and the default is invalid.
+:::

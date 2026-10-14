@@ -1,7 +1,11 @@
-// Types for IR 0.1 (schema/ir-0.1.json). Hand-written; tests check them
-// against examples/minimal.json. Frames are integers; no renderer types.
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3 and 1.0 (ir-1.0.json).
+// Hand-written; tests check them against the schemas and examples. Frames are
+// integers; no renderer types.
+import type { IrContentV02 } from "./content-types.js";
 
-export type SchemaVersion = "0.1";
+export type * from "./content-types.js";
+
+export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0";
 
 export interface IrSettings {
   width: number;
@@ -11,34 +15,100 @@ export interface IrSettings {
   background: string;
 }
 
-export interface IrContent {
+/** IR 0.1 scene content: one flat text. */
+export interface IrContentV01 {
   text: string;
 }
 
 export interface IrSource {
   /** Project-relative path. */
   file: string;
+  /** 1-based line of the scene's opening fence in `file`; absent when unknown. */
+  line?: number;
 }
 
-export interface IrScene {
+interface IrSceneBase {
   id: string;
   component: string;
   durationFrames: number;
-  content: IrContent;
   source: IrSource;
 }
 
-export interface IrVideo {
-  schemaVersion: SchemaVersion;
+export interface IrSceneV01 extends IrSceneBase {
+  content: IrContentV01;
+}
+
+export interface IrSceneV02 extends IrSceneBase {
+  content: IrContentV02;
+}
+
+/** Incoming transition of a scene (ADR-0005). Absent on the first scene. */
+export interface IrTransition {
+  /** A transition name from the registry, e.g. "cut" or "fade". */
+  name: string;
+  /** Frames the scene overlaps the previous one; 0 for "cut". */
+  durationFrames: number;
+}
+
+export interface IrSceneV03 extends IrSceneV02 {
+  transition?: IrTransition;
+}
+
+/** Resolved timeline (ADR-0005): where each scene starts and the total length. */
+export interface IrTimeline {
+  durationFrames: number;
+  /** Same order as `scenes`. */
+  scenes: { id: string; startFrame: number }[];
+}
+
+export interface IrVideoV01 {
+  schemaVersion: "0.1";
   type: "video";
   settings: IrSettings;
-  scenes: IrScene[];
+  scenes: IrSceneV01[];
 }
+
+export interface IrVideoV02 {
+  schemaVersion: "0.2";
+  type: "video";
+  settings: IrSettings;
+  scenes: IrSceneV02[];
+}
+
+export interface IrVideoV03 {
+  schemaVersion: "0.3";
+  type: "video";
+  settings: IrSettings;
+  scenes: IrSceneV03[];
+  timeline: IrTimeline;
+}
+
+/** Versions that the filter writes in (ADR-0007): the build that made the manifest. */
+export interface IrGenerator {
+  /** Version of the Quarto extension (`_extensions/video`), semver. */
+  extension: string;
+  /** Version of the `video` CLI package, semver. */
+  cli: string;
+}
+
+/** IR 1.0 (ADR-0007): IR 0.3 plus the required `generator` block. */
+export interface IrVideoV10 extends Omit<IrVideoV03, "schemaVersion"> {
+  schemaVersion: "1.0";
+  generator: IrGenerator;
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3 and 1.0). */
+export type IrVideoWithTimeline = IrVideoV03 | IrVideoV10;
+
+/** Any supported manifest. Renderers read every version through `plainText`. */
+export type IrVideo = IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {
   path: string;
   message: string;
+  /** A diagnostic code when the error has one, e.g. E_IR_UNSUPPORTED_VERSION. */
+  code?: "E_IR_UNSUPPORTED_VERSION";
 }
 
 export interface IrValid {

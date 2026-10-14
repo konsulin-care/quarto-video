@@ -1,0 +1,17 @@
+{
+  "durationFrames": 60,
+  "scenes": [
+    {
+      "id": "one",
+      "startFrame": 0
+    },
+    {
+      "id": "two",
+      "startFrame": 15
+    },
+    {
+      "id": "three",
+      "startFrame": 30
+    }
+  ]
+}
