@@ -55,11 +55,15 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 
 ## Commands
 - `mise install && mise run setup` — pinned tools + git hooks (ADR-0010).
-- `mise run check` — line limit, format, lint, typecheck on all code.
-- `mise run test` — all test suites. Narrow with
+- `npm ci` — install workspace dependencies from `package-lock.json` (ADR-0001).
+- `mise run check` — `scripts/check.sh --all`: line limit, format, lint, typecheck.
+- `mise run test` — `scripts/test.sh --all`: all suites. Narrow with
   `scripts/test.sh --all --suite scripts|unit|lua|integration|visual`.
-- npm scripts arrive with task 001; `video validate|render` with 005/006.
-Do not invent commands that are not listed here or in a directory README.
+- `npm run check` — format:check, lint, typecheck, unit (root).
+- `npm run format` · `npm run lint` · `npm run typecheck` · `npm run test`.
+- `npm run typecheck -w @quarto-video/ir` — one workspace.
+- `npm run test:lua|test:integration|test:visual` — placeholders until tasks 003, 005, 020.
+- `video validate|render` arrive with 005/006.
 
 ## Working rules
 - One task per change set. Commits use Conventional Commits

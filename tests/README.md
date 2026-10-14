@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: Empty — harness built by tasks 001, 003, 005, 020.
+Status: Placeholders (task 001): `npm run test:lua|test:integration|test:visual` print "no tests yet". Harness built by tasks 003, 005, 020.
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 

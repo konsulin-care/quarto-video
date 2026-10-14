@@ -1,5 +1,5 @@
 # docs/decisions/ — Architecture Decision Records
-Status: Template only. ADRs are written by the tasks listed below.
+Status: ADR-0010 and ADR-0001 accepted. Other ADRs are written by the tasks listed below.
 
 ## Purpose
 Record every decision that shapes parsing, timing, portability, or the
