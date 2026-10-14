@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: Diagnostics model and formatters (task 008); content codes (012); stage runner with stage 2 IR schema and component contracts (014); stage 4 transitions and timeline (015, ADR-0005). Asset and output checks: tasks 016, 018, 037–038.
+Status: Diagnostics model and formatters (task 008); content codes (012); stage runner with stage 2 IR schema and component contracts (014); stage 4 transitions and timeline (015, ADR-0005); stage 3 asset references (016, ADR-0006). Output check: task 018; media metadata: tasks 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -14,11 +14,12 @@ form humans and AI agents can act on (PRD §9).
   schema, then the component contracts (`src/stages/contract.ts`: component,
   slots, block kinds, duration; ADR-0004). Stage 4 is the timeline
   (`src/stages/timeline.ts`: transition names, lengths, overlaps, and that the
-  manifest's timeline is the resolved one; ADR-0005). Stage 3 assets and 6 output
-  check come later. Stage 1 is the Lua filter; stage 5 preflight lives in the CLI.
+  manifest's timeline is the resolved one; ADR-0005). Stage 3 (`src/assets/`,
+  `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
+  carries none yet, so `video validate` does not run it. Stage 6 output check comes later. Stage 1 is the Lua filter; stage 5 preflight lives in the CLI.
 - Depends on `@quarto-video/ir` (IR types, schema, `resolveTimeline`) and `@quarto-video/registry`
   (contracts). Nothing depends on it except the CLI.
-- Asset resolution and the security boundary (ADR-0006).
+- Asset resolution and the security boundary (ADR-0006): `src/assets/syntax.ts` (the text of a path), `src/assets/resolve.ts` (the file system: exact names, realpath inside the root).
 - Media metadata via `ffprobe`, cached in `.video-build/media.json` (task 037).
 
 ## Does not own
@@ -71,6 +72,12 @@ form humans and AI agents can act on (PRD §9).
 | `E_TRANSITION_TOO_LONG` | 4 timeline | A transition is longer than either scene it joins (equal is allowed) | 015 |
 | `E_TRANSITION_OVERLAP` | 4 timeline | The incoming and outgoing transitions of one scene, each of which fits, overlap inside it | 015 |
 | `E_TIMELINE_MISMATCH` | 4 timeline | The manifest's `timeline` is not the one its scenes resolve to (a filter bug; `packages/ir/src/timeline.ts`) | 015 |
+| `E_ASSET_MISSING` | 3 assets | An asset path names no file under the project root, or a directory; each segment matches exactly, case included. The message names the scene (ADR-0006) | 016 |
+| `E_ASSET_ABSOLUTE` | 3 assets | An asset path starts with `/` or `\`, or a drive letter (`C:`). Its text is not printed | 016 |
+| `E_ASSET_ESCAPE` | 3 assets | An asset path has a `..` segment, so it is outside the project root, even when it would stay inside | 016 |
+| `E_ASSET_SYMLINK` | 3 assets | An asset resolves, through a symlink, to a file outside the project root. The target is not printed | 016 |
+| `E_ASSET_URL` | 3 assets | An asset path has a URL scheme (`https:`, `file:`, `data:`, ...). Remote assets are not supported | 016 |
+| `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
 
 `E_SETTING_MISSING` (task 008) was retired in task 010: no setting is required
@@ -85,6 +92,7 @@ not be reused.
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`
   (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure).
+- Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects, symlinks created per test), `test/assets-stage.test.ts` (diagnostic shape, runner), `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`).
 - Fixture-driven tests: `tests/integration/validate.test.ts`, fixtures in
   `tests/fixtures/projects/diagnostics-*`.
 

@@ -1,0 +1,25 @@
+{
+  "accepted": [
+    { "path": "assets/a b.png", "normalised": "assets/a b.png" },
+    { "path": "assets/ünïcode.png", "normalised": "assets/ünïcode.png" },
+    { "path": "./assets/x.png", "normalised": "assets/x.png" },
+    { "path": "assets//x.png", "normalised": "assets/x.png" }
+  ],
+  "rejected": [
+    { "path": "assets/demo.png", "code": "E_ASSET_MISSING" },
+    { "path": "assets/X.png", "code": "E_ASSET_MISSING" },
+    { "path": "assets/u\u0308ni\u0308code.png", "code": "E_ASSET_MISSING" },
+    { "path": "assets", "code": "E_ASSET_MISSING" },
+    { "path": "../../secret.png", "code": "E_ASSET_ESCAPE" },
+    { "path": "assets/../x.png", "code": "E_ASSET_ESCAPE" },
+    { "path": "/etc/passwd", "code": "E_ASSET_ABSOLUTE" },
+    { "path": "C:/secret.png", "code": "E_ASSET_ABSOLUTE" },
+    { "path": "https://example.com/x.png", "code": "E_ASSET_URL" },
+    { "path": "file:///etc/passwd", "code": "E_ASSET_URL" },
+    { "path": "data:image/png;base64,AA", "code": "E_ASSET_URL" },
+    { "path": "assets\\x.png", "code": "E_ASSET_INVALID" },
+    { "path": "assets/a%20b.png", "code": "E_ASSET_INVALID" },
+    { "path": "assets/", "code": "E_ASSET_INVALID" },
+    { "path": "", "code": "E_ASSET_INVALID" }
+  ]
+}

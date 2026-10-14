@@ -1,7 +1,8 @@
 // The stage runner for a parsed manifest (PRD §9.1). Stage 2 is the IR schema,
-// then the component contracts. A stage that reports an error stops the run:
-// later stages never see a manifest that is not valid yet. Stage 1 (the Lua
-// filter) and stage 5 (preflight) run in the CLI.
+// then the component contracts; stage 3 is the asset references (ADR-0006);
+// stage 4 is the timeline. A stage that reports an error stops the run: later
+// stages never see a manifest that is not valid yet. Stage 1 (the Lua filter)
+// and stage 5 (preflight) run in the CLI.
 import {
   validateIr,
   type IrError,
@@ -15,8 +16,15 @@ import {
   type ComponentContract,
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
+import { checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { checkTimeline } from "./stages/timeline.js";
+
+/** Stage 3 input: the asset references to check, and the absolute project root they resolve in. */
+export interface AssetCheck {
+  root: string;
+  refs: readonly AssetRef[];
+}
 
 export interface ManifestCheck {
   /** The manifest when it passed every stage; null when any stage failed. */
@@ -50,15 +58,17 @@ export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
 }
 
 /**
- * Stages 2 and 4 for the manifest the filter wrote (`file`, project-relative).
+ * Stages 2 to 4 for the manifest the filter wrote (`file`, project-relative).
  * Contracts read the slots of IR 0.2 or 0.3 (ADR-0004); a 0.1 manifest is an
- * error. Stage 4 checks transitions and the timeline (ADR-0005; 0.3 only).
+ * error. Stage 3 checks `assets` when given (ADR-0006). Stage 4 checks
+ * transitions and the timeline (ADR-0005; 0.3 only).
  */
 export function checkManifest(
   json: unknown,
   file: string,
   components: readonly ComponentContract[] = listComponents(),
   transitions: readonly string[] = listTransitions(),
+  assets?: AssetCheck,
 ): ManifestCheck {
   const state: { ir?: IrVideoV02 | IrVideoV03 } = {};
   const diagnostics = runStages([
@@ -86,6 +96,7 @@ export function checkManifest(
       const ir = state.ir;
       return ir === undefined ? [] : checkContracts(ir, components);
     },
+    () => (assets === undefined ? [] : checkAssets(assets.refs, assets.root)),
     () => {
       const ir = state.ir;
       return ir === undefined ? [] : checkTimeline(ir, transitions);
