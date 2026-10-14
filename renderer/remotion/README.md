@@ -63,6 +63,7 @@ add it to `src/registry-map.ts`. 3. Add visual cases in `tests/visual/cases/`.
 - Integration (`npm run test:integration`): renders `packages/ir/examples/minimal.json`
   shrunk to 640×360 and 1 s, and a two-scene IR; ffprobe checks size, 30 fps and
   frame count = sum of `durationFrames`.
+- Parity (root `npm run check`): `test/registry-parity.test.ts` checks that `src/registry-map.ts` maps exactly the registry's component ids (task 013). The only runtime-free use of `@quarto-video/registry` here; `src` never imports it.
 - Not yet covered: `tsc` does not check `tests/integration/` (no tsconfig there).
 
 ## Related

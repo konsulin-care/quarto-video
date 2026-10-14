@@ -1,5 +1,5 @@
 # packages/cli/ — the `video` command
-Status: `video validate` (task 005) and `video render` (task 006) are real, both with `--json` (task 008). `components` and `doctor` arrive with tasks 013 and 018.
+Status: `video validate` (task 005), `video render` (task 006, both with `--json`, task 008) and `video components` (task 013) are real. `doctor` arrives with task 018.
 Run from the repo root (after `npm ci`): `npx video render videos/hello`. From any other directory: `npm exec --prefix <repo> -- video render <path>`. Tests: `npm run test:integration` (spawns the bin); unit tests run from the root with `npm run test`.
 
 ## Purpose
@@ -11,17 +11,19 @@ filter, validate, render, and report.
 | ------- | ---- | --------- |
 | `video validate <path> [--print-ir]` or `[--json]` | 005, 008 | Stages 1–2 (filter, IR schema). Done |
 | `video render <path> [--json]` | 006, 008 | Stages 1–2, then render to `video.output`. Done |
-| `video components [--json]` | 013 | List registered components |
+| `video components [--json]` | 013 | List registry component contracts. Done |
 | `video doctor` | 018 | Environment and version report |
 
 `--print-ir` and `--json` cannot be combined (exit 2). `--output <path>` is not implemented yet.
 Use `video.output` in front matter to choose the destination.
 
 ## Entry point
-- `bin/video.mjs` is the `video` bin. It registers tsx (root devDependency,
-  ADR-0001) and runs `src/cli.ts`, so it works from any working directory.
-- `npx video` only resolves inside the repo: outside it, `npx` would fetch an
-  unrelated npm package named `video`. Use `npm exec --prefix` instead.
+- `bin/video.mjs` registers tsx (ADR-0001) and runs `src/cli.ts` from any cwd.
+  `npx video` resolves only inside the repo; elsewhere use `npm exec --prefix <repo> -- video`.
+
+## `components` output (`src/commands/components.ts`)
+- Table on stdout: `ID VERSION DURATION SLOTS PROPS`; durations in author syntax (`1s-30s`). `--json`: a JSON array of the full contracts.
+- Needs no project. Exit 0; exit 2 for extra arguments, unknown flags or a broken registry (`video: <message>`).
 
 ## Project resolution (`src/project.ts`)
 - `<path>` is a project dir or a `.qmd` file. `<dir>` → `<dir>/index.qmd`; `<file.qmd>` → its parent is the project root.
@@ -86,6 +88,7 @@ Environment:
 - Show progress during render (percent of encoded frames).
 
 ## Testing
+- `tests/integration/components.test.ts` (table, `--json`, usage errors) and `test/components.test.ts` (table layout).
 - `tests/integration/validate.test.ts` (validate, through the bin),
   `tests/integration/validate-diagnostics.test.ts` (one fixture per error family, `--json`),
   and `tests/integration/cli-render.test.ts` (render, through the bin, node:test under
@@ -94,4 +97,4 @@ Environment:
   `.qmd` input, and cwd independence. Fixtures are copied to a scratch dir.
 
 ## Related
-Tasks 005–008, 013, 018, 048. PRD §4.2, §9, §11.2, §11.3.
+Tasks 005–008, 013, 018, 048. PRD §4.2, §5.5, §9, §11.2, §11.3.

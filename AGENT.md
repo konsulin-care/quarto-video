@@ -67,6 +67,7 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the content nodes test (task 012), the `video` CLI tests (validate: 005; render: 006) and `quarto render` through the post-render hook (007a).
 - `npm run test:visual` — placeholder until task 020.
 - `npx video validate <path> [--print-ir] [--json]` — filter + IR check; exit 0/1/2 (tasks 005, 008). From another directory: `npm exec --prefix <repo> -- video validate <path>`.
+- `npx video components [--json]` — list the component contracts: id, version, slots, props, duration (task 013).
 - `npx video render <path> [--json]` — validate, render to `video.output` (tasks 006, 008). Progress on stdout; exit 0/1/2 as for validate. Set `QV_BROWSER_EXECUTABLE` to a Chromium headless shell.
 - `quarto render videos/hello/index.qmd` (or `quarto render videos/hello`) — writes `videos/hello/output.mp4` through the project post-render hook (task 007a, ADR-0002). Needs the pinned Quarto and `QV_BROWSER_EXECUTABLE`; a failing render exits non-zero.
 

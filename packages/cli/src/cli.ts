@@ -1,13 +1,15 @@
 // Entry point of the `video` command (packages/cli/README.md).
 // Usage errors exit 2; the commands themselves set their own exit codes.
 import { EXIT_USAGE } from "./exit-codes.js";
+import { runComponents } from "./commands/components.js";
 import { runRender } from "./commands/render.js";
 import { runValidate } from "./commands/validate.js";
 import { selectRenderer } from "./renderer-port.js";
 
 const USAGE =
   "usage: video validate <path> [--print-ir | --json]\n" +
-  "       video render <path> [--json]\n";
+  "       video render <path> [--json]\n" +
+  "       video components [--json]\n";
 
 async function renderCommand(args: string[]): Promise<number> {
   const flags = args.filter((arg) => arg.startsWith("-"));
@@ -36,6 +38,14 @@ async function renderCommand(args: string[]): Promise<number> {
   );
 }
 
+function componentsCommand(args: string[]): number {
+  if (args.some((arg) => arg !== "--json")) {
+    process.stderr.write(USAGE);
+    return EXIT_USAGE;
+  }
+  return runComponents({ json: args.includes("--json") });
+}
+
 async function main(argv: string[]): Promise<number> {
   const [command, ...rest] = argv;
   if (command === "--help" || command === "-h") {
@@ -43,6 +53,7 @@ async function main(argv: string[]): Promise<number> {
     return 0;
   }
   if (command === "render") return renderCommand(rest);
+  if (command === "components") return componentsCommand(rest);
   if (command !== "validate") {
     process.stderr.write(USAGE);
     return EXIT_USAGE;
