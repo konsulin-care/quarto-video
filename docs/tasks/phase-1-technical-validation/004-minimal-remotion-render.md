@@ -1,6 +1,6 @@
 # 004 — Minimal Remotion render of IR
 
-Phase 1 · Status: todo · Depends on: 002 · PRD: §8.4, §11.1 · ADR: reads 0001
+Phase 1 · Status: in-progress · Depends on: 002 · PRD: §8.4, §11.1 · ADR: reads 0001
 
 ## Goal
 A Remotion package that renders any valid IR v0.1 manifest to an MP4 whose
