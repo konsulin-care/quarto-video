@@ -51,7 +51,7 @@ renderer must require only the IR and the registry.
 | Build info          | `videos/<name>/.video-build/build-info.json` | no        |
 | Output video        | `videos/<name>/<video.output>` (`output.mp4`)| no        |
 
-Exact cleanup policy is defined by task 006 and recorded in the CLI README.
+Cleanup policy (task 006): `packages/cli/README.md`.
 
 ## Cross-cutting rules
 - Paths: every asset path is project-relative; resolution and the security
