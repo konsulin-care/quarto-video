@@ -29,6 +29,8 @@ Why this form:
 - Plain Pandoc flags and no Quarto project or format resolution: deterministic, no dependency on undocumented Quarto internals (PRD §4.3).
 - `quarto render index.qmd` also works when the document lists `filters: [video]`. Verified with 1.10.19 on a scratch copy only. Quarto gives Pandoc a temporary copy of the file, so the filter takes the project path from `quarto.doc.input_file` and falls back to Pandoc's input list. Whether `quarto render` is a supported entry point is for ADR-0002 (task 007); until then the CLI is the reference.
 
+`video validate` runs this same invocation (`packages/cli/src/filter.ts`).
+
 Writes: only `<project>/.video-build/manifest.json`. A run first deletes any old manifest, so a rejected document never leaves a stale one.
 
 ## DSL reference

@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: `npm run test:lua` and `npm run test:integration` are real. `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell) and the minimal-filter golden test (task 003), both through the pinned Quarto. `test:visual` is still a placeholder until task 020; the CLI harness arrives with task 005.
+Status: `npm run test:lua` and `npm run test:integration` are real. `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell) and the minimal-filter golden test (task 003), both through the pinned Quarto. `test:visual` is still a placeholder until task 020; the CLI tests are `tests/integration/validate.test.ts` (task 005).
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 
