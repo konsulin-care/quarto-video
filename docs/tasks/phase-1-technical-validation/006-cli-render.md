@@ -1,6 +1,6 @@
 # 006 — `video render`
 
-Phase 1 · Status: todo · Depends on: 004, 005 · PRD: §4.2, §11.2, §11.3 · ADR: —
+Phase 1 · Status: in-progress · Depends on: 004, 005 · PRD: §4.2, §11.2, §11.3 · ADR: —
 
 ## Goal
 `video render <path>` validates, renders and writes `video.output`
