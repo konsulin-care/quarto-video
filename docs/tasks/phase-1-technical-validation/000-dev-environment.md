@@ -27,8 +27,8 @@ hooks and CI before review.
 
 ## Definition of done
 Automated:
-- [ ] `mise run check` and `mise run test` exit 0 (TS/Lua steps skip).
-- [ ] `scripts/tests/run.sh`: 300-line file passes, 301-line fails,
+- [x] `mise run check` and `mise run test` exit 0 (TS/Lua steps skip).
+- [x] `scripts/tests/run.sh`: 300-line file passes, 301-line fails,
       non-code files ignored, missing runner skips.
 - [ ] CI workflow passes on the branch.
 
@@ -43,5 +43,15 @@ Human check:
 - ffmpeg uses `conda:ffmpeg` (prebuilt binaries for Linux and macOS).
 - shfmt/stylua use explicit `aqua:` names: Renovate does not know the
   short registry names.
+- CI runs on PRs and `main`; the CI box is ticked, and Status set to
+  `done`, after the first green run on the PR for this branch.
 
 ## Completion log
+- 2026-10-14: mise.toml, renovate.json, lefthook.yml, scripts/ gates,
+  CI workflow, ADR-0010, docs/testing.md. Tests: `scripts/tests/` (16
+  cases: line limit, scoping, skip, fail-fast, suite selection). Verified
+  locally: Renovate extracts all 8 mise tools; actionlint clean; hooks
+  reject a 301-line file and skip docs-only commits. GitHub-hosted tools
+  could not be downloaded in the authoring sandbox, so `mise install` of
+  quarto/lefthook/linters is first verified by CI. Follow-up: install the
+  Renovate GitHub App; make "Check and test" a required status check.

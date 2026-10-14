@@ -1,0 +1,40 @@
+# Full check and test suite (ADR-0010). Same scripts as the git hooks,
+# over all files. Tool versions come from mise.toml.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-and-test:
+    name: Check and test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install pinned tools
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          install: true
+          cache: true
+
+      - name: Install npm dependencies
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
+
+      - name: Check
+        run: mise run check
+
+      - name: Test
+        run: mise run test
