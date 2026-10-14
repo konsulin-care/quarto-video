@@ -1,6 +1,6 @@
 # 005 — `video validate`
 
-Phase 1 · Status: in-progress · Depends on: 003 · PRD: §4.2, §9.1 · ADR: —
+Phase 1 · Status: done · Depends on: 003 · PRD: §4.2, §9.1 · ADR: —
 
 ## Goal
 `video validate <path>` resolves a project from a directory or a `.qmd`
@@ -35,5 +35,26 @@ Human check:
 3. `npx video validate does/not/exist` → clear error, `echo $?` → 2.
 
 ## Notes
+- Schema-invalid fixture is `tests/fixtures/projects/cli-validate-invalid-ir`
+  (a blank scene body, IR error `/scenes/0/content/text`). `duration="0s"` is
+  rejected by the Lua filter before IR (exit 1, filter message), so it is not used.
+- `--print-ir`: the OK line moves to stderr; an IR that fails the schema prints
+  nothing on stdout (chosen: conservative, no unvalidated IR on stdout).
+- Filter rejections print `<document>: <message>`; Quarto's own exit code
+  (83 for Lua errors) is not propagated, the CLI exits 1.
+- `bin/video.mjs` loads TypeScript through tsx: a `#!/usr/bin/env tsx` shebang
+  fails outside `node_modules/.bin`, and `node --import tsx` resolves from cwd.
+- `npx video` resolves only inside the repo; use `npm exec --prefix <repo> -- video`.
 
 ## Completion log
+- 2026-10-14: `video validate <path> [--print-ir]` in packages/cli: project
+  resolution (`src/project.ts`), filter run via `quarto pandoc` (`src/filter.ts`),
+  `validateIr`, exit codes 0/1/2. Summary `OK <name> (<n> scenes, <frames> frames)`.
+  Tests: `tests/integration/validate.test.ts` (12 cases: dir vs file IR identity,
+  cwd independence, exit 2 paths, exit 1 filter and IR errors, `--print-ir`).
+  Gates: `npm run check|test|test:lua|test:integration`, `scripts/check.sh --all`,
+  `scripts/test.sh --all` exit 0. A fresh `npm ci` links the `video` bin.
+- Follow-ups: CI not verified. Human check 2 unverified in its literal form
+  (`cd /tmp && npx video ...`): npx there would fetch an unrelated package; checked
+  instead with `npm exec --prefix <repo> -- video validate <abs .qmd>` (OK, exit 0).
+  Checks 1 and 3 run from the repo root as written (OK, exit 0 and exit 2).
