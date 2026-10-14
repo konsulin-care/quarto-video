@@ -1,16 +1,23 @@
 -- Builds the Video IR 0.1 manifest and writes it to
--- <project>/.video-build/manifest.json. This is the only file the filter
--- writes, and it never writes anywhere else (see _extensions/video/README.md).
+-- <project>/.video-build/manifest.json, plus the render settings that stay
+-- outside the IR (<project>/.video-build/render.json). These are the only
+-- files the filter writes (see _extensions/video/README.md).
 local json = require("lib.json")
 
 local M = {}
 
 local BUILD_DIR = ".video-build"
 local FILE_NAME = "manifest.json"
+local RENDER_FILE = "render.json"
 
 --- Path of the manifest for a project directory.
 function M.path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, FILE_NAME })
+end
+
+--- Path of the render settings file (container settings, not IR; PRD §5.2).
+function M.render_path(project_dir)
+  return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
 --- Assembles the IR table. Field names follow schema/ir-0.1.json.

@@ -27,6 +27,31 @@ local function background(video)
   return text
 end
 
+local DEFAULT_OUTPUT = "output.mp4"
+
+--- Returns video.output (default "output.mp4"): a path relative to the project
+--- root that ends in .mp4. Absolute paths and ".." segments are filter errors.
+function M.output(meta)
+  local video = meta.video
+  if video == nil or video.output == nil then
+    return DEFAULT_OUTPUT
+  end
+  local text = pandoc.utils.stringify(video.output)
+  if text == "" then
+    error("video.output must not be empty", 0)
+  end
+  if text:match("^[/\\]") or text:match("^%a:") then
+    error(string.format('video.output must be relative to the project, got "%s"', text), 0)
+  end
+  if ("/" .. text:gsub("\\", "/") .. "/"):find("/%.%./") then
+    error(string.format('video.output must not contain "..", got "%s"', text), 0)
+  end
+  if not text:lower():match("%.mp4$") then
+    error(string.format('video.output must end in .mp4, got "%s"', text), 0)
+  end
+  return text
+end
+
 --- Returns { width, height, fps, background } from document metadata.
 function M.read(meta)
   local video = meta.video

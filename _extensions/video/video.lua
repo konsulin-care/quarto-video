@@ -30,9 +30,13 @@ function Pandoc(doc)
   local input = source_path()
   local project_dir = pandoc.path.directory(input)
   local path = manifest.path(project_dir)
+  local render_path = manifest.render_path(project_dir)
 
   manifest.remove(path)
+  manifest.remove(render_path)
   local video = settings.read(doc.meta)
+  local output = settings.output(doc.meta)
   local list = scenes.collect(doc, video.fps)
   manifest.write(path, manifest.build(video, list, pandoc.path.filename(input)))
+  manifest.write(render_path, { output = output })
 end

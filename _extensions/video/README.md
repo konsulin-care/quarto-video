@@ -1,12 +1,12 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest. Defaults (010), source lines (011), structured content (012), diagnostics (008) and the full duration parser (009) are not done.
+Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest; `video.output` (task 006). Defaults (010), source lines (011), structured content (012), diagnostics (008) and the full duration parser (009) are not done.
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `settings.lua` (front matter), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"` → frames), `manifest.lua` (IR table, JSON file), `json.lua` (deterministic encoder).
+- `lib/`: `settings.lua` (front matter, `video.output`), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"` → frames), `manifest.lua` (IR table, JSON file), `json.lua` (deterministic encoder).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module).
 
 ## Does not own
@@ -31,13 +31,14 @@ Why this form:
 
 `video validate` runs this same invocation (`packages/cli/src/filter.ts`).
 
-Writes: only `<project>/.video-build/manifest.json`. A run first deletes any old manifest, so a rejected document never leaves a stale one.
+Writes: only `<project>/.video-build/manifest.json` (the IR) and `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2). A run first deletes both old files, so a rejected document never leaves a stale one.
 
 ## DSL reference
 | Input | Scope | Type | Default | Since |
 | --- | --- | --- | --- | --- |
 | `video.width`, `video.height` | front matter | integer ≥ 1 | none, required | 003 |
 | `video.fps` | front matter | integer ≥ 1 | none, required | 003 |
+| `video.output` | front matter | relative path ending in `.mp4`, no `..` | `output.mp4` | 006 |
 | `video.background` | front matter | `"#RRGGBB"` | none, required | 003 |
 | `.scene` | top-level block | Div with class `scene` only | — | 003 |
 | `component` | `.scene` | non-empty string, not checked | none, required | 003 |

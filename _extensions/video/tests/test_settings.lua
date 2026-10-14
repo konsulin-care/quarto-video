@@ -47,4 +47,37 @@ return {
     end)
     h.contains(err, "video.background must be a hex colour", "error")
   end,
+
+  ["video.output defaults to output.mp4"] = function()
+    h.eq(settings.output(h.doc("", front(FULL)).meta), "output.mp4", "output")
+  end,
+
+  ["reads a relative video.output path"] = function()
+    local fields = FULL .. "  output: exports/clip.mp4\n"
+    h.eq(settings.output(h.doc("", front(fields)).meta), "exports/clip.mp4", "output")
+  end,
+
+  ["rejects an absolute video.output path"] = function()
+    local fields = FULL .. "  output: /tmp/clip.mp4\n"
+    local err = h.error_of(function()
+      settings.output(h.doc("", front(fields)).meta)
+    end)
+    h.contains(err, "video.output must be relative to the project", "error")
+  end,
+
+  ["rejects a video.output path that leaves the project"] = function()
+    local fields = FULL .. "  output: ../clip.mp4\n"
+    local err = h.error_of(function()
+      settings.output(h.doc("", front(fields)).meta)
+    end)
+    h.contains(err, 'video.output must not contain ".."', "error")
+  end,
+
+  ["rejects a video.output without the .mp4 extension"] = function()
+    local fields = FULL .. "  output: clip.mov\n"
+    local err = h.error_of(function()
+      settings.output(h.doc("", front(fields)).meta)
+    end)
+    h.contains(err, "video.output must end in .mp4", "error")
+  end,
 }
