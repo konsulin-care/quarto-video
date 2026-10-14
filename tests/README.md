@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: Placeholders (task 001): `npm run test:lua|test:integration|test:visual` print "no tests yet". Harness built by tasks 003, 005, 020.
+Status: `npm run test:lua` and `npm run test:integration` are real (task 003: Lua unit tests and the minimal-filter golden test, run through the pinned `quarto pandoc`). `test:visual` is still a placeholder; the CLI harness arrives with task 005 and visual tests with task 020.
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 
