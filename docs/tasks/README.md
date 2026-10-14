@@ -40,6 +40,7 @@ Sections: Goal, Scope (In/Out), Deliverables, Definition of done
 | 005 | `video validate`                       | 003      |
 | 006 | `video render`                         | 004, 005 |
 | 007 | Quarto-native spike + ADR-0002         | 006      |
+| 007a | Quarto render via post-render (ADR-0002) | 007    |
 | **Phase 2 — DSL and validation** |  |  |
 | 008 | Diagnostics model and reporter         | 005      |
 | 009 | Durations → frames + ADR-0003          | 008      |
