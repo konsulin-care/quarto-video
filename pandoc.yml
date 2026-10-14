@@ -1,0 +1,13 @@
+# selene standard library for Pandoc's Lua environment (see selene.toml).
+# Globals that Pandoc provides to filters and to `pandoc lua` scripts.
+globals:
+  pandoc:
+    any: true
+  PANDOC_STATE:
+    any: true
+  PANDOC_SCRIPT_FILE:
+    any: true
+  Pandoc:
+    any: true
+  quarto:
+    any: true

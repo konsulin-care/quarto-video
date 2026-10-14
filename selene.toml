@@ -1,0 +1,4 @@
+# selene settings for Lua code (ADR-0010). The code avoids Lua-5.4-only
+# library calls, so the Lua 5.1 standard library applies; pandoc.yml declares
+# the Pandoc globals the filter uses.
+std = "lua51+pandoc"
