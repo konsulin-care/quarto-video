@@ -95,6 +95,7 @@ export async function runRender(
     await renderer(manifestPath(project), temp, {
       browserExecutable: options.browserExecutable,
       onProgress: percentPrinter(),
+      theme: check.theme,
     });
     const found = checkOutput(
       check.ir,

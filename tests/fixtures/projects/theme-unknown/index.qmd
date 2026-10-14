@@ -1,0 +1,8 @@
+---
+title: "Unknown theme"
+theme: retro
+---
+
+::: {.scene component="title" duration="2s"}
+This document names a theme the registry does not have.
+:::

@@ -1,7 +1,7 @@
 -- Builds the Video IR 1.0 manifest and writes it to
 -- <project>/.video-build/manifest.json, plus the render settings that stay
--- outside the IR (<project>/.video-build/render.json). These are the only
--- files the filter writes (see _extensions/video/README.md).
+-- outside the IR (<project>/.video-build/render.json: output and theme name).
+-- These are the only files the filter writes (see _extensions/video/README.md).
 local json = require("lib.json")
 local timeline = require("lib.timeline")
 local generator = require("lib.generator")

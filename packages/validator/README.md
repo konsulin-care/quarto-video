@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); stage 6 output check (018). Media metadata: tasks 037–038.
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); stage 6 output check (018); theme name, stage 2 (019). Media metadata: tasks 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -18,9 +18,8 @@ form humans and AI agents can act on (PRD §9).
   `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
   carries none yet, so `video validate` does not run it. Stage 6 (`src/stages/output.ts`,
   `checkOutput`) judges the rendered file from facts the CLI probes. Stage 1 is the Lua
-  filter; stage 5 preflight is in the CLI.
-- Depends on `@quarto-video/ir` (IR types, schema, `resolveTimeline`) and `@quarto-video/registry`
-  (contracts). Nothing depends on it except the CLI.
+  filter; stage 5 preflight is in the CLI. `checkTheme` (`src/stages/theme.ts`) resolves the theme name (stage 2).
+- Depends on `@quarto-video/ir` and `@quarto-video/registry` (contracts, themes); nothing depends on it except the CLI.
 - Asset resolution and the security boundary (ADR-0006): `src/assets/syntax.ts` (the text of a path), `src/assets/resolve.ts` (the file system: exact names, realpath inside the root).
 - Media metadata via `ffprobe`, cached in `.video-build/media.json` (task 037).
 
@@ -65,6 +64,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
 | `E_DURATION_BOUNDS` | 2 contract | A scene's duration is outside the component's `duration` bounds (inclusive, in ms as in the contract) | 014 |
+| `E_THEME_UNKNOWN` | 2 contract | The document's `theme` is not a registered theme (`packages/registry/themes/`); the suggestion lists the available themes. A missing `theme` means `modern` | 019 |
 | `E_TRANSITION_UNKNOWN` | 1 filter, 4 timeline | A scene's `transition` is not a transition name (filter: the syntax); stage 4: not in the registry (`transitions.json`); the suggestion lists the known names | 015 |
 | `E_TRANSITION_DURATION` | 1 filter | A transition is missing its `transitionDuration`, a `cut` has one, or a `transitionDuration` has no transition (ADR-0005) | 015 |
 | `E_TRANSITION_FIRST_SCENE` | 1 filter, 4 timeline | The first scene has a transition with time in it; it has no earlier scene to overlap (ADR-0005) | 015 |
@@ -94,7 +94,7 @@ It is not emitted and must not be reused.
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`
   (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure).
 - Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects, symlinks created per test), `test/assets-stage.test.ts` (diagnostic shape, runner), `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`).
-- Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`).
+- Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`). Theme: `test/theme.test.ts`; `tests/integration/theme.test.ts`.
 
 ## Related
 Tasks 008, 011, 012, 014–018, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.

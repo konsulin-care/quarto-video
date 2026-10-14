@@ -24,7 +24,7 @@ quarto pandoc tests/fixtures/projects/minimal-filter/index.qmd \
 
 It writes `.video-build/manifest.json`; the `--to native` output is discarded. `quarto pandoc` runs the pinned Pandoc (ADR-0010) without project resolution (PRD §4.3). `video validate` runs this same invocation (`packages/cli/src/filter.ts`).
 
-Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three.
+Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>", "theme": "<name>"}`, `theme` only when set; settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three.
 
 ## Front matter settings (task 010)
 Every value that is present must be valid. Omitted values take the default. An empty `video:` block means all defaults.
@@ -34,16 +34,16 @@ Every value that is present must be valid. Omitted values take the default. An e
 | `video.width`, `video.height` | integer ≥ 1, even (H.264) | 1920, 1080 | no | Only the IR carries them. |
 | `video.fps` | integer ≥ 1 | 30 | no | Scene durations convert at this fps (ADR-0003). |
 | `video.output` | relative path ending `.mp4`, no `..` | `output.mp4` | no | `render.json`, not the IR. |
-| `video.background` | `"#RRGGBB"` | `"#000000"` | no | Black until a theme supplies a background (task 019). |
+| `video.background` | `"#RRGGBB"` | `"#000000"` | no | The canvas. A theme background is not the default yet (follow-up to task 019). |
 | `title` | text | none | no | Stored; not in the IR yet. |
-| `theme` | text | none | no | Stored; resolved by task 019. Absent means no theme yet. |
+| `theme` | text | none | no | Written to `render.json`; the validator resolves it (`E_THEME_UNKNOWN`, task 019). Absent means `modern`. |
 | `defaults.scene.duration` | `<n>s` or `<n>ms` (ADR-0003) | none | no | Applies to every `.scene` without `duration`. An explicit scene `duration` wins. |
 | `defaults.scene.transition` | transition name (`[a-z][a-z0-9-]*`) | none | no | Applies to every scene after the first that has no `transition`; a non-cut default needs `transitionDuration` on each scene it reaches. Registry check: validator stage 4. |
 
 Rules:
 - Unknown keys under `video` and `defaults` are `E_CONFIG_UNKNOWN_KEY`, with a "did you mean" suggestion when a known key is close. Top-level keys are shared with Quarto and are not checked here.
 - `codec` and `container` are rejected as not supported yet (PRD §5.2).
-- Settings the IR does not carry (`title`, `theme`) are validated here and stored until their tasks use them.
+- Settings the IR does not carry are validated here: `theme` goes to `render.json` for the validator, `title` is stored until task 024 uses it.
 - A scene without a duration and without a default is `E_SCENE_NO_DURATION`.
 
 ## Scenes and durations

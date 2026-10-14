@@ -36,9 +36,9 @@ Use `video.output` in front matter to choose the destination.
 - `--json`: the diagnostics as a JSON array on stdout, with nothing else (a valid project prints `[]`).
 
 ## `render` (`src/commands/render.ts`)
-1. Resolve the project and run stages 1–4 as `validate` (`src/check.ts`). A rejected project exits 1; the renderer is never called.
+1. Resolve the project and run stages 1–4 as `validate` (`src/check.ts`). Stage 2 also resolves the `theme` name from `render.json` (`E_THEME_UNKNOWN`, task 019). A rejected project exits 1; the renderer is never called.
 2. Preflight, stage 5 (`src/preflight.ts`): every tool from `detectTools` (`src/tools.ts`) must be ok (node, quarto, pandoc, remotion, browser, ffprobe); the output directory and `.video-build` must be writable; the output's filesystem needs at least 256 MiB free. Any problem: `video: <problem>` on stderr, exit 2, renderer not called.
-3. Render to `<root>/.video-build/render.partial.mp4` with `render()` from `@quarto-video/remotion`.
+3. Render to `<root>/.video-build/render.partial.mp4` with `render()` from `@quarto-video/remotion`, passing the resolved theme id.
 4. Stage 6 (`src/output-probe.ts`, `checkOutput`): ffprobe reads the temp file; its width, height, fps and frame count must equal the IR. A mismatch, a missing file or an unreadable one: the temp file is deleted, diagnostics are reported, exit 1, and `video.output` is untouched.
 5. On success, create the output's directory and rename the temp file to the output path.
 
@@ -78,7 +78,7 @@ Environment:
 
 ## Testing
 - Unit: `test/preflight.test.ts` (each preflight rule), `test/tools.test.ts`, `test/output-probe.test.ts`, `test/components.test.ts`.
-- Integration: `tests/integration/validate*.test.ts`, `contract.test.ts`, `cli-render.test.ts` (render, output size, fps, frames), `preflight-output.test.ts` (stages 5 and 6), `doctor.test.ts`, `components.test.ts`.
+- Integration: `tests/integration/validate*.test.ts`, `contract.test.ts`, `cli-render.test.ts` (render, output size, fps, frames), `preflight-output.test.ts` (stages 5 and 6), `doctor.test.ts`, `components.test.ts`, `theme.test.ts` (unknown theme: exit 1, no video).
 
 ## Related
 Tasks 005–008, 013, 018, 048. PRD §4.2, §5.5, §9, §11.2, §11.3.
