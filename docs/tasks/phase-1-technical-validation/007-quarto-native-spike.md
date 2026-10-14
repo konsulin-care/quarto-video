@@ -1,6 +1,6 @@
 # 007 — Quarto-native invocation spike
 
-Phase 1 · Status: todo · Depends on: 006 · PRD: §1.3, §4.3, §16, §18.1 · ADR: writes 0002
+Phase 1 · Status: in-progress · Depends on: 006 · PRD: §1.3, §4.3, §16, §18.1 · ADR: writes 0002
 
 ## Goal
 Find out, with evidence, whether `quarto render videos/hello/index.qmd` (and
