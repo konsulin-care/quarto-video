@@ -1,9 +1,12 @@
 # tests/ — integration, visual regression, fixtures
 Status: Empty — harness built by tasks 001, 003, 005, 020.
 
+What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
+
 ## Where tests live
 | Kind | Location | Command |
 | ---- | -------- | ------- |
+| Gate scripts | `scripts/tests/` | `scripts/test.sh --all --suite scripts` |
 | Unit (TS) | `packages/*/test/`, `renderer/remotion/test/` | `npm run check` |
 | Unit (Lua) | `_extensions/video/tests/` | `npm run test:lua` |
 | Integration | `tests/integration/` | `npm run test:integration` |

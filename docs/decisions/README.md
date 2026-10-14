@@ -31,6 +31,7 @@ Numbers follow task order. Each ADR is written by the task shown.
 | 0007 | IR/DSL versioning and migration policy           | §18.7   | 017  |
 | 0008 | Supported media formats                          | §18.8   | 037  |
 | 0009 | Audio architecture                               | §18.6   | 044  |
+| 0010 | Dev environment, hooks, CI, testing policy       | §11.1   | 000  |
 
 ## Rules for agents
 - If your task says "writes ADR-NNNN", the ADR must reach `accepted` (or be

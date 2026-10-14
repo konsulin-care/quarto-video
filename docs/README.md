@@ -9,6 +9,7 @@ Status: Planning docs in place; user-facing guides arrive in tasks 049–050.
 | docs/glossary.md             | Shared vocabulary                               | A term is ambiguous              |
 | docs/decisions/README.md     | ADR format and index                            | Your task references an ADR      |
 | docs/tasks/README.md         | Task lifecycle and index                        | Always, before starting work     |
+| docs/testing.md              | What needs tests, gates, how to test            | Before writing or changing code  |
 | docs/components/<id>.md      | Per-component reference (created by tasks 024+) | Authoring or changing a component|
 | docs/guides/                 | Human guides (created by tasks 049–050)         | Writing user-facing docs         |
 
@@ -19,7 +20,7 @@ contradicts a PRD requirement. If you find a contradiction, stop and flag it.
 
 ## Rules
 - `prd.md` is read-only for agents. Propose changes to a human.
-- `architecture.md`, `glossary.md` and everything under `tasks/` are agentic
+- `architecture.md`, `glossary.md`, `testing.md` and everything under `tasks/` are agentic
   docs: keep each file ≤ 100 lines, terse, and current.
 - When you introduce a new term, add it to `glossary.md` in the same change.
 - When a decision changes the architecture, update `architecture.md` and link
