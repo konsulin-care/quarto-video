@@ -48,8 +48,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_SCENE_NO_DURATION` | 1 filter | A `.scene` has no `duration` attribute | 008 |
 | `E_SCENE_NESTED` | 1 filter | A `.scene` is nested inside another block | 008 |
 | `E_SCENE_SHAPE` | 1 filter | A `.scene` has an identifier, an unknown class or an unknown attribute | 008 |
-| `E_DURATION_SYNTAX` | 1 filter | A `duration` is not whole seconds in the form `"<n>s"` | 008 |
-| `E_DURATION_RANGE` | 1 filter | A `duration` is below 1 second | 008 |
+| `E_DURATION_SYNTAX` | 1 filter | A `duration` is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 |
+| `E_DURATION_RANGE` | 1 filter | A `duration` is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails IR 0.1 (`message` gives the JSON path) | 008 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
 

@@ -182,7 +182,10 @@ describe("quarto render with the videos/hello post-render hook", () => {
         `${BIN_DIR}${delimiter}${process.env["PATH"] ?? ""}`,
       );
       assert.notEqual(run.status, 0, run.output);
-      assert.match(run.output, /duration "0s" must be at least 1s/);
+      assert.match(
+        run.output,
+        /Scene "scene-001" has duration "0s", which must be greater than zero/,
+      );
       assert.equal(existsSync(join(copy, "output.mp4")), false);
     },
   );

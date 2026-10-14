@@ -1,12 +1,12 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest; `video.output` (task 006); diagnostics with codes (task 008). Defaults (010), source lines (011), structured content (012) and the full duration parser (009) are not done.
+Status: Minimal filter (task 003): `.scene` Divs → IR 0.1 manifest; `video.output` (task 006); diagnostics with codes (task 008). Defaults (010), source lines (011) and structured content (012) are not done.
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `settings.lua` (front matter, `video.output`), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"` → frames), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
+- `lib/`: `settings.lua` (front matter, `video.output`), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
 ## Does not own
@@ -47,7 +47,7 @@ Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-
 | `video.background` | front matter | `"#RRGGBB"` | none, required | 003 |
 | `.scene` | top-level block | Div with class `scene` only | — | 003 |
 | `component` | `.scene` | non-empty string, not checked | none, required | 003 |
-| `duration` | `.scene` | `"<n>s"`, whole seconds ≥ 1 | none, required | 003 |
+| `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | none, required | 003 (form 009) |
 
 Rules:
 - Scenes are numbered `scene-001`, `scene-002`… in document order. A document with no scenes gives `"scenes": []`.
@@ -64,7 +64,7 @@ Rules:
 - Lua code must be pure: no `os.execute`, `io.popen`, network, or reading files other than the document being processed.
 - Attribute names are case-sensitive and passed through unchanged; unknown attributes are NOT dropped (they are errors here).
 - Keep the Pandoc dependency inside this directory. IR content nodes must not contain Pandoc type names (`Para`, `Str`, …).
-- Duration conversion must pass `packages/ir/test-vectors/durations.json` once task 009 adds it.
+- Duration conversion must pass `packages/ir/test-vectors/durations.json` (task 009, ADR-0003).
 
 ## Related
 Tasks 003, 007, 008–012, 015, 038. ADR-0002, 0003, 0004, 0005.

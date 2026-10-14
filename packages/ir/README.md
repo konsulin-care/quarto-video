@@ -1,5 +1,5 @@
 # packages/ir/ — Video IR schema, types, time rules
-Status: IR 0.1 schema, types, `validateIr()` and `ir:check` (task 002). Time rules, content, timeline and v1 freeze: tasks 009, 012, 015, 017.
+Status: IR 0.1 schema, types, `validateIr()` and `ir:check` (task 002); duration → frames rule and shared vectors (task 009, ADR-0003). Content, timeline and v1 freeze: tasks 012, 015, 017.
 Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video/ir -- <file.json>`; tests: root `npm run test`.
 
 ## Layout
@@ -10,9 +10,16 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 | `src/validate.ts` | `validateIr(json)`: ajv, all errors, JSON Pointer paths |
 | `src/check.ts` | File text → `OK` or `<path>: <message>` lines (pure) |
 | `src/cli.ts` | `ir:check` entry point (tsx); exit 0 valid, 1 otherwise |
-| `src/index.ts` | Package exports (`PACKAGE_NAME`, `validateIr`, types) |
+| `src/duration.ts` | `durationToFrames(text, fps)`: `"<n>s"`/`"<n>ms"` → frames (ADR-0003) |
+| `src/index.ts` | Package exports (`PACKAGE_NAME`, `validateIr`, `durationToFrames`, types) |
+| `test-vectors/durations.json` | Shared duration cases, run by TS and Lua (`{ input, fps, frames \| errorCode }`) |
 | `examples/minimal.json` | One 4 s title scene at 30 fps; must validate |
-| `test/` | `validate` (paths per rule), `schema` (no renderer terms), `cli`, smoke |
+| `test/` | `validate` (paths per rule), `schema` (no renderer terms), `cli`, `duration` (vectors), smoke |
+
+## Decisions (task 009, ADR-0003)
+- Durations: `s` or `ms`, up to 3 decimals, exact in microseconds, rounded half up
+  to frames. Zero, negative, > 3600 s and < 1 frame are errors.
+- No built-in default duration; scenes must declare one until task 010.
 
 ## Decisions (task 002)
 - Validator: `ajv@8.20.0` (exact; runtime dependency of this package), draft

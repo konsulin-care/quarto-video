@@ -82,7 +82,7 @@ return {
   end,
 
   ["reports a bad duration with its scene id and component"] = function()
-    local body = '::: {.scene component="title" duration="1.5s"}\nX\n:::\n'
+    local body = '::: {.scene component="title" duration="2 seconds"}\nX\n:::\n'
     local diagnostic = h.code_is(collect_fn(body), "E_DURATION_SYNTAX", "duration")
     h.eq(diagnostic.sceneId, "scene-001", "sceneId")
     h.eq(diagnostic.component, "title", "component")

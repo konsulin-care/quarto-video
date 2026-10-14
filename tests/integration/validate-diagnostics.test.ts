@@ -7,6 +7,7 @@ import {
   copyFileSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -52,6 +53,18 @@ function copyProject(fixture: string, name: string = fixture): string {
   mkdirSync(root, { recursive: true });
   copyFileSync(join(FIXTURES, fixture, "index.qmd"), join(root, "index.qmd"));
   return root;
+}
+
+/** Sets the first scene's duration attribute in the copied project. */
+function setFirstDuration(project: string, duration: string): void {
+  const file = join(project, "index.qmd");
+  writeFileSync(
+    file,
+    readFileSync(file, "utf8").replace(
+      'duration="4s"',
+      `duration="${duration}"`,
+    ),
+  );
 }
 
 /** Parses `stdout` as a diagnostics array, which must validate against the schema. */
@@ -144,7 +157,7 @@ describe("video validate diagnostics", () => {
     assert.equal(run.status, 1);
     assert.equal(
       run.stderr,
-      'ERROR index.qmd\nduration "0s" must be at least 1s\nUse duration="1s" or longer.\n',
+      'ERROR index.qmd\nScene "scene-001" has duration "0s", which must be greater than zero.\nUse a positive duration, for example duration="1s".\n',
     );
   });
 
@@ -154,7 +167,7 @@ describe("video validate diagnostics", () => {
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      'ERROR index.qmd\nduration "0s" must be at least 1s\nUse duration="1s" or longer.\n',
+      'ERROR index.qmd\nScene "scene-001" has duration "0s", which must be greater than zero.\nUse a positive duration, for example duration="1s".\n',
     );
   });
 
@@ -165,6 +178,31 @@ describe("video validate diagnostics", () => {
     const [error] = diagnosticsOf(run.stdout);
     assert.equal(error?.code, "E_DURATION_RANGE");
     assert.equal(error?.sceneId, "scene-001");
+  });
+
+  it("writes the frames of a fractional duration to the IR", () => {
+    const project = copyProject("minimal-filter", "fractional-duration");
+    setFirstDuration(project, "1.5s");
+    const run = video(["validate", "--print-ir", project]);
+    assert.equal(run.status, 0, run.stderr);
+    const ir = JSON.parse(run.stdout) as {
+      scenes: { durationFrames: number }[];
+    };
+    assert.equal(ir.scenes[0]?.durationFrames, 45);
+  });
+
+  it("names the scene and the value for a negative duration as E_DURATION_RANGE", () => {
+    const project = copyProject("minimal-filter", "negative-duration");
+    setFirstDuration(project, "-1s");
+    const run = video(["validate", "--json", project]);
+    assert.equal(run.status, 1);
+    const [error] = diagnosticsOf(run.stdout);
+    assert.equal(error?.code, "E_DURATION_RANGE");
+    assert.equal(error?.sceneId, "scene-001");
+    assert.equal(
+      error?.message,
+      'Scene "scene-001" has duration "-1s", which must be greater than zero.',
+    );
   });
 
   it("reports a filter that fails without diagnostics as E_FILTER_FAILED", () => {

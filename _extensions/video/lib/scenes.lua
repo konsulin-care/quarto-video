@@ -87,7 +87,7 @@ local function scene_record(div, id, fps)
   return {
     id = id,
     component = component,
-    durationFrames = duration.to_frames(text, fps),
+    durationFrames = duration.to_frames(text, id, fps),
     text = plain_text(div),
   }
 end
