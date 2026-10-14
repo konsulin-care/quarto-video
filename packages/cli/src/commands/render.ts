@@ -7,6 +7,7 @@ import { dirname, join, relative } from "node:path";
 import type { RenderFn, RenderProgress } from "@quarto-video/remotion";
 import { checkProject } from "../check.js";
 import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
+import { exitCodeFor } from "../exit-status.js";
 import { manifestPath } from "../filter.js";
 import { outputPath } from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
@@ -65,7 +66,7 @@ export async function runRender(
   }
   if (check.kind === "invalid") {
     report(check.diagnostics, options.json);
-    return EXIT_INVALID;
+    return exitCodeFor(check.diagnostics);
   }
   // Warnings do not stop the render; with --json they are printed first.
   report(check.diagnostics, options.json);

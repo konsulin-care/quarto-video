@@ -4,7 +4,8 @@
 // for the IR JSON only). Diagnostics go to stderr as text, or with --json to
 // stdout as a JSON array (report.ts); with --json nothing else is printed.
 import { checkProject } from "../check.js";
-import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
+import { EXIT_USAGE } from "../exit-codes.js";
+import { exitCodeFor } from "../exit-status.js";
 import { ProjectError, resolveProject } from "../project.js";
 import { report } from "../report.js";
 
@@ -33,11 +34,11 @@ export function runValidate(options: ValidateOptions, cwd: string): number {
   }
   if (check.kind === "invalid") {
     report(check.diagnostics, options.json);
-    return EXIT_INVALID;
+    return exitCodeFor(check.diagnostics);
   }
   if (options.json) {
     report(check.diagnostics, true);
-    return EXIT_OK;
+    return exitCodeFor(check.diagnostics);
   }
 
   report(check.diagnostics, false);
@@ -53,5 +54,5 @@ export function runValidate(options: ValidateOptions, cwd: string): number {
   } else {
     process.stdout.write(summary);
   }
-  return EXIT_OK;
+  return exitCodeFor(check.diagnostics);
 }
