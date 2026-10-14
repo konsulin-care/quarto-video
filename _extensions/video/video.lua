@@ -11,6 +11,7 @@ package.path = extension_root() .. "?.lua;" .. package.path
 local config = require("lib.config")
 local config_keys = require("lib.config_keys")
 local scenes = require("lib.scenes")
+local source_scan = require("lib.scan")
 local manifest = require("lib.manifest")
 local diagnostics = require("lib.diagnostics")
 
@@ -66,8 +67,10 @@ function Pandoc(doc)
     -- the missing-duration check.
     default_frames = false
   end
+  -- The raw text gives scene source lines and reads openers Pandoc drops.
+  local scan = source_scan.read_scan(input)
   local list = diagnostics.try(function()
-    return scenes.collect(doc, fps, default_frames)
+    return scenes.collect(doc, fps, default_frames, scan)
   end, found)
 
   diagnostics.attach_file(found, file_name)

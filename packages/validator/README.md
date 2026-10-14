@@ -23,8 +23,8 @@ form humans and AI agents can act on (PRD §9).
 ## Diagnostic shape
 `{ severity: "error"|"warning", code, message, file?, line?, sceneId?,
    component?, property?, assetPath?, suggestion? }`
-- Only `severity`, `code` and `message` are always set. `line` stays optional
-  until task 011.
+- Only `severity`, `code` and `message` are always set. `line` is set for scene
+  problems when the source text can be paired with the scenes (task 011).
 - Human format (PRD §9.2): a header `ERROR <file>[:<line>]`, the message, then
   the suggestion; blocks are separated by a blank line.
 - `--json` (and `.video-build/diagnostics.json`): a JSON array of these objects,
@@ -47,7 +47,9 @@ form humans and AI agents can act on (PRD §9).
 | `E_SCENE_NO_COMPONENT` | 1 filter | A `.scene` has no `component` attribute | 008 |
 | `E_SCENE_NO_DURATION` | 1 filter | A `.scene` has no `duration` attribute | 008 |
 | `E_SCENE_NESTED` | 1 filter | A `.scene` is nested inside another block | 008 |
-| `E_SCENE_SHAPE` | 1 filter | A `.scene` has an identifier, an unknown class or an unknown attribute | 008 |
+| `E_SCENE_SHAPE` | 1 filter | A `.scene` has an unknown class or attribute, its `{...}` cannot be read, or Pandoc does not read its fence as a block | 008 (widened 011) |
+| `E_SCENE_ID_INVALID` | 1 filter | A scene id (`#id`) is not a letter then lowercase letters, digits and hyphens (max 64); the suggestion is a valid id | 011 |
+| `E_SCENE_DUPLICATE_ID` | 1 filter | Two scenes have the same id (author ids or generated `scene-NNN`); the message names both lines | 011 |
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 |
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails IR 0.1 (`message` gives the JSON path) | 008 |

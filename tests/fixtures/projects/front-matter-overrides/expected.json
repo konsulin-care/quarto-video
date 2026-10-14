@@ -16,7 +16,8 @@
         "text": "The default is 1.5 s, so 36 frames at 24 fps."
       },
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 16
       }
     },
     {
@@ -27,7 +28,8 @@
         "text": "Two seconds is 48 frames at 24 fps."
       },
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 20
       }
     }
   ]

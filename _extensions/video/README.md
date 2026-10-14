@@ -1,12 +1,12 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 0.1 manifest (task 003); `video.output` (006); diagnostics with codes (008); durations → frames (009); front matter defaults and unknown-key checks (010). Source lines (011) and structured content (012) are not done.
+Status: `.scene` Divs → IR 0.1 manifest (task 003); `video.output` (006); diagnostics with codes (008); durations → frames (009); front matter defaults and unknown-key checks (010); scene ids and source lines (011). Structured content (012) is not done.
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
 
 ## Owns
 - `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
-- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
+- `lib/`: `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `scan.lua` (raw-text scan of scene fences), `locate.lua` (scene ids, Div pairing, source lines), `manifest.lua` (IR table, JSON file), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
 ## Does not own
@@ -53,10 +53,28 @@ Rules:
 | `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | `defaults.scene.duration`, else required | 003 (form 009, default 010) |
 
 Rules:
-- Scenes are numbered `scene-001`, `scene-002`… in document order. A document with no scenes gives `"scenes": []`.
+- Scene ids: the author's `#id`, else `scene-NNN` where NNN is the scene's position among all scene Divs (1-based, document order). An author id does not renumber the others. A document with no scenes gives `"scenes": []`.
+- Id rule: a letter, then lowercase letters, digits and hyphens, at most 64 characters (`#1` and `#Intro` are `E_SCENE_ID_INVALID` with a suggestion). Two scenes with one id, including a generated id, are `E_SCENE_DUPLICATE_ID`; the message names both lines.
+- Each scene's `source.line` in the IR is the 1-based line of its opening fence in `index.qmd`.
 - Content is the scene's plain text, one line per paragraph (structured content is task 012).
-- Any other attribute, class or identifier on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error.
+- Any other attribute or class on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error (with its line).
 - Every bad setting and every bad scene is reported in one run. Scene and duration problems carry their scene id; a bad default names the setting.
+
+## Source lines (task 011)
+Pandoc's Markdown reader keeps no source positions (Pandoc 3.1.3 has no
+`sourcepos`). So `lib/scan.lua` reads the raw `.qmd` for scene fences, allowing
+blockquote markers and indentation, and skipping front matter, fenced code and
+HTML comments. It adds a marker attribute `data-qv-line="<n>"` to each fence it
+reads, and the marked text is parsed once more. `lib/locate.lua` then pairs
+each scene Div of the real document with its marked twin, in document order.
+A pair counts only when nesting, component, duration and text all agree, so a
+mismatch gives no line at all, never a wrong one (the IR then omits
+`source.line`). A scene fence Pandoc does not read as a block (for example a
+lazy list continuation) is `E_SCENE_SHAPE` at its own line. A fence whose
+`{...}` cannot be read (for example `#1 bad`) is reported from the scan.
+Known limits: a scene-like line in an indented code block is reported as
+unread; a `.scene` inside a table cell is not a scene (no error yet).
+Lines of nested non-scene Divs come with content (task 012).
 
 ## Diagnostics (task 008)
 - Each stage collects its errors with `diagnostics.try` and raises them together.
@@ -64,7 +82,8 @@ Rules:
 - Codes and their meaning: `packages/validator/README.md`.
 
 ## Testing
-- `npm run test:lua` runs `quarto pandoc lua _extensions/video/tests/run.lua`: unit tests for scenes, durations, config, config keys and the encoder.
+- `npm run test:lua` runs `quarto pandoc lua _extensions/video/tests/run.lua`: unit tests for scenes, scene ids (`test_scene_ids.lua`), the source scan (`test_locate.lua`), durations, config, config keys and the encoder.
+- `tests/integration/scene-lines.test.ts` checks ids and lines through the CLI (fixtures `tests/fixtures/projects/scene-lines-*`).
 - `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
 - Both need `quarto` on `PATH` (mise provides the pinned version).
 

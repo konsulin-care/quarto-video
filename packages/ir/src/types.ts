@@ -18,6 +18,8 @@ export interface IrContent {
 export interface IrSource {
   /** Project-relative path. */
   file: string;
+  /** 1-based line of the scene's opening fence in `file`; absent when unknown. */
+  line?: number;
 }
 
 export interface IrScene {

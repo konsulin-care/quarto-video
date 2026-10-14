@@ -29,7 +29,7 @@ function M.build(settings, scenes, source_file)
       component = scene.component,
       durationFrames = scene.durationFrames,
       content = { text = scene.text },
-      source = { file = source_file },
+      source = { file = source_file, line = scene.line },
     }
   end
   return {

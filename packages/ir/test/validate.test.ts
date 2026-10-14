@@ -85,4 +85,18 @@ describe("validateIr", () => {
       "/settings/fps",
     ]);
   });
+
+  it("accepts source.line on a scene", () => {
+    const json = withEdit((d) => {
+      (firstScene(d)["source"] as Record<string, unknown>)["line"] = 3;
+    });
+    expect(validateIr(json)).toEqual({ ok: true, errors: [] });
+  });
+
+  it("rejects source.line below 1 at /scenes/0/source/line", () => {
+    const json = withEdit((d) => {
+      (firstScene(d)["source"] as Record<string, unknown>)["line"] = 0;
+    });
+    expect(paths(json)).toEqual(["/scenes/0/source/line"]);
+  });
 });

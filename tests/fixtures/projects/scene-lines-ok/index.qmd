@@ -1,0 +1,42 @@
+---
+title: "Scene lines: long front matter"
+author: "Fixture for task 011"
+description: "Front matter is longer than the scene block, so line numbers must still be exact."
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  background: "#10131C"
+defaults:
+  scene:
+    duration: "3s"
+---
+
+# Opening
+
+::: {#intro .scene component="title" duration="4s"}
+Why GPUs Matter
+:::
+
+<!-- A comment that mentions a scene: ::: {.scene component="title"} -->
+
+<!--
+::: {.scene component="title" duration="9s"}
+This commented-out block is not a scene.
+-->
+
+::: {.scene component="statement" duration="2s"}
+Code inside a scene:
+
+```text
+::: {.scene component="title" duration="9s"}
+This line is code, not a scene.
+:::
+```
+:::
+
+::: {#closing .scene component="end-card"}
+::: {.note}
+Thanks for watching.
+:::
+:::

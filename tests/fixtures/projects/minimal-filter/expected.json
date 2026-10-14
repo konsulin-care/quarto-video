@@ -16,7 +16,8 @@
         "text": "Why GPUs Matter"
       },
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 10
       }
     },
     {
@@ -27,7 +28,8 @@
         "text": "Parallel work changes everything."
       },
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 14
       }
     }
   ]

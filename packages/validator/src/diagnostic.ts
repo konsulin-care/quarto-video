@@ -11,6 +11,8 @@ export const DIAGNOSTIC_CODES = [
   "E_SCENE_NO_DURATION",
   "E_SCENE_NESTED",
   "E_SCENE_SHAPE",
+  "E_SCENE_ID_INVALID",
+  "E_SCENE_DUPLICATE_ID",
   "E_DURATION_SYNTAX",
   "E_DURATION_RANGE",
   "E_IR_SCHEMA",
@@ -28,7 +30,7 @@ export interface Diagnostic {
   message: string;
   /** Document or build file, relative to the project root, e.g. `index.qmd`. */
   file?: string;
-  /** Line in `file`; optional until line tracking (task 011). */
+  /** Line in `file` (1-based) of the scene or block the problem is about. */
   line?: number;
   sceneId?: string;
   component?: string;

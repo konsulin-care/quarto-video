@@ -7,6 +7,8 @@ package.path = root .. "?.lua;" .. package.path
 
 local SUITES = {
   "tests.test_scenes",
+  "tests.test_scene_ids",
+  "tests.test_locate",
   "tests.test_duration",
   "tests.test_duration_vectors",
   "tests.test_config",

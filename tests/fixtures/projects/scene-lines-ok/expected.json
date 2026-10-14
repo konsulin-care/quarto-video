@@ -1,0 +1,48 @@
+{
+  "scenes": [
+    {
+      "component": "title",
+      "content": {
+        "text": "Why GPUs Matter"
+      },
+      "durationFrames": 120,
+      "id": "intro",
+      "source": {
+        "file": "index.qmd",
+        "line": 17
+      }
+    },
+    {
+      "component": "statement",
+      "content": {
+        "text": "Code inside a scene:"
+      },
+      "durationFrames": 60,
+      "id": "scene-002",
+      "source": {
+        "file": "index.qmd",
+        "line": 28
+      }
+    },
+    {
+      "component": "end-card",
+      "content": {
+        "text": "Thanks for watching."
+      },
+      "durationFrames": 90,
+      "id": "closing",
+      "source": {
+        "file": "index.qmd",
+        "line": 38
+      }
+    }
+  ],
+  "schemaVersion": "0.1",
+  "settings": {
+    "background": "#10131C",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920
+  },
+  "type": "video"
+}

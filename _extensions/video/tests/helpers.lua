@@ -13,9 +13,15 @@ local FRONT_MATTER = table.concat({
   "",
 }, "\n")
 
+--- The source text of a document: the standard front matter (or `front`)
+--- followed by `body`. This is what the filter scans for source lines.
+function M.text(body, front)
+  return (front or FRONT_MATTER) .. body
+end
+
 --- Parses `body` after the standard front matter (or `front` when given).
 function M.doc(body, front)
-  return pandoc.read((front or FRONT_MATTER) .. body, "markdown")
+  return pandoc.read(M.text(body, front), "markdown")
 end
 
 --- Returns the error message raised by `fn`, or nil when it does not raise.

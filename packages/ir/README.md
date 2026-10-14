@@ -16,6 +16,11 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 | `examples/minimal.json` | One 4 s title scene at 30 fps; must validate |
 | `test/` | `validate` (paths per rule), `schema` (no renderer terms), `cli`, `duration` (vectors), smoke |
 
+## Decisions (task 011)
+- `scenes[].source.line` is optional: the 1-based line of the scene's opening
+  fence in `source.file`. It is absent when the source text cannot be paired
+  with the scenes (`_extensions/video/lib/locate.lua`). Renderers must not need it.
+
 ## Decisions (task 009, ADR-0003)
 - Durations: `s` or `ms`, up to 3 decimals, exact in microseconds, rounded half up
   to frames. Zero, negative, > 3600 s and < 1 frame are errors.

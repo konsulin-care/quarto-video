@@ -16,7 +16,8 @@
         "text": "Takes the default duration."
       },
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 8
       }
     },
     {
@@ -27,7 +28,8 @@
         "text": "An explicit duration wins."
       },
       "source": {
-        "file": "index.qmd"
+        "file": "index.qmd",
+        "line": 12
       }
     }
   ]

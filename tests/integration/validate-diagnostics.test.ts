@@ -83,7 +83,7 @@ describe("video validate diagnostics", () => {
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      'ERROR index.qmd\nScene "scene-002" has no component attribute.\nAdd component="<name>"\n',
+      'ERROR index.qmd:14\nScene "scene-002" has no component attribute.\nAdd component="<name>"\n',
     );
   });
 
@@ -157,7 +157,7 @@ describe("video validate diagnostics", () => {
     assert.equal(run.status, 1);
     assert.equal(
       run.stderr,
-      'ERROR index.qmd\nScene "scene-001" has duration "0s", which must be greater than zero.\nUse a positive duration, for example duration="1s".\n',
+      'ERROR index.qmd:10\nScene "scene-001" has duration "0s", which must be greater than zero.\nUse a positive duration, for example duration="1s".\n',
     );
   });
 
@@ -167,7 +167,7 @@ describe("video validate diagnostics", () => {
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      'ERROR index.qmd\nScene "scene-001" has duration "0s", which must be greater than zero.\nUse a positive duration, for example duration="1s".\n',
+      'ERROR index.qmd:10\nScene "scene-001" has duration "0s", which must be greater than zero.\nUse a positive duration, for example duration="1s".\n',
     );
   });
 
