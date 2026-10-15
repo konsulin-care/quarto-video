@@ -1,6 +1,6 @@
 # 030 — Component `end-card`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (12), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (12), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `end-card` component: closing message, credits or call to action.
