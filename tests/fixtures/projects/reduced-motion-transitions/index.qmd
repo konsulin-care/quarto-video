@@ -1,0 +1,32 @@
+---
+title: "Reduced motion transitions"
+video:
+  width: 640
+  height: 360
+  fps: 30
+  reducedMotion: true
+---
+
+::: {.scene component="title" duration="1.2s" #one}
+One
+:::
+
+::: {.scene component="title" duration="1.2s" transition="cut" #two}
+Two (cut)
+:::
+
+::: {.scene component="title" duration="1.2s" transition="fade" transitionDuration="500ms" #three}
+Three (fade)
+:::
+
+::: {.scene component="title" duration="1.2s" transition="slide" transitionDuration="500ms" #four}
+Four (slide)
+:::
+
+::: {.scene component="title" duration="1.2s" transition="wipe" transitionDuration="500ms" #five}
+Five (wipe)
+:::
+
+::: {.scene component="title" duration="1.2s" transition="zoom" transitionDuration="500ms" #six}
+Six (zoom)
+:::

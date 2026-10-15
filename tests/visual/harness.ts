@@ -63,7 +63,7 @@ export function findBrowser(): string {
 }
 
 /** Copies the fixture project into scratch and returns the IR file from `video validate --print-ir`. */
-async function projectIr(
+export async function projectIr(
   root: string,
   project: string,
   scratch: string,

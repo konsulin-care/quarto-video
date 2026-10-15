@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/reduced-motion-animations",
+  "theme": "modern",
+  "frames": [0, 7, 44, 45, 52, 89, 90, 97, 134],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}
