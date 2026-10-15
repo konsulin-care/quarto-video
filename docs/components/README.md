@@ -1,5 +1,5 @@
 # docs/components/ — component and preset pages
-Status: `title` is the only released component (released in task 024, which replaces its placeholder). Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
+Status: `title` (task 024, which replaces its placeholder) and `statement` (task 025) are released. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
 
 ## Purpose
 One page per released component (`<id>.md`), plus this index. A page says what an author writes, what the component accepts and how it behaves. The registry (`packages/registry`) is the source of truth for slots, props and bounds; these pages explain it.
@@ -8,6 +8,7 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | Component | Page | Status |
 | --- | --- | --- |
 | `title` | [title.md](title.md) | Released (task 024: subtitle slot; placeholder task 004, contract 013, animations 021) |
+| `statement` | [statement.md](statement.md) | Released (task 025: one sentence, accent for `strong`, text fit to the safe area) |
 
 ## Presets
 A preset is a named motion or transition that an author may use. Presets are data in `packages/registry` (`animations/<id>.json`, `transitions.json`) and a pure frame function in `renderer/remotion`. Authors pick a preset by name; they never write motion code.
@@ -17,9 +18,9 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 
 | Id | Purpose | Compatible components | Min frames | Short scene | Reduced motion |
 | --- | --- | --- | --- | --- | --- |
-| `fade-in` | Content fades from transparent to opaque. | `title` | 15 | static | static |
-| `slide-up` | Content fades in while it rises into place. | `title` | 15 | static | static |
-| `reveal` | A wipe uncovers the content from left to right. | `title` | 15 | static | static |
+| `fade-in` | Content fades from transparent to opaque. | `title`, `statement` | 15 | static | static |
+| `slide-up` | Content fades in while it rises into place. | `title`, `statement` | 15 | static | static |
+| `reveal` | A wipe uncovers the content from left to right. | `title`, `statement` | 15 | static | static |
 
 Rules that apply to every animation preset:
 - Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame.
