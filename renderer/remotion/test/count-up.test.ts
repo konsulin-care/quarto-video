@@ -150,15 +150,20 @@ describe("count-up schedule", () => {
     }
   });
 
-  it("is deterministic: the same inputs give the same value, in any order of calls", () => {
-    const first = frameRange(150).map((frame) =>
-      countUpValue(-3.456, frame, 150),
-    );
-    countUpValue(7, 3, 60);
-    const again = frameRange(150)
-      .reverse()
-      .map((frame) => countUpValue(-3.456, frame, 150));
-    expect(again.reverse()).toEqual(first);
+  it("is deterministic: the same frame gives the same value, in any order of calls", () => {
+    for (const value of values) {
+      for (const duration of [45, 90, 151]) {
+        const frames = frameRange(duration);
+        const first = frames.map((f) => countUpValue(value, f, duration));
+        const reversed = [...frames]
+          .reverse()
+          .map((f) => countUpValue(value, f, duration));
+        expect(reversed.reverse()).toEqual(first);
+        expect(frames.map((f) => countUpValue(value, f, duration))).toEqual(
+          first,
+        );
+      }
+    }
   });
 
   it("depends on the scene length", () => {
