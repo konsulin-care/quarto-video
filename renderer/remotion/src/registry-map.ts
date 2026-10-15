@@ -3,6 +3,7 @@
 import type { FC } from "react";
 import { SectionDivider } from "../components/section-divider/SectionDivider.js";
 import { Title } from "../components/title/Title.js";
+import { EndCard } from "../components/end-card/EndCard.js";
 
 export interface SceneProps {
   /** Plain text of each slot the scene has, by slot name (task 024). */
@@ -12,4 +13,5 @@ export interface SceneProps {
 export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   "section-divider": SectionDivider,
   title: Title,
+  "end-card": EndCard,
 };

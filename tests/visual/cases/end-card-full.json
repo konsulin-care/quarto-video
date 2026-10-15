@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/component-end-card",
+  "theme": "modern",
+  "frames": [90, 110, 209],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

@@ -1,6 +1,6 @@
 # 030 — Component `end-card`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (12), §5.5, §10.2 · ADR: —
+Phase 3 · Status: done · Depends on: 024 · PRD: §5.4 (12), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `end-card` component: closing message, credits or call to action.
@@ -19,19 +19,25 @@ Release the `end-card` component: closing message, credits or call to action.
 
 ## Definition of done
 Automated:
-- [ ] Contract validates; parity test passes; `video components` lists `end-card`.
-- [ ] Each contract violation in the invalid fixture yields its code and line.
-- [ ] Credits list of 10 lines fits or yields a warning, never clipping.
-- [ ] Visual cases: message only; message + cta + credits.
-- [ ] Every compatible animation renders without clipping (visual cases).
+- [x] Contract validates; parity test passes; `video components` lists `end-card`.
+- [x] Each contract violation in the invalid fixture yields its code and line.
+- [x] Credits list of 10 lines fits or yields a warning, never clipping.
+- [x] Visual cases: message only; message + cta + credits.
+- [x] Every compatible animation renders without clipping (visual cases).
 
 Human check:
-1. `npx video render tests/fixtures/projects/component-end-card` and watch it.
-2. Review against `docs/components/end-card.md`: legible at 1080p, consistent
-   with the theme, no clipped or overlapping text.
-3. `npx video validate tests/fixtures/projects/component-end-card-invalid` → one
-   actionable error per violating scene.
+1. [ ] Partly met: `video render` of the fixture ran (1920x1080, 300 frames); stills at start, middle and end were checked. No person watched the video.
+2. [x] Review against `docs/components/end-card.md`: legible at 1080p, theme-consistent, no clipped or overlapping text (on the stills and references).
+3. [x] `video validate` on the invalid fixture: one actionable error per violating scene.
 
 ## Notes
+- Contract: slots `default` (paragraph, heading), `cta` (paragraph), `credits` (list). Compatible with fade-in, slide-up and reveal. Duration 2s to 30s.
+- Credits: at most half the safe-area height. Ten lines fit at the caption size; a longer list is drawn smaller, never clipped. No validator warning: the renderer scales instead. Items that wrap are not measured.
+- Animations: `fade-in` and `slide-up` are checked mid-entrance; `reveal` only at its end state (recorded deviation).
+- Shared files changed: `renderer/remotion/src/registry-map.ts` (one import, one entry); `packages/registry/animations/{fade-in,slide-up,reveal}.json` (`end-card` in `compatibleComponents`); `docs/components/README.md` (status sentence, one row, the three animation rows); `package.json` (integration test appended); `packages/registry/test/animations.test.ts` and `components.test.ts` and `tests/integration/contract.test.ts` (expected lists now include `end-card`).
+- Gates: `scripts/check.sh --all` exit 0; `scripts/test.sh --all` exit 0, run on a scratch copy of the committed tree (see Completion log).
+- Open, not caused by this task: in the first worktree gate run, a registry test once listed a `comparison` component that is not in this tree (it exists in another worktree). It did not recur in isolation or in the scratch-copy gates; cause not found.
 
 ## Completion log
+- 2026-10-15: `in-progress` (commit 1). Contract, renderer, fixtures, docs and visual references added. Visual references approved for `end-card-message` (frames 0, 15, 89, 255, 299) and `end-card-full` (frames 90, 110, 209); looked at frames 110, 209 and 299 by eye, and the render's start, middle and end frames as one montage.
+- 2026-10-15: test gate failed in the worktree on `quarto-render` (the post-render hook did not run). The same commit at a non-hidden path passes, so the worktree location is the cause. Gates re-run on that copy: check exit 0, test exit 0 (visual: 72 frames passed).
