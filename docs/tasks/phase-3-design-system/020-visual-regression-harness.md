@@ -1,6 +1,6 @@
 # 020 — Visual regression harness
 
-Phase 3 · Status: todo · Depends on: 019 · PRD: §13.3 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 019 · PRD: §13.3 · ADR: —
 
 ## Goal
 Render chosen frames of fixture projects to stills and compare them with
