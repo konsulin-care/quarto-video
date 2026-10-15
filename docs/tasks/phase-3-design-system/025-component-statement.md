@@ -1,6 +1,6 @@
 # 025 — Component `statement`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (2), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (2), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `statement` component: one prominent message or key sentence.
