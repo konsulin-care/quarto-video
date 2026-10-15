@@ -38,6 +38,7 @@ Human check:
 - `reveal` is now a fade with growth from 96% (task 021 redesign), so no entrance clips; the old wipe deviation is gone.
 - Awaiting human playback: `video render tests/fixtures/projects/component-chart` (18 s, 1080p). Agent stills at 3 s, 9 s and 17.5 s were legible, labelled with units, theme tokens only, no clipping. Not ticked.
 - Known limit: text is not shrunk; 12 long labels at 640x360 can crowd (rotation applies).
+- 2026-10-15: the regression test (`component-chart.test.ts`) no longer needs `QV_BROWSER_EXECUTABLE`. Its stub renderer calls `runRender` directly, and the browser preflight had run inside `runRender`. Preflight now runs at the CLI boundary (`cli.ts` passes it as `RenderOptions.preflight`). `video render` still exits 2 without the variable (`cli-browser-gate.test.ts`).
 
 ## Completion log
 - 2026-10-15: merged the chart branch; IR 1.4 and ADR-0014 renumber; `video render` fix (the transient `.video-build/resolved.json` is removed after the render). `check.sh --all` exit 0. `test.sh --all` exit 0 (scripts 16/16, unit 569/569, lua 214/214, integration with no failures, visual 163 frames and flash checks). Log: `scratchpad/chart-test-final.log`.

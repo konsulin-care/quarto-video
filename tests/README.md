@@ -50,5 +50,11 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 - Integration tests that encode video must keep fixtures short (≤ 2 s,
   ≤ 640×360) unless the task requires otherwise.
 
+## Browser (which suites need one)
+- Needs a Chromium headless shell: any test that reaches the real renderer or the CLI's stage 5 preflight after stages 1–4 pass. These are `test:integration:render` (`cli-render`, `preflight-output`, `doctor`, `theme-render-option`, `timeline`, `quarto-render`, `spike-quarto-native`, plus the vitest `render*.test.ts`) and `test:visual`.
+- Needs no browser: `test:integration:pure` (every other integration file, incl. `cli-browser-gate.test.ts`), the stub-renderer tests that call `runRender` directly (`component-chart.test.ts`), and any render that exits at stage 1 or 2 (`contract`, `theme`, `validate-diagnostics`).
+- `scripts/test.sh` resolves `QV_BROWSER_EXECUTABLE` once when it is unset (`scripts/lib/browser.sh`: newest `chromium_headless_shell-*` under `PLAYWRIGHT_BROWSERS_PATH`; nothing is downloaded). If it finds none, it fails before the `integration` and `visual` suites start and names the variable and `renderer/remotion/README.md`.
+- `npm run test:integration` runs `test:integration:pure` then `test:integration:render`.
+
 ## Related
 Tasks 001, 003, 005, 006, 007, 007a, 010, 011, 012, 013, 014, 015, 017, 018, 019, 020, 021, 022, 023, 024, 047, 048. PRD §12, §13.
