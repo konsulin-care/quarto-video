@@ -1,6 +1,6 @@
 # 027 — Component `bullets`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (3), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (3), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `bullets` component: sequential points or a compact list.
