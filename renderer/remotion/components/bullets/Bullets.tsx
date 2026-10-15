@@ -6,6 +6,10 @@
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import { useTheme } from "../../themes/ThemeProvider.js";
 import { safeAreaPixels } from "../../themes/safe-area.js";
+import {
+  itemStyle,
+  useStaggerMotion,
+} from "../../animations/stagger-motion.js";
 
 export interface BulletsProps {
   /** Plain text by slot name: `default` (the list, one line per item), `heading` (optional). */
@@ -21,6 +25,8 @@ export function Bullets({ slots }: BulletsProps) {
   const heading = slots["heading"] ?? "";
   const list = slots["default"] ?? "";
   const items = list === "" ? [] : list.split("\n");
+  // stagger reveals the items one after another (task 028); none draws them as they are.
+  const motion = useStaggerMotion();
   return (
     <AbsoluteFill
       style={{
@@ -66,6 +72,7 @@ export function Bullets({ slots }: BulletsProps) {
                 alignItems: "flex-start",
                 gap: space.sm,
                 minWidth: 0,
+                ...itemStyle(motion, index, items.length),
               }}
             >
               <span

@@ -9,6 +9,10 @@ import {
   WordMotionContext,
   type WordMotion,
 } from "../animations/word-motion.js";
+import {
+  StaggerMotionContext,
+  type StaggerMotion,
+} from "../animations/stagger-motion.js";
 import { useTheme } from "../themes/ThemeProvider.js";
 
 export interface AnimatedSceneProps {
@@ -42,9 +46,16 @@ export function AnimatedScene({
     animation === "kinetic"
       ? { frame, durationFrames, tokens: theme, reducedMotion: reduced }
       : undefined;
+  // stagger moves the items of its list, not the scene (task 028).
+  const items: StaggerMotion | undefined =
+    animation === "stagger"
+      ? { frame, durationFrames, tokens: theme, reducedMotion: reduced }
+      : undefined;
   return (
     <WordMotionContext.Provider value={words}>
-      <AbsoluteFill style={style}>{children}</AbsoluteFill>
+      <StaggerMotionContext.Provider value={items}>
+        <AbsoluteFill style={style}>{children}</AbsoluteFill>
+      </StaggerMotionContext.Provider>
     </WordMotionContext.Provider>
   );
 }

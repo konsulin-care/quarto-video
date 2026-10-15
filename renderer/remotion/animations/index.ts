@@ -8,10 +8,12 @@ import fadeInPreset from "@quarto-video/registry/animations/fade-in.json" with {
 import kineticPreset from "@quarto-video/registry/animations/kinetic.json" with { type: "json" };
 import revealPreset from "@quarto-video/registry/animations/reveal.json" with { type: "json" };
 import slideUpPreset from "@quarto-video/registry/animations/slide-up.json" with { type: "json" };
+import staggerPreset from "@quarto-video/registry/animations/stagger.json" with { type: "json" };
 import { fadeIn } from "./fade-in.js";
 import { kinetic } from "./kinetic.js";
 import { reveal } from "./reveal.js";
 import { slideUp } from "./slide-up.js";
+import { stagger } from "./stagger.js";
 import type { AnimationFn, AnimationStyle } from "./types.js";
 
 export type { AnimationFn, AnimationStyle } from "./types.js";
@@ -21,6 +23,7 @@ export const ANIMATIONS: Readonly<Record<string, AnimationFn>> = {
   kinetic,
   reveal,
   "slide-up": slideUp,
+  stagger,
 };
 
 /** The preset ids this renderer draws, sorted. */
@@ -34,6 +37,7 @@ const REDUCED_MOTION: Readonly<Record<string, string>> = {
   kinetic: kineticPreset.reducedMotion,
   reveal: revealPreset.reducedMotion,
   "slide-up": slideUpPreset.reducedMotion,
+  stagger: staggerPreset.reducedMotion,
 };
 
 /**

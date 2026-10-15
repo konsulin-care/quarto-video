@@ -165,7 +165,7 @@ describe("preset API", () => {
 
   it("throws for a name the renderer does not know", () => {
     expect(() => style("spin", 0, 90)).toThrow(
-      'unknown animation "spin" (known: fade-in, kinetic, reveal, slide-up)',
+      'unknown animation "spin" (known: fade-in, kinetic, reveal, slide-up, stagger)',
     );
   });
 });

@@ -7,6 +7,10 @@
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import { useTheme } from "../../themes/ThemeProvider.js";
 import { safeAreaPixels } from "../../themes/safe-area.js";
+import {
+  itemStyle,
+  useStaggerMotion,
+} from "../../animations/stagger-motion.js";
 
 export interface EndCardProps {
   /** Plain text by slot name: `default` (message), `cta` and `credits` (optional). */
@@ -42,6 +46,8 @@ export function EndCard({ slots }: EndCardProps) {
   const credits = (slots["credits"] ?? "")
     .split("\n")
     .filter((line) => line !== "");
+  // stagger reveals the credit lines one after another (task 028); none draws the block.
+  const motion = useStaggerMotion();
   const budget = (height - 2 * margin.y) * CREDITS_SHARE;
   const creditsSize = creditsFontSize(
     typography.scale.caption,
@@ -118,7 +124,16 @@ export function EndCard({ slots }: EndCardProps) {
             flexShrink: 0,
           }}
         >
-          {credits.join("\n")}
+          {motion === undefined
+            ? credits.join("\n")
+            : credits.map((line, index) => (
+                <div
+                  key={index}
+                  style={itemStyle(motion, index, credits.length)}
+                >
+                  {line}
+                </div>
+              ))}
         </div>
       )}
     </AbsoluteFill>
