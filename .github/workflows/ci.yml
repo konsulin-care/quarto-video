@@ -43,3 +43,38 @@ jobs:
 
       - name: Test
         run: mise run test
+
+  # Visual regression (tests/README.md, task 020): the suite also runs inside
+  # check-and-test; this job exists to upload the diff report when it fails.
+  visual:
+    name: Visual regression
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install pinned tools
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          install: true
+          cache: true
+
+      - name: Install npm dependencies
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
+
+      # Same pinned revision as check-and-test (Playwright 1.56.1 -> 1194).
+      - name: Install headless Chromium for render tests
+        run: npx --yes playwright@1.56.1 install --with-deps chromium-headless-shell
+
+      - name: Visual regression
+        run: npm run test:visual
+
+      - name: Upload visual report
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: visual-report
+          path: tests/visual/report/
+          if-no-files-found: ignore
+          retention-days: 14
