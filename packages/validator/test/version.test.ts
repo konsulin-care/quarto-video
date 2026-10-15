@@ -24,7 +24,7 @@ describe("manifest version gate", () => {
         severity: "error",
         code: "E_IR_UNSUPPORTED_VERSION",
         message:
-          '/schemaVersion: "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2',
+          '/schemaVersion: "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3',
         file: "index.qmd",
         property: "/schemaVersion",
       },

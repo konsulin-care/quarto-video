@@ -37,13 +37,14 @@ function M.build(settings, scenes, source_file)
       durationFrames = scene.durationFrames,
       transition = scene.transition,
       animation = scene.animation,
+      props = scene.props,
       content = { slots = scene.slots },
       source = { file = source_file, line = scene.line },
     }
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
   return {
-    schemaVersion = "1.2",
+    schemaVersion = "1.3",
     type = "video",
     settings = settings,
     scenes = list,

@@ -5,7 +5,8 @@ import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
 
-export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2";
+export type SchemaVersion =
+  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3";
 
 export interface IrSettings {
   width: number;
@@ -131,13 +132,39 @@ export interface IrVideoV12 extends Omit<
   settings: IrSettingsV12;
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0, 1.1 and 1.2). */
+/** A CSV data table (task 035, ADR-0013): header names and the rows' cell text. */
+export interface IrTable {
+  columns: string[];
+  rows: string[][];
+}
+
+/** IR 1.3 (ADR-0013): IR 1.2 plus scene `props` (authored attributes) and `tables` (CSV data). */
+export interface IrSceneV13 extends IrSceneV11 {
+  props?: Record<string, string>;
+  tables?: Record<string, IrTable>;
+}
+
+export interface IrVideoV13 extends Omit<
+  IrVideoV12,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.3";
+  scenes: IrSceneV13[];
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.3). */
 export type IrVideoWithTimeline =
-  IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12;
+  IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12 | IrVideoV13;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
-  IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12;
+  | IrVideoV01
+  | IrVideoV02
+  | IrVideoV03
+  | IrVideoV10
+  | IrVideoV11
+  | IrVideoV12
+  | IrVideoV13;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {
