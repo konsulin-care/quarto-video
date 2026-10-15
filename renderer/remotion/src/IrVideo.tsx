@@ -10,6 +10,7 @@ import { timelineOf } from "@quarto-video/ir/timeline";
 import { plainText } from "@quarto-video/ir/text";
 import { AbsoluteFill, Sequence } from "remotion";
 import { ThemeProvider } from "../themes/ThemeProvider.js";
+import { AnimatedScene } from "./AnimatedScene.js";
 import { COMPONENTS } from "./registry-map.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
@@ -17,6 +18,11 @@ export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
   string,
   unknown
 >;
+
+/** The scene's animation preset id; IR 0.1 to 1.0 scenes have none. */
+function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
+  return "animation" in scene ? scene.animation?.name : undefined;
+}
 
 export function IrVideo({ ir, theme }: IrVideoProps) {
   const timeline = timelineOf(ir);
@@ -39,7 +45,12 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
               from={start}
               durationInFrames={next - start}
             >
-              <Component text={plainText(scene.content)} />
+              <AnimatedScene
+                animation={animationOf(scene)}
+                durationFrames={scene.durationFrames}
+              >
+                <Component text={plainText(scene.content)} />
+              </AnimatedScene>
             </Sequence>
           );
         })}
