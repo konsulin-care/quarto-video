@@ -68,6 +68,7 @@ describe("animation presets", () => {
       "title",
       "end-card",
       "statement",
+      "comparison",
     ]);
   });
 
