@@ -1,0 +1,11 @@
+---
+title: "Title basic"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="1s"}
+Basic title
+:::

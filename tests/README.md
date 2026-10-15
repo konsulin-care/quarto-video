@@ -1,5 +1,5 @@
 # tests/ — integration, visual regression, fixtures
-Status: `npm run test:lua` and `npm run test:integration` are real. The IR 1.0 golden manifests (`ir-v1.test.ts`, task 017: every golden IR is 1.0, valid, with the generator versions). `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell), the minimal-filter golden test (task 003), the CLI tests (`validate.test.ts`, task 005; `cli-render.test.ts`, task 006), the front matter defaults test (`front-matter.test.ts`, task 010), the scene ids and source lines test (`scene-lines.test.ts`, task 011), the content nodes test (`content-nodes.test.ts`, task 012: golden IR and `E_CONTENT_UNSUPPORTED` at its line), the components test (`components.test.ts`, task 013: `video components` table, `--json`, usage errors), the contract stage test (`contract.test.ts`, task 014: every `contract-*` fixture against its `expected.json`, `videos/hello` valid, no render on stage 2 failure), the preflight and output check (`preflight-output.test.ts`, task 018: missing tools exit 2, wrong frame count `E_OUTPUT_MISMATCH` exit 1), `video doctor` (`doctor.test.ts`, task 018), the timeline test (`timeline.test.ts`, task 015: each `timeline-*` fixture against its `expected.json`, and the rendered MP4's frame count), the Quarto-native spike check (`spike-quarto-native.test.ts`, task 007: script output equals ADR-0002's evidence), and `quarto-render.test.ts` (task 007a: `quarto render` of `videos/hello` in both forms writes the MP4, and a failing render exits non-zero), through the pinned Quarto. The quarto-render test writes `videos/hello` outputs in place and removes them afterwards. The theme tests (`theme.test.ts`, task 019: an unknown theme is exit 1 and writes no video) and `render-theme.test.ts` (task 019: the modern theme renders with unreachable proxies; task 019a: the canvas pixel is the theme token, or the explicit colour). `theme-render-option.test.ts` (task 019a: `--theme` precedence, the default, an unknown option, the explicit background). `test:visual` is still a placeholder until task 020.
+Status: `npm run test:lua` and `npm run test:integration` are real. The IR 1.0 golden manifests (`ir-v1.test.ts`, task 017: every golden IR is 1.0, valid, with the generator versions). `test:lua` runs the Lua filter unit tests; `test:integration` runs the Remotion render test (task 004, needs a Chromium headless shell), the minimal-filter golden test (task 003), the CLI tests (`validate.test.ts`, task 005; `cli-render.test.ts`, task 006), the front matter defaults test (`front-matter.test.ts`, task 010), the scene ids and source lines test (`scene-lines.test.ts`, task 011), the content nodes test (`content-nodes.test.ts`, task 012: golden IR and `E_CONTENT_UNSUPPORTED` at its line), the components test (`components.test.ts`, task 013: `video components` table, `--json`, usage errors), the contract stage test (`contract.test.ts`, task 014: every `contract-*` fixture against its `expected.json`, `videos/hello` valid, no render on stage 2 failure), the preflight and output check (`preflight-output.test.ts`, task 018: missing tools exit 2, wrong frame count `E_OUTPUT_MISMATCH` exit 1), `video doctor` (`doctor.test.ts`, task 018), the timeline test (`timeline.test.ts`, task 015: each `timeline-*` fixture against its `expected.json`, and the rendered MP4's frame count), the Quarto-native spike check (`spike-quarto-native.test.ts`, task 007: script output equals ADR-0002's evidence), and `quarto-render.test.ts` (task 007a: `quarto render` of `videos/hello` in both forms writes the MP4, and a failing render exits non-zero), through the pinned Quarto. The quarto-render test writes `videos/hello` outputs in place and removes them afterwards. The theme tests (`theme.test.ts`, task 019: an unknown theme is exit 1 and writes no video) and `render-theme.test.ts` (task 019: the modern theme renders with unreachable proxies; task 019a: the canvas pixel is the theme token, or the explicit colour). `theme-render-option.test.ts` (task 019a: `--theme` precedence, the default, an unknown option, the explicit background). `test:visual` (task 020) compares the stills of `visual/cases/` with `visual/references/`, then runs `harness.test.ts` (a perturbed token must fail it); see "Visual review" below.
 
 What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 
@@ -30,6 +30,23 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 - Never delete, skip, or loosen a test to make a task pass.
 - Updating references (`npm run test:visual:approve`) requires stating the
   intentional design change in the task's Completion log.
+
+## Visual review (task 020)
+- A case is `visual/cases/<case>.json`: `project` (a fixture folder), `theme`,
+  `frames` (numbers) and `threshold` (`channelTolerance` levels per channel,
+  `maxDiffRatio` share of pixels allowed to differ). Unknown keys are errors.
+- `npm run test:visual` validates each project through `video validate
+  --print-ir`, renders the frames with `renderStills()`, and compares each with
+  `visual/references/<case>/<frame>.png`. A missing reference fails the frame.
+- A failing run exits 1 and writes `visual/report/index.html` (reference, actual
+  and diff per frame; changed pixels in red). The report is gitignored. The CI
+  `visual` job uploads it as `visual-report` when it fails.
+- Review: open the report. An unintended difference is a bug: fix it and rerun.
+  An intended one: run `npm run test:visual:approve -- <case>` (no name means
+  every case), check the new PNGs, and commit them with the design change
+  stated in the task's Completion log.
+- A new component adds its own case and references; the harness never
+  approves anything by itself.
 - Integration tests that encode video must keep fixtures short (≤ 2 s,
   ≤ 640×360) unless the task requires otherwise.
 

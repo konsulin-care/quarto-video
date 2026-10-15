@@ -1,6 +1,6 @@
 # Component `title`
 
-Status: placeholder released with task 004; contract in task 013 (`packages/registry/components/title.json`). Visual cases: pending task 020.
+Status: placeholder released with task 004; contract in task 013 (`packages/registry/components/title.json`). Visual case: `title-basic` (task 020).
 
 ## Purpose
 Opening title and subtitle for a video or a chapter.
