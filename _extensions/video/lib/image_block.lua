@@ -51,7 +51,10 @@ function M.node(el, found)
     if not IMAGE_ATTRIBUTES[key] then
       return image_problem(
         found,
-        string.format('Scene "%%s" has an image block with the unknown attribute "%s".', quoted(key)),
+        string.format(
+          'Scene "%%s" has an image block with the unknown attribute "%s".',
+          quoted(key)
+        ),
         "Allowed attributes: src, fit, alt."
       )
     end

@@ -58,33 +58,46 @@ return {
   ["a missing src is E_IMAGE_BLOCK naming the scene"] = function()
     local diagnostic = one_problem(scene('::: {.image alt="A harbour"}\n:::'))
     h.eq(diagnostic.code, "E_IMAGE_BLOCK", "code")
-    h.eq(diagnostic.message, 'Scene "scene-001" has an image block with no src attribute.', "message")
+    h.eq(
+      diagnostic.message,
+      'Scene "scene-001" has an image block with no src attribute.',
+      "message"
+    )
     h.eq(diagnostic.sceneId, "scene-001", "scene id")
     h.eq(diagnostic.component, "image", "component")
   end,
 
   ["a missing alt is E_IMAGE_BLOCK"] = function()
     local diagnostic = one_problem(scene('::: {.image src="assets/a.png"}\n:::'))
-    h.eq(diagnostic.message, 'Scene "scene-001" has an image block with no alt attribute.', "message")
+    h.eq(
+      diagnostic.message,
+      'Scene "scene-001" has an image block with no alt attribute.',
+      "message"
+    )
   end,
 
   ["an unknown fit is E_IMAGE_BLOCK naming the value"] = function()
-    local diagnostic = one_problem(
-      scene('::: {.image src="assets/a.png" fit="stretch" alt="x"}\n:::')
-    )
+    local diagnostic =
+      one_problem(scene('::: {.image src="assets/a.png" fit="stretch" alt="x"}\n:::'))
     h.eq(diagnostic.message, 'Scene "scene-001" has an image block with fit="stretch".', "message")
   end,
 
   ["an unknown attribute is E_IMAGE_BLOCK"] = function()
-    local diagnostic = one_problem(
-      scene('::: {.image src="assets/a.png" alt="x" width="2"}\n:::')
+    local diagnostic = one_problem(scene('::: {.image src="assets/a.png" alt="x" width="2"}\n:::'))
+    h.eq(
+      diagnostic.message,
+      'Scene "scene-001" has an image block with the unknown attribute "width".',
+      "message"
     )
-    h.eq(diagnostic.message, 'Scene "scene-001" has an image block with the unknown attribute "width".', "message")
   end,
 
   ["content inside an image block is E_IMAGE_BLOCK"] = function()
     local diagnostic = one_problem(scene('::: {.image src="assets/a.png" alt="x"}\nText.\n:::'))
-    h.eq(diagnostic.message, 'Scene "scene-001" has an image block with content inside it.', "message")
+    h.eq(
+      diagnostic.message,
+      'Scene "scene-001" has an image block with content inside it.',
+      "message"
+    )
   end,
 
   ["a second image block in a scene is E_IMAGE_BLOCK at the second block"] = function()
