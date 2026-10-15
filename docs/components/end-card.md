@@ -36,7 +36,7 @@ Errors (validator, stage 2): a `.cta` with a list is `E_SLOT_BLOCK_KIND`; a `.cr
 
 ## Timing and placement
 - Duration: 2s to 30s per scene (`duration` in the contract).
-- Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the whole card at once.
+- Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the whole card at once. `stagger` (task 028) reveals the `credits` lines one after another; the message and call to action stay in place.
 - Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 
 ## Accessibility

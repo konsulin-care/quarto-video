@@ -33,7 +33,7 @@ Errors (validator, stage 2): a slot with no list (a paragraph in `default`) is `
 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
-- Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the heading and the list together.
+- Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the heading and the list together. `stagger` (task 028) reveals the points one after another and leaves the heading in place; see the README.
 - Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 
 ## Accessibility
