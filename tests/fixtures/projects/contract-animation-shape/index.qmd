@@ -1,0 +1,11 @@
+---
+title: "Contract animation shape"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" animation="Fade In"}
+Not a name
+:::

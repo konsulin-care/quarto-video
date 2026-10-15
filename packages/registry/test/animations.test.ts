@@ -79,11 +79,7 @@ describe("animation presets", () => {
 
   it.each([
     ["not JSON", "{", "not valid JSON"],
-    [
-      "an unknown field",
-      text({ easing: "linear" }),
-      '"easing"',
-    ],
+    ["an unknown field", text({ easing: "linear" }), '"easing"'],
     [
       "no compatible components",
       text({ compatibleComponents: [] }),
@@ -115,11 +111,7 @@ describe("animation presets", () => {
       text({ purpose: "x".repeat(201) }),
       "/purpose: must NOT have more than 200 characters",
     ],
-    [
-      "an uppercase id",
-      text({ id: "Fade-In" }),
-      "/id: must match pattern",
-    ],
+    ["an uppercase id", text({ id: "Fade-In" }), "/id: must match pattern"],
     [
       "a version without patch",
       text({ version: "1.0" }),

@@ -57,13 +57,15 @@ form humans and AI agents can act on (PRD §9).
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 (widened 015) |
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 (widened 015) |
 | `E_CONTENT_UNSUPPORTED` | 1 filter | Scene content has Markdown the content model does not support (a table, raw HTML or comment, footnote, math, link, image, ...), a block with a bad or missing slot class, a duplicate or empty slot; the line is the element's (ADR-0004) | 012 |
-| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.0 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017) |
-| `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3 or 1.0, including numbers); the message lists the supported versions (ADR-0007) | 017 |
+| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.1 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017, 1.1 in 021) |
+| `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3, 1.0 or 1.1, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |
 | `E_SLOT_UNKNOWN` | 2 contract | A scene has content in a slot its component does not declare; the suggestion lists the slots | 014 |
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
 | `E_DURATION_BOUNDS` | 2 contract | A scene's duration is outside the component's `duration` bounds (inclusive, in ms as in the contract) | 014 |
+| `E_ANIMATION_UNKNOWN` | 1 filter, 2 contract | A scene's `animation` is not an animation name (filter: the syntax); stage 2: not a registered preset (`packages/registry/animations/`); the suggestion lists the known presets (ADR-0011) | 021 |
+| `E_ANIMATION_INCOMPATIBLE` | 2 contract | A registered preset does not apply to the scene's component (the component or the preset lacks the other); the suggestion lists the component's animations | 021 |
 | `E_THEME_UNKNOWN` | 2 contract | The document's `theme` is not a registered theme (`packages/registry/themes/`); the suggestion lists the available themes. A missing `theme` means `modern` | 019 |
 | `E_TRANSITION_UNKNOWN` | 1 filter, 4 timeline | A scene's `transition` is not a transition name (filter: the syntax); stage 4: not in the registry (`transitions.json`); the suggestion lists the known names | 015 |
 | `E_TRANSITION_DURATION` | 1 filter | A transition is missing its `transitionDuration`, a `cut` has one, or a `transitionDuration` has no transition (ADR-0005) | 015 |

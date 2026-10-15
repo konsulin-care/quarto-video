@@ -11,11 +11,14 @@ import {
   type IrVideoWithTimeline,
 } from "@quarto-video/ir";
 import {
+  listAnimations,
   listComponents,
   listTransitions,
+  type AnimationPreset,
   type ComponentContract,
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
+import { checkAnimations } from "./stages/animation.js";
 import { checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { checkTimeline } from "./stages/timeline.js";
@@ -60,9 +63,10 @@ export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
 /**
  * Stages 2 to 4 for the manifest the filter wrote (`file`, project-relative).
  * An unsupported version is E_IR_UNSUPPORTED_VERSION (ADR-0007). Contracts read
- * the slots of IR 0.2 or later (ADR-0004); a 0.1 manifest is an error. Stage 3
- * checks `assets` when given (ADR-0006). Stage 4 checks transitions and the
- * timeline (ADR-0005; 0.3 and 1.0).
+ * the slots of IR 0.2 or later (ADR-0004); a 0.1 manifest is an error. Stage 2
+ * also checks scene animations against `animations` (ADR-0011). Stage 3 checks
+ * `assets` when given (ADR-0006). Stage 4 checks transitions and the timeline
+ * (ADR-0005; 0.3 and later).
  */
 export function checkManifest(
   json: unknown,
@@ -70,6 +74,7 @@ export function checkManifest(
   components: readonly ComponentContract[] = listComponents(),
   transitions: readonly string[] = listTransitions(),
   assets?: AssetCheck,
+  animations: readonly AnimationPreset[] = listAnimations(),
 ): ManifestCheck {
   const state: { ir?: IrVideoV02 | IrVideoWithTimeline } = {};
   const diagnostics = runStages([
@@ -95,7 +100,11 @@ export function checkManifest(
     },
     () => {
       const ir = state.ir;
-      return ir === undefined ? [] : checkContracts(ir, components);
+      if (ir === undefined) return [];
+      return [
+        ...checkContracts(ir, components),
+        ...checkAnimations(ir, components, animations),
+      ];
     },
     () => (assets === undefined ? [] : checkAssets(assets.refs, assets.root)),
     () => {
