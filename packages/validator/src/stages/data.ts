@@ -12,7 +12,7 @@ import { resolveAsset } from "../assets/resolve.js";
 import { parseCsv, type CsvError } from "../csv/parse.js";
 import type { Diagnostic } from "../diagnostic.js";
 import { problem, where } from "./contract.js";
-import { propsOf } from "./props.js";
+import { textPropsOf } from "./props.js";
 
 /** IR 1.4 scene field written here (ADR-0014). */
 type WithTables = { tables?: Record<string, IrTable> };
@@ -124,7 +124,7 @@ function checkScene(
   root: string,
   tables: Record<string, IrTable>,
 ): Diagnostic[] {
-  const given = propsOf(scene);
+  const given = textPropsOf(scene);
   const found: Diagnostic[] = [];
   const lines: Record<string, number[]> = {};
   const csvNames = Object.keys(contract.props).filter(

@@ -23,6 +23,7 @@ import { checkAnimations } from "./stages/animation.js";
 import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { resolveData } from "./stages/data.js";
+import { withNumbers } from "./stages/number.js";
 import { checkProps } from "./stages/props.js";
 import { checkTimeline } from "./stages/timeline.js";
 
@@ -119,11 +120,14 @@ export function checkManifest(
     () => {
       const ir = state.ir;
       if (ir === undefined) return [];
-      return inDocumentOrder([
+      const found = inDocumentOrder([
         ...checkContracts(ir, components),
         ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
       ]);
+      // Number props become JSON numbers (ADR-0015); with errors the run stops here.
+      state.ir = withNumbers(ir, components);
+      return found;
     },
     () => {
       if (assets === undefined) return [];

@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); stage 6 output check (018); theme name, stage 2 (019). Media metadata: tasks 037–038.
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media metadata: tasks 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -13,7 +13,7 @@ form humans and AI agents can act on (PRD §9).
 - Stage runner (`src/run.ts`, `checkManifest`) for PRD §9.1. Stage 2 is the IR
   schema, then the component contracts (`src/stages/contract.ts`: component,
   slots, block kinds, duration; ADR-0004; `src/stages/animation.ts`: presets, ADR-0011;
-  `src/stages/props.ts`: props against the contract, ADR-0014). Stage 3 has two parts:
+  `src/stages/props.ts`: props against the contract, ADR-0014; `src/stages/number.ts`: number props, ADR-0015, whose text becomes a JSON number in the resolved IR after stage 2 passes). Stage 3 has two parts:
   asset references (`src/assets/`, `src/stages/assets.ts`), which run only when the
   caller passes them, and data (`src/stages/data.ts`, `src/csv/parse.ts`, task 035):
   each csv prop is read through the asset resolver and parsed (no code runs), column
@@ -72,7 +72,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
 | `E_SLOT_CONSTRAINT` | 2 contract | A slot breaks its contract's item limit: its one list has fewer or more items than the `items` range, or the slot holds more than one list; the message gives the limit | 027 |
 | `E_PROP_REQUIRED` | 2 contract | A prop the contract marks `required` is missing from the scene | 035 (ADR-0014) |
-| `E_PROP_VALUE` | 2 contract | A prop's value is empty, not one of its `enum`, not `true`/`false` for a boolean, or not a `.csv` path for a `csv` prop | 035 (ADR-0014) |
+| `E_PROP_VALUE` | 2 contract | A prop's value is empty, not one of its `enum`, not `true`/`false` for a boolean, or not a `.csv` path for a `csv` prop; a `number` prop is outside its `min`/`max`, not a whole number where `integer` is set, or not finite | 035 (ADR-0014), 031 (ADR-0015) |
+| `E_PROP_TYPE` | 2 contract | A `number` prop's text is not a number (`abc`, `1,000`, `NaN`): a decimal literal such as `42`, `-0.5` or `1e9` is one; the suggestion says how to write it | 031 (ADR-0015) |
 | `E_DURATION_BOUNDS` | 2 contract | A scene's duration is outside the component's `duration` bounds (inclusive, in ms as in the contract) | 014 |
 | `E_ANIMATION_UNKNOWN` | 1 filter, 2 contract | A scene's `animation` is not an animation name (filter: the syntax); stage 2: not a registered preset (`packages/registry/animations/`); the suggestion lists the known presets (ADR-0011) | 021 |
 | `E_ANIMATION_INCOMPATIBLE` | 2 contract | A registered preset does not apply to the scene's component (the component or the preset lacks the other); the suggestion lists the component's animations | 021 |
