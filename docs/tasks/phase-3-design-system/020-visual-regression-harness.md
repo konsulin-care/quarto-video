@@ -25,7 +25,7 @@ Automated:
 
 Human check:
 1. [x] `npm run test:visual` → pass.
-2. [ ] Accent change → fails: NOT VERIFIED AS WRITTEN. Changing `accent` leaves the run passing; no component draws it (see Notes). Verified instead: `text` → `#FFFFFF` fails (6.403% of pixels differ), and `report/index.html` shows the diff in red. Reverted.
+2. [x] Accent change → fails. Met 2026-10-15 through `statement-basic` (task 025, which draws `accent` on `strong`): `modern.json` accent `#FF3366` → frame 330 0.570% of pixels differ, frame 420 0.973% (max channel change 153); re-run and reverted. Earlier evidence: `text` → `#FFFFFF` fails (6.403% of pixels differ), and `report/index.html` shows the diff in red.
 
 ## Notes
 - `accent` is declared in the theme but not drawn by any released component; the placeholder `title` uses `text`, the font and `background`. A perturbed accent cannot fail a case until a component draws it. Not changed here: the title contract is task 024's. Follow-up: an accent case when the first component uses it.
@@ -46,4 +46,5 @@ Human check:
 - Docs: `tests/README.md` (Visual review), `AGENT.md` Commands, `renderer/remotion/README.md`, `docs/components/title.md`.
 - Tests: `harness.test.ts` (5: four case-file error paths, one perturbed token). `test:visual` passes unchanged and fails on a changed `text` token.
 - Gates: `mise exec -- scripts/check.sh --all`: passed. `mise exec -- scripts/test.sh --all`: passed (scripts 16; unit 44 files, 331 tests; lua 193; integration 5 vitest and 110 tsx checks; visual 2 frames and 5 self-test checks)
-- Human check 2 (accent) not met as written; see Notes. Follow-ups: (1) accent case with its first component (024); (2) confirm the `visual` CI job on GitHub and, if CI rasterisation differs, approve from CI output; (3) drop the duplicate visual run from `check-and-test` once the job is trusted.
+- 2026-10-15: human check 2 (accent) is now met through `statement-basic` (task 025 draws `accent`). Re-verified: accent `#FF3366` makes the case FAIL at 0.570% (frame 330) and 0.973% (frame 420) of pixels; reverted.
+- Human check 2 (accent) was not met as written on the day of this task; see Notes. Follow-ups: (1) accent case with its first component (024); (2) confirm the `visual` CI job on GitHub and, if CI rasterisation differs, approve from CI output; (3) drop the duplicate visual run from `check-and-test` once the job is trusted.
