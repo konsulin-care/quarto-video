@@ -38,6 +38,16 @@ function overlapOf(
   return { name: transition.name, overlapFrames: transition.durationFrames };
 }
 
+/** The scene's props; none before IR 1.3 (ADR-0013). */
+function propsOf(scene: IrManifest["scenes"][number]): Record<string, string> {
+  return "props" in scene ? (scene.props ?? {}) : {};
+}
+
+/** The scene's CSV tables; none before IR 1.3 (ADR-0013). */
+function tablesOf(scene: IrManifest["scenes"][number]) {
+  return "tables" in scene ? (scene.tables ?? {}) : {};
+}
+
 /** The IR's reduced-motion setting; IR 0.1 to 1.1 have none, so false (task 023). */
 function reducedMotionOf(ir: IrManifest): boolean {
   return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
@@ -74,7 +84,11 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >
-                  <Component slots={slotTexts(scene.content)} />
+                  <Component
+                    slots={slotTexts(scene.content)}
+                    props={propsOf(scene)}
+                    tables={tablesOf(scene)}
+                  />
                 </AnimatedScene>
               </TransitionScene>
             </Sequence>
