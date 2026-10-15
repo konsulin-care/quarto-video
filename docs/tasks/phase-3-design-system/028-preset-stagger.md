@@ -1,6 +1,6 @@
 # 028 — Preset `stagger`
 
-Phase 3 · Status: todo · Depends on: 027 · PRD: §5.6, §12 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 027 · PRD: §5.6, §12 · ADR: —
 
 ## Goal
 Release the `stagger` animation preset: sequential reveal of list items.
