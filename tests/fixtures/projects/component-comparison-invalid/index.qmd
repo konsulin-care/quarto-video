@@ -1,0 +1,59 @@
+---
+title: "Component comparison invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="comparison" duration="1s"}
+::: {.left}
+Only a left area.
+:::
+:::
+
+::: {.scene component="comparison" duration="1s"}
+::: {.left}
+Left area.
+:::
+
+::: {.right}
+Right area.
+:::
+
+::: {.center}
+A slot the comparison does not have.
+:::
+:::
+
+::: {.scene component="comparison" duration="1s"}
+::: {.left}
+Left area.
+:::
+
+::: {.right}
+``` python
+print("code is not a comparison area")
+```
+:::
+:::
+
+::: {.scene component="comparison" duration="0.5s"}
+::: {.left}
+Left area.
+:::
+
+::: {.right}
+Right area.
+:::
+:::
+
+::: {.scene component="comparison" duration="1s" animation="bounce"}
+::: {.left}
+Left area.
+:::
+
+::: {.right}
+Right area.
+:::
+:::
