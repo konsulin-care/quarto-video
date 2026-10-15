@@ -1,0 +1,6 @@
+workload,speedup
+Matrix maths,50
+Image filters,30
+Physics,20
+Sorting,3
+Branchy code,1
