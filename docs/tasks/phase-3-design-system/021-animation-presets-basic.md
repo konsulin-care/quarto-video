@@ -1,6 +1,6 @@
 # 021 — Animation presets: fade-in, slide-up, reveal
 
-Phase 3 · Status: todo · Depends on: 020 · PRD: §5.6, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 020 · PRD: §5.6, §10.2 · ADR: —
 
 ## Goal
 A preset system where animations are registered data + pure frame functions,
