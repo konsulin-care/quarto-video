@@ -79,6 +79,9 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 400
+    },
+    "textFit": {
+      "$ref": "#/$defs/textFit"
     }
   },
   "$defs": {
@@ -95,7 +98,8 @@
           "items": {
             "enum": ["paragraph", "heading", "list", "code-block"]
           }
-        }
+        },
+        "maxBlocks": { "type": "integer", "minimum": 1, "maximum": 100 }
       }
     },
     "prop": {
@@ -122,6 +126,18 @@
           "else": { "not": { "required": ["enum"] } }
         }
       ]
+    },
+    "textFit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max", "min"],
+      "properties": {
+        "max": { "$ref": "#/$defs/scaleName" },
+        "min": { "$ref": "#/$defs/scaleName" }
+      }
+    },
+    "scaleName": {
+      "enum": ["caption", "body", "subtitle", "title"]
     },
     "idList": {
       "type": "array",

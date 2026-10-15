@@ -83,6 +83,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_OUTPUT_UNREADABLE` | 6 output | The rendered file has no readable video stream | 018 |
 | `E_OUTPUT_MISMATCH` | 6 output | The rendered width, height, fps or frame count differs from the IR; `property` names it | 018 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
+| `W_SLOT_TOO_MANY_BLOCKS` | 2 contract | Warning. A slot holds more blocks than its contract's `maxBlocks` (the statement's `default` shows one); the suggestion says how many to keep | 025 |
+| `W_TEXT_FIT` | 2 text fit | Warning. A component's text (contract `textFit`) does not fit the frame even at the smallest size of its range; the suggestion says to shorten it or use a larger frame | 025 |
 
 `E_SETTING_MISSING` (task 008) was retired in task 010 (every setting has a default).
 It is not emitted and must not be reused.

@@ -1,0 +1,27 @@
+---
+title: "Component statement"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="statement" duration="3s" animation="fade-in"}
+Parallel hardware runs **thousands of threads** at once.
+:::
+
+::: {.scene component="statement" duration="3s" animation="slide-up"}
+Memory, not compute, is usually the **limit**.
+:::
+
+::: {.scene component="statement" duration="3s" animation="reveal"}
+# Small batches make *big* differences
+:::
+
+::: {.scene component="statement" duration="4s"}
+A key sentence can run to a full line of several words, and its emphasis, **like this**, is drawn in the accent colour.
+:::
+
+::: {.scene component="statement" duration="2s"}
+**Next: memory.**
+:::

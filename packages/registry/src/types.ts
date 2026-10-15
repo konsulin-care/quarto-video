@@ -7,6 +7,8 @@ export type BlockKind = "paragraph" | "heading" | "list" | "code-block";
 export interface SlotContract {
   required: boolean;
   accepts: BlockKind[];
+  /** More blocks than this is a warning (W_SLOT_TOO_MANY_BLOCKS), not an error. */
+  maxBlocks?: number;
 }
 
 export interface PropContract {
@@ -20,6 +22,15 @@ export interface DurationBounds {
   maxMs: number;
 }
 
+/** A name in the theme's type scale (`typography.scale`). */
+export type ScaleName = "caption" | "body" | "subtitle" | "title";
+
+/** The sizes a component's text may take, from `max` down to `min` (task 025). */
+export interface TextFit {
+  max: ScaleName;
+  min: ScaleName;
+}
+
 export interface ComponentContract {
   id: string;
   version: string;
@@ -31,6 +42,8 @@ export interface ComponentContract {
   compatibleTransitions: string[];
   duration: DurationBounds;
   accessibility: string;
+  /** Scales the `default` slot's text within this range; absent means no scaling. */
+  textFit?: TextFit;
 }
 
 /** Colour roles a theme declares (schema/theme.json). Hex `#RRGGBB` values. */

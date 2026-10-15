@@ -32,7 +32,7 @@ describe("component lookups", () => {
   it("rejects an unknown component id with an error, not undefined", () => {
     expect(() => getComponent("statistic")).toThrow(RegistryError);
     expect(() => getComponent("statistic")).toThrow(
-      /unknown component "statistic" \(known: end-card, section-divider, title\)/,
+      /unknown component "statistic" \(known: end-card, section-divider, statement, title\)/,
     );
   });
 });

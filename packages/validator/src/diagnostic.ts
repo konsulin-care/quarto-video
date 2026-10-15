@@ -42,6 +42,8 @@ export const DIAGNOSTIC_CODES = [
   "E_OUTPUT_UNREADABLE",
   "E_OUTPUT_MISMATCH",
   "E_FILTER_FAILED",
+  "W_SLOT_TOO_MANY_BLOCKS",
+  "W_TEXT_FIT",
 ] as const;
 
 export type DiagnosticCode = (typeof DIAGNOSTIC_CODES)[number];

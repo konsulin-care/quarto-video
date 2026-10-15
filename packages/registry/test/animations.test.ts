@@ -63,9 +63,11 @@ describe("animation presets", () => {
   it("returns copies, so a caller cannot change the registry", () => {
     const first = getAnimation("reveal");
     first.compatibleComponents.push("statement");
+    first.compatibleComponents.push("bullets");
     expect(getAnimation("reveal").compatibleComponents).toEqual([
       "title",
       "end-card",
+      "statement",
     ]);
   });
 

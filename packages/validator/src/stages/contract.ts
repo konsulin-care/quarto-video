@@ -102,6 +102,21 @@ function checkSlots(
       ),
     );
   }
+  for (const name of Object.keys(contract.slots).sort()) {
+    const max = contract.slots[name]?.maxBlocks;
+    const count = blocksIn(slots, name).length;
+    if (max === undefined || count <= max) continue;
+    found.push({
+      ...problem(
+        scene,
+        "W_SLOT_TOO_MANY_BLOCKS",
+        `Slot "${name}" of component "${contract.id}" holds ${count} blocks; the component shows ${max}.`,
+        `slots.${name}`,
+        `Keep at most ${max} block${max === 1 ? "" : "s"} in "${name}"; move the rest to a scene of their own.`,
+      ),
+      severity: "warning",
+    });
+  }
   return found;
 }
 
