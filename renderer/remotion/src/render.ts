@@ -5,6 +5,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundle, type WebpackConfiguration } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
+import type { ThemeTokens } from "@quarto-video/registry";
 import { validateIr, type IrVideo } from "@quarto-video/ir";
 import { COMPOSITION_ID } from "./composition-id.js";
 import { COMPONENTS } from "./registry-map.js";
@@ -85,6 +86,40 @@ export async function loadIr(irPath: string): Promise<IrVideo> {
   return ir;
 }
 
+/** Theme and canvas options shared by render() and renderStills(). */
+export interface InputOptions {
+  /** Theme id (themes/tokens.ts); unset means the default theme. */
+  theme?: string;
+  /** Explicit video.background, or unset/null for the theme's token. */
+  background?: string | null;
+  /** Test seam (task 020): tokens to draw instead of the registry's for `theme`. */
+  tokens?: ThemeTokens;
+}
+
+/** The composition's input props: the IR with its canvas colour, and the theme tokens. */
+export function inputPropsFor(
+  ir: IrVideo,
+  options: InputOptions,
+): { ir: IrVideo; theme: ThemeTokens } {
+  const themeId = options.theme ?? DEFAULT_THEME_ID;
+  if (!themeIds().includes(themeId)) {
+    throw new IrRenderError(
+      `Unknown theme "${themeId}" (known: ${themeIds().join(", ")})`,
+    );
+  }
+  const tokens = options.tokens ?? themeTokens(themeId);
+  const background = canvasBackground(tokens, options.background);
+  return {
+    ir: { ...ir, settings: { ...ir.settings, background } },
+    theme: tokens,
+  };
+}
+
+/** Bundles the renderer entry point; resolves to the serve URL. */
+export function bundleEntry(): Promise<string> {
+  return bundle(bundleOptions);
+}
+
 /** Renders a valid IR file to an H.264 MP4 at outPath. */
 export async function render(
   irPath: string,
@@ -93,20 +128,9 @@ export async function render(
 ): Promise<void> {
   const ir = await loadIr(irPath);
   const browserExecutable = options.browserExecutable ?? null;
-  const themeId = options.theme ?? DEFAULT_THEME_ID;
-  if (!themeIds().includes(themeId)) {
-    throw new IrRenderError(
-      `Unknown theme "${themeId}" (known: ${themeIds().join(", ")})`,
-    );
-  }
-  const tokens = themeTokens(themeId);
-  const background = canvasBackground(tokens, options.background);
-  const inputProps = {
-    ir: { ...ir, settings: { ...ir.settings, background } },
-    theme: tokens,
-  };
+  const inputProps = inputPropsFor(ir, options);
   const onProgress = options.onProgress;
-  const serveUrl = await bundle(bundleOptions);
+  const serveUrl = await bundleEntry();
   const composition = await selectComposition({
     serveUrl,
     id: COMPOSITION_ID,
