@@ -65,7 +65,7 @@ describe("component image", () => {
     assert.ok(row, `no image row in:\n${run.stdout}`);
     assert.match(
       row,
-      /default \(required: image\); caption \(optional: paragraph\)/,
+      /caption \(optional: paragraph\); default \(required: image\)/,
     );
   });
 

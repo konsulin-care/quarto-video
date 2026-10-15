@@ -62,4 +62,4 @@ safe-area margins at 1920x1080.
 - One image per scene. A second image is `E_IMAGE_BLOCK` (task 033); a gallery is a later component.
 - Formats are not checked yet beyond the file's existence and type (task 037, ADR-0008).
 - The renderer copies the whole project root into the bundle, so large projects bundle slowly (task 038 keeps media placement in scope).
-- `reveal` wipes the picture and caption during its entrance (recorded deviation, task 021); the end state is not clipped.
+- `reveal` fades the picture and caption in while they grow from 96% to full size (task 021, redesigned 2026-10-15); nothing is clipped at any frame.
