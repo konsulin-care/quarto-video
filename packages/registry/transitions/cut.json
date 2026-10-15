@@ -1,0 +1,7 @@
+{
+  "id": "cut",
+  "version": "1.0.0",
+  "purpose": "No overlap: the next scene starts on the frame after the previous one ends.",
+  "duration": { "defaultMs": 0, "minMs": 0, "maxMs": 0 },
+  "reducedMotion": "cut"
+}

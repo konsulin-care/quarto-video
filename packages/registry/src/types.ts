@@ -81,3 +81,14 @@ export interface AnimationPreset {
   /** Shown when reduced motion is requested (task 023). */
   reducedMotion: "static";
 }
+
+/** A transition preset's data (schema/transition.json, PRD §5.6; ADR-0005). */
+export interface TransitionPreset {
+  id: string;
+  version: string;
+  purpose: string;
+  /** Milliseconds, fps-independent (ADR-0003). Only cut's are all 0. */
+  duration: { defaultMs: number; minMs: number; maxMs: number };
+  /** The registered transition drawn when reduced motion is requested (task 023). */
+  reducedMotion: string;
+}

@@ -1,0 +1,7 @@
+{
+  "id": "zoom",
+  "version": "1.0.0",
+  "purpose": "The incoming scene grows from a smaller size to full size while it fades in over the outgoing scene.",
+  "duration": { "defaultMs": 500, "minMs": 100, "maxMs": 3000 },
+  "reducedMotion": "fade"
+}

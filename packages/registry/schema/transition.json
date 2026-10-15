@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quarto-video.local/registry/transition.json",
+  "title": "Transition preset",
+  "description": "Data contract of one transition preset (PRD §5.6; ADR-0005). Static data only: the frame functions live in renderer/remotion/transitions, keyed by id. Durations are milliseconds (ADR-0003). No functions, no pixels, no CSS.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "purpose", "duration", "reducedMotion"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "duration": {
+      "description": "defaultMs is documentation only: ADR-0005 forbids a hidden default, so every non-cut transition states transitionDuration. minMs and maxMs bound it (stage 4).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultMs", "minMs", "maxMs"],
+      "properties": {
+        "defaultMs": { "type": "integer", "minimum": 0 },
+        "minMs": { "type": "integer", "minimum": 0 },
+        "maxMs": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "reducedMotion": {
+      "description": "The transition drawn when reduced motion is requested (task 023): another registered name that moves nothing, and that keeps the same overlap, so the timeline does not change.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 64
+    }
+  }
+}

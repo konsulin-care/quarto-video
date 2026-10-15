@@ -4,6 +4,11 @@ export { RegistryError, loadComponentDir, parseContract } from "./load.js";
 export { getComponent, listComponents } from "./components.js";
 export { listTransitions, parseTransitions } from "./transitions.js";
 export {
+  listTransitionPresets,
+  loadTransitionDir,
+  parseTransitionPreset,
+} from "./transition-presets.js";
+export {
   getAnimation,
   listAnimations,
   loadAnimationDir,

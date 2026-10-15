@@ -1,0 +1,7 @@
+{
+  "id": "fade",
+  "version": "1.0.0",
+  "purpose": "The incoming scene fades in over the outgoing scene, which stays opaque until the overlap ends.",
+  "duration": { "defaultMs": 500, "minMs": 100, "maxMs": 3000 },
+  "reducedMotion": "fade"
+}
