@@ -1,0 +1,23 @@
+---
+title: "Component title warnings"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s"}
+# Welcome to the course
+
+::: {.subtitle}
+A short subtitle under the title.
+:::
+:::
+
+::: {.scene component="title" duration="3s"}
+# This opening title is far longer than a small 640 by 360 frame can hold even at the smallest legible size, so it keeps going past the top and bottom of the frame and the validator must warn about it before render time now.
+:::
+
+::: {.scene component="title" duration="2s"}
+# The end
+:::

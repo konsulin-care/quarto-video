@@ -2,6 +2,10 @@
 // §5.5, §9.2). component-title-invalid has one scene per contract violation:
 // each must yield exactly the code, line and scene id of its expected.json,
 // one error per scene. component-title is valid and must pass stage 2.
+// component-title-small (640x360, a title of about 100 characters) and
+// component-title-warn (640x360) cover the text fit (task 026): the long title
+// scales down with no warning; a title that cannot fit even at 40px warns
+// W_TEXT_FIT and nothing else.
 import { spawnSync } from "node:child_process";
 import {
   mkdirSync,
@@ -79,6 +83,39 @@ describe("component title fixtures", () => {
         String(diagnostic["suggestion"] ?? "") !== "",
         `no suggestion for ${String(diagnostic["code"])}`,
       );
+    }
+  });
+
+  it("component-title-small validates with no warnings at 640x360", () => {
+    const run = video(["validate", copyFixture("component-title-small")]);
+    assert.equal(run.status, 0, run.stderr);
+    assert.equal(
+      run.stdout,
+      "OK component-title-small (2 scenes, 120 frames)\n",
+    );
+  });
+
+  it("component-title-warn yields only its W_TEXT_FIT warning, and exits 0", () => {
+    const run = video([
+      "validate",
+      "--json",
+      copyFixture("component-title-warn"),
+    ]);
+    assert.equal(run.status, 0, run.stderr);
+    const actual = JSON.parse(run.stdout) as Array<Record<string, unknown>>;
+    const expected = JSON.parse(
+      readFileSync(
+        join(FIXTURES, "component-title-warn", "expected.json"),
+        "utf8",
+      ),
+    ) as Array<Record<string, unknown>>;
+    assert.deepEqual(
+      actual.map((d) => Object.fromEntries(KEYS.map((k) => [k, d[k]]))),
+      expected,
+    );
+    for (const diagnostic of actual) {
+      assert.equal(diagnostic["severity"], "warning");
+      assert.equal(diagnostic["property"], "slots.default");
     }
   });
 });

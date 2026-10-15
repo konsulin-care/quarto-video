@@ -1,0 +1,19 @@
+---
+title: "Component title small frame"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s"}
+# The opening title of a video can run to about one hundred characters, so it must scale down to fit
+:::
+
+::: {.scene component="title" duration="2s"}
+# The opening title of a video can run to about one hundred characters, so it must scale down to fit
+
+::: {.subtitle}
+A short subtitle.
+:::
+:::
