@@ -1,5 +1,5 @@
 # docs/components/ — component and preset pages
-Status: `title` is the only released component (task 024 replaces its placeholder). Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
+Status: `title` is the only released component (released in task 024, which replaces its placeholder). Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
 
 ## Purpose
 One page per released component (`<id>.md`), plus this index. A page says what an author writes, what the component accepts and how it behaves. The registry (`packages/registry`) is the source of truth for slots, props and bounds; these pages explain it.
@@ -7,7 +7,7 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 ## Components
 | Component | Page | Status |
 | --- | --- | --- |
-| `title` | [title.md](title.md) | Released (placeholder, task 004; contract, task 013; animations, task 021) |
+| `title` | [title.md](title.md) | Released (task 024: subtitle slot; placeholder task 004, contract 013, animations 021) |
 
 ## Presets
 A preset is a named motion or transition that an author may use. Presets are data in `packages/registry` (`animations/<id>.json`, `transitions.json`) and a pure frame function in `renderer/remotion`. Authors pick a preset by name; they never write motion code.
@@ -65,4 +65,4 @@ Example:
 Errors (validator, stage 4): `E_TRANSITION_UNKNOWN` for a name that is not registered (the message lists the known ones); `E_TRANSITION_DURATION` when the length is outside the transition's bounds, or a `transitionDuration` is given to `cut`. Other timeline errors: `E_TRANSITION_FIRST_SCENE`, `E_TRANSITION_TOO_LONG`, `E_TRANSITION_OVERLAP` (ADR-0005).
 
 ## Adding a page
-Copy the shape of [title.md](title.md): Purpose, Usage, Slots and content, Timing and placement, Accessibility, Known limits. A released component or preset also needs its visual case in `tests/visual/cases/` (`tests/README.md`).
+Copy [_template.md](_template.md): Purpose, Usage, Slots and content, Timing and placement, Accessibility, Known limits. [title.md](title.md) is a worked example. A released component or preset also needs its visual case in `tests/visual/cases/` (`tests/README.md`).
