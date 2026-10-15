@@ -73,5 +73,7 @@ Human check:
 - Follow-ups: (1) a human reviews the luminance flash rule against WCAG 2.3.1
   and the colour-flash case; (2) per-scene overrides are out of scope; (3)
   `reveal` still wipes text during its normal entrance (task 021 deviation,
-  unchanged here); (4) a reduced-motion rule for future components' motion
+  unchanged here). Corrected 2026-10-15: this is no longer true. Task 021 and the
+  reveal redesign (commits a5ddad6, be180a6) make `reveal` fade the text in whole;
+  nothing is wiped; (4) a reduced-motion rule for future components' motion
   (tasks 024+) comes with each preset.
