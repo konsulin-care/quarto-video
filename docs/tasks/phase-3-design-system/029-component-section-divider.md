@@ -1,6 +1,6 @@
 # 029 — Component `section-divider`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (11), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (11), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `section-divider` component: chapter or topic break between sections.
