@@ -60,8 +60,12 @@ conservative option applies (AGENT.md). IR 0.2 has no transitions and no timelin
   The validator recomputes it with `resolveTimeline` (`packages/ir/src/timeline.ts`)
   and rejects a difference (`E_TIMELINE_MISMATCH`). Both pass
   `packages/ir/test-vectors/timeline.json`.
-- **Renderer.** Each scene is shown from its `startFrame` until the next starts (or the
-  total). Negative values are rejected earlier (ADR-0003; IR schema `minimum: 0`).
+- **Renderer.** Each scene plays its own `durationFrames` from its `startFrame`, so a
+  transition's overlap is shown by both scenes (the incoming scene's
+  `transition.durationFrames`; `cut` has none). Negative values are rejected earlier
+  (ADR-0003; IR schema `minimum: 0`). Corrected 2026-10-15: the earlier wording,
+  "until the next starts", contradicted the overlap; the decision is unchanged. See
+  task 022.
 - **Placement.** Stage 4 is `packages/validator/src/stages/timeline.ts`; the DSL rules
   above are stage 1.
 
