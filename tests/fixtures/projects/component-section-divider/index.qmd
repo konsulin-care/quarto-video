@@ -1,0 +1,35 @@
+---
+title: "Component section divider"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="section-divider" duration="3s" animation="fade-in"}
+::: {.kicker}
+Part 1
+:::
+
+# Foundations
+:::
+
+::: {.scene component="section-divider" duration="3s" animation="slide-up"}
+::: {.kicker}
+Part 2
+:::
+
+# Memory and data
+:::
+
+::: {.scene component="section-divider" duration="2s" animation="fade-in"}
+# Summary
+:::
+
+::: {.scene component="section-divider" duration="4s"}
+::: {.kicker}
+Part 3
+:::
+
+# A section title can run to a full sentence, so a long title wraps inside the safe area
+:::

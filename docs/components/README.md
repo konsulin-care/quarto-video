@@ -8,6 +8,7 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | Component | Page | Status |
 | --- | --- | --- |
 | `title` | [title.md](title.md) | Released (task 024: subtitle slot; placeholder task 004, contract 013, animations 021) |
+| `section-divider` | [section-divider.md](section-divider.md) | Released (task 029: kicker slot, fade-in and slide-up) |
 
 ## Presets
 A preset is a named motion or transition that an author may use. Presets are data in `packages/registry` (`animations/<id>.json`, `transitions.json`) and a pure frame function in `renderer/remotion`. Authors pick a preset by name; they never write motion code.
@@ -17,8 +18,8 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 
 | Id | Purpose | Compatible components | Min frames | Short scene | Reduced motion |
 | --- | --- | --- | --- | --- | --- |
-| `fade-in` | Content fades from transparent to opaque. | `title` | 15 | static | static |
-| `slide-up` | Content fades in while it rises into place. | `title` | 15 | static | static |
+| `fade-in` | Content fades from transparent to opaque. | `title`, `section-divider` | 15 | static | static |
+| `slide-up` | Content fades in while it rises into place. | `title`, `section-divider` | 15 | static | static |
 | `reveal` | A wipe uncovers the content from left to right. | `title` | 15 | static | static |
 
 Rules that apply to every animation preset:

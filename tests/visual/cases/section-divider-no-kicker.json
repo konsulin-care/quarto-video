@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/component-section-divider",
+  "theme": "modern",
+  "frames": [180, 190, 239],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}
