@@ -1,5 +1,5 @@
 # docs/components/ — component and preset pages
-Status: `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image` (task 033, IR 1.3, ADR-0013) `chart` (task 035, props and CSV tables, IR 1.4, ADR-0014) and `statistic` (task 031, number props, IR 1.5, ADR-0015) are the released components. `title` in task 024 replaces its placeholder; `section-divider` in task 029; `end-card` in task 030; `statement` in task 025; `comparison` in task 034; `bullets` in task 027. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021), `kinetic` (task 026), `stagger` (task 028). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
+Status: `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image` (task 033, IR 1.3, ADR-0013) `chart` (task 035, props and CSV tables, IR 1.4, ADR-0014) and `statistic` (task 031, number props, IR 1.5, ADR-0015) are the released components. `title` in task 024 replaces its placeholder; `section-divider` in task 029; `end-card` in task 030; `statement` in task 025; `comparison` in task 034; `bullets` in task 027. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021), `kinetic` (task 026), `stagger` (task 028), `count-up` (task 032). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
 
 ## Purpose
 One page per released component (`<id>.md`), plus this index. A page says what an author writes, what the component accepts and how it behaves. The registry (`packages/registry`) is the source of truth for slots, props and bounds; these pages explain it.
@@ -30,6 +30,7 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 | `reveal` | The content fades in while it grows from 96% to full size. | `title`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
 | `kinetic` | The words of a statement appear one after another, each rising into place, all in place by 80% of the scene. | `statement` | 30 | static | static |
 | `stagger` | The items of a list appear one after another, each fading in while it rises into place, all in place by 70% of the scene. | `bullets`, `end-card` | 45 | static | static |
+| `count-up` | The value of a statistic counts up from zero to its exact value, shown from 70% of the scene. | `statistic` | 45 | static | static |
 
 Rules that apply to every animation preset:
 - Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame. `kinetic` keeps its own timing (below).
@@ -42,6 +43,8 @@ Rules that apply to every animation preset:
 Kinetic (task 026): the scene itself does not move; each word of the statement fades in over 6 frames and rises by `space.sm`. Word *i* of *N* starts at frame floor(*i* × S / *N*), with S = ceil(0.8 × length) − 6, so every word is in place by 80% of the scene. Only `statement`. More than 12 words (`KINETIC_MAX_WORDS`) draws `fade-in` and the validator warns `W_ANIMATION_FALLBACK`. A word is a run of non-space characters. `title` is not supported.
 
 Stagger (task 028): the scene itself does not move; each item of the list does. Item *i* of *N* starts at floor(*i* × S / *N*), with S = ceil(0.7 × length) − 9, and fades in over 9 frames while it rises by `space.sm`, so every item is in place by 70% of the scene. For `bullets` the items are the list points; for `end-card` they are the `credits` lines. The message, heading and call to action are drawn from the first frame. A scene under 45 frames (1.5 s) and reduced motion draw every item in its place (static): reduced motion shows the whole list at once, with no fade, which is the registry's `static` rule. Errors: a stagger on a component other than `bullets` or `end-card` is `E_ANIMATION_INCOMPATIBLE`.
+
+Count-up (task 032): the scene does not move; the number of a `statistic` counts up. The count runs from frame 0 to frame ceil(0.7 × duration), easing out, and shows the value formatted as the statistic formats it (`formatNumber`) from that frame on. A negative value counts down to its value. A scene under 45 frames (1.5 s) and reduced motion show the value from the first frame. Errors: a count-up on any other component is `E_ANIMATION_INCOMPATIBLE`.
 
 Example:
 ```markdown

@@ -58,7 +58,7 @@ The number takes the largest size up to twice the theme's title size (192px at `
 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
-- Animations: `fade-in`, `slide-up`, `reveal` (see [README](README.md#animations-task-021)). The animation moves the number, label and context together.
+- Animations: `count-up` (task 032: the number counts up from zero, see [README](README.md#animations-task-021)), `fade-in`, `slide-up`, `reveal`. The animation moves the number, label and context together.
 - Placements and transitions: none.
 
 ## Accessibility
