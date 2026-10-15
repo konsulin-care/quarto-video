@@ -38,8 +38,14 @@ function overlapOf(
   return { name: transition.name, overlapFrames: transition.durationFrames };
 }
 
+/** The IR's reduced-motion setting; IR 0.1 to 1.1 have none, so false (task 023). */
+function reducedMotionOf(ir: IrManifest): boolean {
+  return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
+}
+
 export function IrVideo({ ir, theme }: IrVideoProps) {
   const timeline = timelineOf(ir);
+  const reducedMotion = reducedMotionOf(ir);
   return (
     <ThemeProvider theme={theme}>
       <AbsoluteFill
@@ -61,10 +67,12 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                 durationFrames={scene.durationFrames}
                 incoming={overlapOf(scene)}
                 outgoing={overlapOf(ir.scenes[index + 1])}
+                reducedMotion={reducedMotion}
               >
                 <AnimatedScene
                   animation={animationOf(scene)}
                   durationFrames={scene.durationFrames}
+                  reducedMotion={reducedMotion}
                 >
                   <Component text={plainText(scene.content)} />
                 </AnimatedScene>

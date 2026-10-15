@@ -1,5 +1,5 @@
 # renderer/remotion/ — Remotion reference renderer
-Status: Minimal render (task 004): any valid IR renders to MP4 with a placeholder `title` scene; the title shows the `default` slot's text (task 012). Scenes play on the IR timeline. Transition presets (task 022): `cut`, `fade`, `slide`, `wipe`, `zoom`, applied over each boundary's overlap by `TransitionScene`. Themes (task 019): tokens from the registry, bundled Inter fonts; `title` is styled from them. Animation presets (task 021): `fade-in`, `slide-up`, `reveal`, applied to the whole scene by `AnimatedScene`. Other components and transitions: tasks 022–035, 039–046.
+Status: Minimal render (task 004): any valid IR renders to MP4 with a placeholder `title` scene; the title shows the `default` slot's text (task 012). Scenes play on the IR timeline. Transition presets (task 022): `cut`, `fade`, `slide`, `wipe`, `zoom`, applied over each boundary's overlap by `TransitionScene`. Themes (task 019): tokens from the registry, bundled Inter fonts; `title` is styled from them. Animation presets (task 021): `fade-in`, `slide-up`, `reveal`, applied to the whole scene by `AnimatedScene`. Reduced motion (task 023, `settings.reducedMotion` in IR 1.2): each preset draws its registry rule (`static`: the end state from its first frame) and each transition its fallback (`slide`, `wipe`, `zoom` draw `fade`), over the same overlap. Other components and transitions: tasks 022–035, 039–046.
 Run: `npm run render -w renderer/remotion -- <ir.json> <out.mp4>`; typecheck: `npm run typecheck -w @quarto-video/remotion`; unit tests: root `npm run test`; render tests: root `npm run test:integration`.
 
 ## Purpose
@@ -13,8 +13,8 @@ what is valid.
   input props via `calculateMetadata`.
 - `src/IrVideo.tsx` — plays each scene with `<Sequence>` at its `startFrame` for its own `durationFrames` (`timelineOf`, `@quarto-video/ir/timeline`), on `settings.background`. A transition's overlap shows both scenes: the outgoing scene runs to its own end. Scene text comes from `plainText` (`@quarto-video/ir/text`).
 - `src/registry-map.ts` — registry id → implementation (`title` only).
-- `src/AnimatedScene.tsx` — applies the scene's animation preset at the scene's own frame; no animation draws the scene as it is.
-- `src/TransitionScene.tsx` — applies the incoming transition on the scene's first frames and the outgoing one (from the next scene) on its last; no overlap draws the scene as it is.
+- `src/AnimatedScene.tsx` — applies the scene's animation preset at the scene's own frame; no animation draws the scene as it is. `reducedMotion` (from the IR, via `IrVideo.tsx`) selects the preset's registry rule.
+- `src/TransitionScene.tsx` — applies the incoming transition on the scene's first frames and the outgoing one (from the next scene) on its last; no overlap draws the scene as it is. `reducedMotion` selects each transition's registry fallback.
 - `transitions/` — preset type (`types.ts`: `incoming(p)` and `outgoing(p)`, `p` in (0, 1], 1 on the overlap's last frame), one file per name, `index.ts` (`TRANSITIONS`, `transitionStyle`). Names and bounds come from `packages/registry/transitions/`.
 - `animations/` — preset API (`types.ts`: `(frame, durationFrames, tokens) → style`), shared timing (`curve.ts`), one file per preset, `index.ts` (`ANIMATIONS`, `animationStyle`). Minimums come from `packages/registry/animations/`.
 - `src/index.ts` — public API used by `packages/cli`: `render`, `loadIr`, `IrRenderError`, types `RenderFn`, `RenderOptions`, `RenderProgress`.
@@ -72,6 +72,7 @@ A preset: its `packages/registry/animations/<id>.json`, a file in `animations/` 
   shrunk to 640×360 and 1 s, and a two-scene IR; ffprobe checks size, 30 fps and
   frame count = sum of `durationFrames`.
 - Transitions (task 022): `test/transition-curves.test.ts` (each side at its first, middle and last overlap frame; cut draws no style; the outgoing scene is gone by the overlap's last frame), `test/transition-parity.test.ts`. Visual: `transitions-basic`; integration: `timeline.test.ts` (`transitions` fixture).
+- Reduced motion (task 023): `test/reduced-motion.test.ts` (each animation is static at its end state; each transition's fallback has the same overlap as fade).
 - Animations (task 021): `test/animation-curves.test.ts` (value curves, end state by the last frame for every duration from the minimum, short-scene fallback, determinism), `test/animation-parity.test.ts` (ids equal the registry's). Visual: `animations-basic` (`tests/visual/`).
 - Lint (task 021): `test/banned-apis.test.ts` scans `src`, `components`, `themes`, `animations` for the banned APIs and pins what the rule flags.
 - Parity (root `npm run check`): `test/registry-parity.test.ts` checks that `src/registry-map.ts` maps exactly the registry's component ids (task 013). Tests may import the registry index. `src` uses the registry only for types and the theme JSON subpath (`themes/tokens.ts`), never its runtime index (it pulls in the validator).

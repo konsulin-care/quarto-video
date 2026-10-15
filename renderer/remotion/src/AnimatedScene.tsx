@@ -11,17 +11,26 @@ export interface AnimatedSceneProps {
   /** A preset id, or undefined for no animation. */
   animation: string | undefined;
   durationFrames: number;
+  /** The IR's reduced-motion setting (task 023); absent means false. */
+  reducedMotion?: boolean | undefined;
   children: ReactNode;
 }
 
 export function AnimatedScene({
   animation,
   durationFrames,
+  reducedMotion,
   children,
 }: AnimatedSceneProps) {
   const frame = useCurrentFrame();
   const theme = useTheme();
   if (animation === undefined) return <>{children}</>;
-  const style = animationStyle(animation, frame, durationFrames, theme);
+  const style = animationStyle(
+    animation,
+    frame,
+    durationFrames,
+    theme,
+    reducedMotion === true,
+  );
   return <AbsoluteFill style={style}>{children}</AbsoluteFill>;
 }

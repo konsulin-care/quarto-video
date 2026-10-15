@@ -11,6 +11,8 @@ export interface TransitionSceneProps {
   incoming?: Overlap | undefined;
   /** The transition out of this scene, given by the next scene. */
   outgoing?: Overlap | undefined;
+  /** The IR's reduced-motion setting (task 023); absent means false. */
+  reducedMotion?: boolean | undefined;
   children: ReactNode;
 }
 
@@ -18,10 +20,17 @@ export function TransitionScene({
   durationFrames,
   incoming,
   outgoing,
+  reducedMotion,
   children,
 }: TransitionSceneProps) {
   const frame = useCurrentFrame();
-  const style = transitionStyle(frame, durationFrames, incoming, outgoing);
+  const style = transitionStyle(
+    frame,
+    durationFrames,
+    incoming,
+    outgoing,
+    reducedMotion === true,
+  );
   if (style === undefined) return <>{children}</>;
   return <AbsoluteFill style={style}>{children}</AbsoluteFill>;
 }
