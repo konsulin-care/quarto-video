@@ -20,5 +20,10 @@
     "minMs": 1000,
     "maxMs": 30000
   },
-  "accessibility": "The title and the optional subtitle are the only content. Colour and size come from the theme (task 019); the subtitle uses the muted text token, a theme pair that meets WCAG AA. Long text wraps inside the safe area."
+  "accessibility": "The title and the optional subtitle are the only content. Colour and size come from the theme (task 019); the subtitle uses the muted text token, a theme pair that meets WCAG AA. Long text wraps inside the safe area and scales down within the theme's type scale (title to body, subtitle to body); below body size it is a validation warning.",
+  "textFit": {
+    "max": "title",
+    "min": "body",
+    "subtitle": { "max": "subtitle", "min": "body" }
+  }
 }

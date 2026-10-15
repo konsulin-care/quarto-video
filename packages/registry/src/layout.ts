@@ -2,7 +2,7 @@
 // safe-area margins of a frame, and the largest size in a theme's type scale
 // at which text fits its box. Pure, with no node or browser APIs, so the
 // renderer bundle imports it through "@quarto-video/registry/layout".
-import type { ThemeTokens, TextFit } from "./types.js";
+import type { TextFit, TextRange, ThemeTokens } from "./types.js";
 
 export interface Margins {
   x: number;
@@ -108,24 +108,84 @@ function linesAt(text: string, width: number, size: number): number {
 
 /**
  * The largest integer size from `range.max` down to `range.min` (theme type
- * scale) at which `text` fits `box` at the theme's tight line height. When none
- * fits, `fontPx` is the minimum and `fits` is false: the renderer draws it and
- * the validator warns (W_TEXT_FIT).
+ * scale) at which `text` fits `box` at `lineHeight` (default: the theme's tight
+ * line height). When none fits, `fontPx` is the minimum and `fits` is false: the
+ * renderer draws it and the validator warns (W_TEXT_FIT).
  */
 export function fitText(
   text: string,
   box: Box,
   theme: ThemeTokens,
-  range: TextFit,
+  range: TextRange,
+  lineHeight: number = theme.typography.lineHeight.tight,
 ): FitResult {
-  const { scale, lineHeight } = theme.typography;
+  const { scale } = theme.typography;
   const max = scale[range.max];
   const min = scale[range.min];
   for (let size = max; size >= min; size -= 1) {
     const lines = linesAt(text, box.width, size);
-    if (lines * size * lineHeight.tight <= box.height) {
+    if (lines * size * lineHeight <= box.height) {
       return { fontPx: size, lines, fits: true };
     }
   }
   return { fontPx: min, lines: linesAt(text, box.width, min), fits: false };
+}
+
+/** The fit of a title (`default`) and, when it has text, its `subtitle`. */
+export interface StackFit {
+  default: FitResult;
+  subtitle?: FitResult;
+}
+
+/**
+ * Fits a title and its optional subtitle as one centred column in `box` (task
+ * 026). The title keeps the largest size in its range at which the column fits:
+ * for each title size, from the largest down, the subtitle takes the largest
+ * size in its range that fits the height the title leaves, at the body line
+ * height the renderer draws it with, plus the theme's `sm` space. Without
+ * subtitle text, or without a subtitle range, the title is fitted alone.
+ *
+ * When no pair fits, the title stays at the minimum and the result says what
+ * does not fit: the title when it overflows alone, otherwise the subtitle.
+ */
+export function fitStack(
+  slots: { default: string; subtitle: string },
+  box: Box,
+  theme: ThemeTokens,
+  range: TextFit,
+): StackFit {
+  if (range.subtitle === undefined || slots.subtitle === "") {
+    return { default: fitText(slots.default, box, theme, range) };
+  }
+  const subRange = range.subtitle;
+  const { tight, body } = theme.typography.lineHeight;
+  const { scale } = theme.typography;
+  const gap = theme.space.sm;
+  for (let size = scale[range.max]; size >= scale[range.min]; size -= 1) {
+    const lines = linesAt(slots.default, box.width, size);
+    const rest = {
+      width: box.width,
+      height: box.height - lines * size * tight - gap,
+    };
+    const subtitle = fitText(slots.subtitle, rest, theme, subRange, body);
+    if (subtitle.fits) {
+      return { default: { fontPx: size, lines, fits: true }, subtitle };
+    }
+  }
+  const min = scale[range.min];
+  const lines = linesAt(slots.default, box.width, min);
+  const used = lines * min * tight;
+  if (used > box.height) {
+    // The title overflows alone at its minimum: it is the warning.
+    return {
+      default: { fontPx: min, lines, fits: false },
+      subtitle: fitText(slots.subtitle, box, theme, subRange, body),
+    };
+  }
+  // The title fits at its minimum; the subtitle is what does not fit beside it.
+  const rest = { width: box.width, height: box.height - used - gap };
+  return {
+    default: { fontPx: min, lines, fits: true },
+    subtitle: fitText(slots.subtitle, rest, theme, subRange, body),
+  };
 }

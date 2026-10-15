@@ -27,10 +27,19 @@ export interface DurationBounds {
 /** A name in the theme's type scale (`typography.scale`). */
 export type ScaleName = "caption" | "body" | "subtitle" | "title";
 
-/** The sizes a component's text may take, from `max` down to `min` (task 025). */
-export interface TextFit {
+/** The sizes a text may take, from `max` down to `min` (task 025). */
+export interface TextRange {
   max: ScaleName;
   min: ScaleName;
+}
+
+/**
+ * A component's text-fit rules (task 025; subtitle task 026). The top level
+ * is the `default` slot's range; `subtitle`, when declared, is the range of the
+ * `subtitle` slot.
+ */
+export interface TextFit extends TextRange {
+  subtitle?: TextRange;
 }
 
 export interface ComponentContract {
@@ -44,7 +53,7 @@ export interface ComponentContract {
   compatibleTransitions: string[];
   duration: DurationBounds;
   accessibility: string;
-  /** Scales the `default` slot's text within this range; absent means no scaling. */
+  /** Scales the `default` slot's text (and `subtitle`, if declared) within its range; absent means no scaling. */
   textFit?: TextFit;
 }
 

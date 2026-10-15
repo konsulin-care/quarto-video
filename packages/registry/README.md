@@ -29,7 +29,7 @@ accepts. The validator enforces it; the renderer implements it.
 | `compatibleAnimations`, `compatibleTransitions` | Preset ids. Each animation id must be a shipped preset whose `compatibleComponents` lists the component (both sides agree; test-checked). Transitions: not checked against scenes yet; empty for every component. |
 | `duration` | `{minMs, maxMs}`: integers ≥ 1, `maxMs` ≥ `minMs`. Milliseconds keep bounds fps-independent (ADR-0003). |
 | `accessibility` | Notes on text, motion and media behaviour, 1–400 characters. |
-| `textFit` | Optional `{max, min}`, each a theme type-scale name (`caption`, `body`, `subtitle`, `title`). The `default` slot's text takes the largest size in the range that fits the safe area (`src/layout.ts`, task 025); text that does not fit at `min` is the warning W_TEXT_FIT. |
+| `textFit` | Optional `{max, min}`, each a theme type-scale name (`caption`, `body`, `subtitle`, `title`). The `default` slot's text takes the largest size in the range that fits the safe area (`src/layout.ts`, task 025); text that does not fit at `min` is the warning W_TEXT_FIT. An optional `subtitle: {max, min}` gives the `subtitle` slot its own range; `fitStack` fits the title first and the subtitle beside it (task 026). |
 
 Numeric props, pixel or CSS values and functions are not allowed (PRD §5.5, AGENT.md).
 

@@ -142,6 +142,16 @@
       "required": ["max", "min"],
       "properties": {
         "max": { "$ref": "#/$defs/scaleName" },
+        "min": { "$ref": "#/$defs/scaleName" },
+        "subtitle": { "$ref": "#/$defs/textRange" }
+      }
+    },
+    "textRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max", "min"],
+      "properties": {
+        "max": { "$ref": "#/$defs/scaleName" },
         "min": { "$ref": "#/$defs/scaleName" }
       }
     },
