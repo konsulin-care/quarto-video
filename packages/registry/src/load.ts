@@ -40,6 +40,14 @@ export function parseContract(text: string, file: string): ComponentContract {
       `${file}: id "${contract.id}" must match the file name (${expectedFile})`,
     );
   }
+  for (const [name, slot] of Object.entries(contract.slots)) {
+    const limit = slot.items;
+    if (limit !== undefined && limit.maxItems < limit.minItems) {
+      throw new RegistryError(
+        `${file}: /slots/${name}/items: maxItems (${limit.maxItems}) is below minItems (${limit.minItems})`,
+      );
+    }
+  }
   if (contract.duration.maxMs < contract.duration.minMs) {
     throw new RegistryError(
       `${file}: /duration: maxMs (${contract.duration.maxMs}) is below minMs (${contract.duration.minMs})`,

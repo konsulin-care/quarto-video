@@ -5,6 +5,7 @@ import type { IrBlock } from "@quarto-video/ir";
 import { SectionDivider } from "../components/section-divider/SectionDivider.js";
 import { Statement } from "../components/statement/Statement.js";
 import { Title } from "../components/title/Title.js";
+import { Bullets } from "../components/bullets/Bullets.js";
 import { Comparison } from "../components/comparison/Comparison.js";
 import { EndCard } from "../components/end-card/EndCard.js";
 
@@ -21,4 +22,5 @@ export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   comparison: Comparison,
   title: Title,
   "end-card": EndCard,
+  bullets: Bullets,
 };

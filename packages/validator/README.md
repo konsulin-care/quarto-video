@@ -63,6 +63,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_SLOT_UNKNOWN` | 2 contract | A scene has content in a slot its component does not declare; the suggestion lists the slots | 014 |
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
+| `E_SLOT_CONSTRAINT` | 2 contract | A slot breaks its contract's item limit: its one list has fewer or more items than the `items` range, or the slot holds more than one list; the message gives the limit | 027 |
 | `E_DURATION_BOUNDS` | 2 contract | A scene's duration is outside the component's `duration` bounds (inclusive, in ms as in the contract) | 014 |
 | `E_ANIMATION_UNKNOWN` | 1 filter, 2 contract | A scene's `animation` is not an animation name (filter: the syntax); stage 2: not a registered preset (`packages/registry/animations/`); the suggestion lists the known presets (ADR-0011) | 021 |
 | `E_ANIMATION_INCOMPATIBLE` | 2 contract | A registered preset does not apply to the scene's component (the component or the preset lacks the other); the suggestion lists the component's animations | 021 |

@@ -9,6 +9,8 @@ export interface SlotContract {
   accepts: BlockKind[];
   /** More blocks than this is a warning (W_SLOT_TOO_MANY_BLOCKS), not an error. */
   maxBlocks?: number;
+  /** Optional: the slot holds one list whose item count is in this range (task 027). */
+  items?: { minItems: number; maxItems: number };
 }
 
 export interface PropContract {

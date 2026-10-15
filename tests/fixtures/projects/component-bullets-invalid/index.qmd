@@ -1,0 +1,68 @@
+---
+title: "Component bullets invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="bullets" duration="2s"}
+::: {.heading}
+## No list
+:::
+:::
+
+::: {.scene component="bullets" duration="2s"}
+- A point.
+- Another point.
+
+::: {.caption}
+A slot the bullets do not have.
+:::
+:::
+
+::: {.scene component="bullets" duration="2s"}
+A paragraph is not a list.
+:::
+
+::: {.scene component="bullets" duration="2s"}
+::: {.heading}
+- A list is not a heading.
+- Second item.
+:::
+
+- Points.
+- Points again.
+:::
+
+::: {.scene component="bullets" duration="2s"}
+- Only one point.
+:::
+
+::: {.scene component="bullets" duration="2s"}
+- One.
+- Two.
+- Three.
+- Four.
+- Five.
+- Six.
+- Seven.
+:::
+
+::: {.scene component="bullets" duration="2s"}
+- First list, one point.
+- First list, two points.
+
+1. Second list.
+2. Second list again.
+:::
+
+::: {.scene component="bullets" duration="0.5s"}
+- Too short to read.
+- Second point.
+:::
+
+::: {.scene component="bullets" duration="2s" animation="bounce"}
+- Unknown animation.
+- Second point.
+:::

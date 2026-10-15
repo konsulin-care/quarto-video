@@ -99,7 +99,16 @@
             "enum": ["paragraph", "heading", "list", "code-block"]
           }
         },
-        "maxBlocks": { "type": "integer", "minimum": 1, "maximum": 100 }
+        "maxBlocks": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minItems", "maxItems"],
+          "properties": {
+            "minItems": { "type": "integer", "minimum": 1 },
+            "maxItems": { "type": "integer", "minimum": 1 }
+          }
+        }
       }
     },
     "prop": {

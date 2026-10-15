@@ -77,6 +77,28 @@ describe("contract schema", () => {
     expect(() => parse(value)).toThrow(/accepts\/0/);
   });
 
+  it("accepts a slot item limit and rejects a maxItems below minItems", () => {
+    const value = contract();
+    value["slots"] = {
+      default: {
+        required: true,
+        accepts: ["list"],
+        items: { minItems: 2, maxItems: 6 },
+      },
+    };
+    expect(() => parse(value)).not.toThrow();
+    value["slots"] = {
+      default: {
+        required: true,
+        accepts: ["list"],
+        items: { minItems: 3, maxItems: 2 },
+      },
+    };
+    expect(() => parse(value)).toThrow(
+      /\/slots\/default\/items: maxItems \(2\) is below minItems \(3\)/,
+    );
+  });
+
   it("rejects a numeric prop type (no pixel-like values)", () => {
     const value = contract();
     value["props"] = { width: { type: "number" } };
