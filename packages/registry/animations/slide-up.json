@@ -2,7 +2,7 @@
   "id": "slide-up",
   "version": "1.0.0",
   "purpose": "Content fades in while it rises into place at the start of its scene.",
-  "compatibleComponents": ["title"],
+  "compatibleComponents": ["chart", "title"],
   "minFrames": 15,
   "shortScene": "static",
   "reducedMotion": "static"

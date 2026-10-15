@@ -19,10 +19,32 @@ describe("component lookups", () => {
     expect(getComponent("title").slots["default"]?.required).toBe(true);
   });
 
+  it("lists chart with its csv and column props (ADR-0013)", () => {
+    const chart = getComponent("chart");
+    expect(chart.props["data"]).toEqual({ type: "csv", required: true });
+    expect(chart.props["x"]).toEqual({
+      type: "column",
+      of: "data",
+      required: true,
+    });
+    expect(chart.props["y"]).toEqual({
+      type: "column",
+      of: "data",
+      numeric: true,
+      required: true,
+    });
+    expect(chart.props["type"]).toEqual({
+      type: "enum",
+      enum: ["bar", "line"],
+      required: true,
+    });
+    expect(chart.duration).toEqual({ minMs: 2000, maxMs: 30000 });
+  });
+
   it("rejects an unknown component id with an error, not undefined", () => {
     expect(() => getComponent("statistic")).toThrow(RegistryError);
     expect(() => getComponent("statistic")).toThrow(
-      /unknown component "statistic" \(known: title\)/,
+      /unknown component "statistic" \(known: chart, title\)/,
     );
   });
 });
