@@ -7,6 +7,8 @@ export type BlockKind = "paragraph" | "heading" | "list" | "code-block";
 export interface SlotContract {
   required: boolean;
   accepts: BlockKind[];
+  /** Optional: the slot holds one list whose item count is in this range (task 027). */
+  items?: { minItems: number; maxItems: number };
 }
 
 export interface PropContract {

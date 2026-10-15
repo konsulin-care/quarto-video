@@ -95,6 +95,15 @@
           "items": {
             "enum": ["paragraph", "heading", "list", "code-block"]
           }
+        },
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minItems", "maxItems"],
+          "properties": {
+            "minItems": { "type": "integer", "minimum": 1 },
+            "maxItems": { "type": "integer", "minimum": 1 }
+          }
         }
       }
     },
