@@ -1,6 +1,6 @@
 # Component `statement`
 
-Status: released in task 025. Visual cases: `statement-animations`, `statement-basic` and `statement-small` (task 025).
+Status: released in task 025. Visual cases: `statement-animations`, `statement-basic` and `statement-small` (task 025); `kinetic-basic` and `kinetic-reduced-motion` (task 026).
 
 ## Purpose
 One prominent message or key sentence, with emphasis in the accent colour.
@@ -24,7 +24,7 @@ Content is drawn as plain lines, one per block (ADR-0004). Inline emphasis is ke
 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
-- Animations: `fade-in`, `slide-up`, `reveal` (see [README](README.md#animations-task-021)).
+- Animations: `fade-in`, `slide-up`, `reveal`, `kinetic` (see [README](README.md#animations-task-021)). `kinetic` shows each word in turn; a statement over 12 words is drawn with `fade-in` and warns `W_ANIMATION_FALLBACK`.
 - Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 
 ## Text size

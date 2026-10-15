@@ -1,5 +1,5 @@
 # docs/components/ — component and preset pages
-Status: `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image` (task 033, IR 1.3, ADR-0013) `chart` (task 035, props and CSV tables, IR 1.4, ADR-0014) and `statistic` (task 031, number props, IR 1.5, ADR-0015) are the released components. `title` in task 024 replaces its placeholder; `section-divider` in task 029; `end-card` in task 030; `statement` in task 025; `comparison` in task 034; `bullets` in task 027. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
+Status: `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image` (task 033, IR 1.3, ADR-0013) `chart` (task 035, props and CSV tables, IR 1.4, ADR-0014) and `statistic` (task 031, number props, IR 1.5, ADR-0015) are the released components. `title` in task 024 replaces its placeholder; `section-divider` in task 029; `end-card` in task 030; `statement` in task 025; `comparison` in task 034; `bullets` in task 027. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021), `kinetic` (task 026). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
 
 ## Purpose
 One page per released component (`<id>.md`), plus this index. A page says what an author writes, what the component accepts and how it behaves. The registry (`packages/registry`) is the source of truth for slots, props and bounds; these pages explain it.
@@ -28,14 +28,17 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 | `fade-in` | Content fades from transparent to opaque. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
 | `slide-up` | Content fades in while it rises into place. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
 | `reveal` | The content fades in while it grows from 96% to full size. | `title`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
+| `kinetic` | The words of a statement appear one after another, each rising into place, all in place by 80% of the scene. | `statement` | 30 | static | static |
 
 Rules that apply to every animation preset:
-- Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame.
+- Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame. `kinetic` keeps its own timing (below).
 - Easing: `fade-in`, `slide-up` and `reveal` ease out (cubic).
 - Short scene: a scene shorter than `minFrames` shows its end state from its first frame. No motion.
 - Reduced motion: each preset declares `static`, which is the end state from its first frame. The switch that applies it is task 023; until then the rule is declared, not applied.
 - A preset is a pure function of the frame, the scene length and the theme tokens. The same frame always gives the same picture (PRD §11.1).
 - `slide-up` rises by `space.lg` of the theme. `reveal` grows from 96% to full size. No preset clips or masks content, so no glyph is cut at any frame (task 021: the earlier wipe was replaced on 2026-10-15).
+
+Kinetic (task 026): the scene itself does not move; each word of the statement fades in over 6 frames and rises by `space.sm`. Word *i* of *N* starts at frame floor(*i* × S / *N*), with S = ceil(0.8 × length) − 6, so every word is in place by 80% of the scene. Only `statement`. More than 12 words (`KINETIC_MAX_WORDS`) draws `fade-in` and the validator warns `W_ANIMATION_FALLBACK`. A word is a run of non-space characters. `title` is not supported.
 
 Example:
 ```markdown
