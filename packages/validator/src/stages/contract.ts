@@ -55,6 +55,43 @@ function kindsOf(blocks: IrBlock[]): IrBlock["type"][] {
   return [...new Set(blocks.map((block) => block.type))];
 }
 
+/**
+ * The item limit of a slot that takes one list (E_SLOT_CONSTRAINT, task 027).
+ * A slot with no list is left to E_SLOT_BLOCK_KIND or E_SLOT_REQUIRED.
+ */
+function listConstraint(
+  scene: IrSceneV02,
+  contract: ComponentContract,
+  name: string,
+  limit: { minItems: number; maxItems: number },
+  slots: IrSceneV02["content"]["slots"],
+): Diagnostic | undefined {
+  const lists = blocksIn(slots, name).filter((block) => block.type === "list");
+  const property = `slots.${name}`;
+  if (lists.length === 0) return undefined;
+  if (lists.length > 1) {
+    return problem(
+      scene,
+      "E_SLOT_CONSTRAINT",
+      `Slot "${name}" of component "${contract.id}" holds ${lists.length} lists; it takes exactly one.`,
+      property,
+      "Put all the points in one list.",
+    );
+  }
+  const only = lists[0];
+  const count = only?.type === "list" ? only.items.length : 0;
+  if (count >= limit.minItems && count <= limit.maxItems) return undefined;
+  const range = `${limit.minItems} to ${limit.maxItems} items`;
+  const noun = count === 1 ? "item" : "items";
+  return problem(
+    scene,
+    "E_SLOT_CONSTRAINT",
+    `Slot "${name}" of component "${contract.id}" has ${count} ${noun}; the limit is ${range}.`,
+    property,
+    `Use ${range}; split a longer list across scenes.`,
+  );
+}
+
 function checkSlots(
   scene: IrSceneV02,
   contract: ComponentContract,
@@ -87,6 +124,11 @@ function checkSlots(
           `Slot "${name}" accepts ${accepts.join(", ")}.`,
         ),
       );
+    }
+    const limit = contract.slots[name]?.items;
+    if (limit !== undefined) {
+      const constraint = listConstraint(scene, contract, name, limit, slots);
+      if (constraint !== undefined) found.push(constraint);
     }
   }
   for (const name of Object.keys(contract.slots).sort()) {
