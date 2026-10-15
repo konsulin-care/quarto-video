@@ -1,0 +1,34 @@
+---
+title: "Reduced motion count-up"
+video:
+  width: 640
+  height: 360
+  fps: 30
+  reducedMotion: true
+---
+
+::: {.scene component="statistic" duration="3s" value="1234" decimals="0" animation="count-up"}
+::: {.label}
+Learners finished the course
+:::
+
+::: {.context}
+Survey of 1,200 learners in 2026
+:::
+:::
+
+::: {.scene component="statistic" duration="3s" value="-3.456" decimals="1" prefix="$" unit="M" animation="count-up"}
+::: {.label}
+Change in quarterly revenue
+:::
+
+::: {.context}
+Compared with the same quarter last year
+:::
+:::
+
+::: {.scene component="statistic" duration="1s" value="98.5" decimals="1" unit="%" animation="count-up"}
+::: {.label}
+Uptime this quarter
+:::
+:::
