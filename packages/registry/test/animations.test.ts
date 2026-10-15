@@ -71,6 +71,7 @@ describe("animation presets", () => {
       "comparison",
       "bullets",
       "image",
+      "chart",
     ]);
   });
 

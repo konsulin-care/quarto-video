@@ -53,6 +53,15 @@ export function parseContract(text: string, file: string): ComponentContract {
       `${file}: /duration: maxMs (${contract.duration.maxMs}) is below minMs (${contract.duration.minMs})`,
     );
   }
+  for (const [name, prop] of Object.entries(contract.props)) {
+    if (prop.type !== "column") continue;
+    const target = prop.of === undefined ? undefined : contract.props[prop.of];
+    if (target?.type !== "csv") {
+      throw new RegistryError(
+        `${file}: /props/${name}/of: "${prop.of ?? ""}" must name a csv prop of this component`,
+      );
+    }
+  }
   return contract;
 }
 

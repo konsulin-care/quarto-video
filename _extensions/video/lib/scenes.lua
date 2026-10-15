@@ -2,8 +2,8 @@
 -- Scenes are read in pre-order, so document order holds for nested Divs too.
 -- A scene id is the author's `#id` or `scene-NNN`, where NNN is the scene's
 -- position among all scene Divs. Ids must be valid and unique. A `.scene`
--- anywhere else, or an attribute the filter does not know, is an error,
--- never ignored. Component names are not checked here (task 014). A scene
+-- anywhere else is an error, never ignored. Other attributes are component
+-- props (ADR-0014), checked by the validator. Component names are not checked here (task 014). A scene
 -- without a duration takes the front matter default (task 010). Its content is
 -- typed blocks in slots (lib/content.lua, ADR-0004). Every bad scene is
 -- reported with its source line (lib/scan.lua, lib/locate.lua,
@@ -18,7 +18,10 @@ local animations = require("lib.animations")
 
 local M = {}
 
-local ALLOWED_ATTRIBUTES = {
+-- Attributes the filter reads itself. Every other attribute is a component
+-- prop (ADR-0014): it is passed on in the IR and checked by the validator
+-- against the component's contract, which names the allowed ones.
+local SCENE_ATTRIBUTES = {
   component = true,
   duration = true,
   transition = true,
@@ -38,18 +41,19 @@ local function check_shape(div, id)
       )
     end
   end
-  for key in pairs(div.attributes) do
-    if not ALLOWED_ATTRIBUTES[key] then
-      diagnostics.fail(
-        "E_SCENE_SHAPE",
-        string.format('Scene "%s" has an unknown attribute "%s".', id, key),
-        {
-          property = key,
-          suggestion = "Allowed attributes: component, duration, transition, transitionDuration, animation.",
-        }
-      )
+end
+
+-- The component props of a scene: its attributes that are not scene
+-- attributes, as written. nil when there are none (the key is then absent).
+local function props_of(div)
+  local props = nil
+  for key, value in pairs(div.attributes) do
+    if not SCENE_ATTRIBUTES[key] then
+      props = props or {}
+      props[key] = value
     end
   end
+  return props
 end
 
 -- An explicit duration wins; otherwise the front matter default applies
@@ -75,6 +79,7 @@ end
 
 local function scene_record(div, id, fps, default_frames, line, slots, transition, animation)
   check_shape(div, id)
+  local props = props_of(div)
   local component = div.attributes.component
   if component == nil or component == "" then
     diagnostics.fail(
@@ -89,6 +94,7 @@ local function scene_record(div, id, fps, default_frames, line, slots, transitio
     durationFrames = scene_frames(div, id, fps, default_frames),
     transition = transition,
     animation = animation,
+    props = props,
     slots = slots,
     line = line,
   }

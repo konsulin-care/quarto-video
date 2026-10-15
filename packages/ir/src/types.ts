@@ -1,4 +1,4 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2 and 1.3 (ir-1.3.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3 and 1.4 (ir-1.4.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
@@ -6,7 +6,7 @@ import type { IrContentV02 } from "./content-types.js";
 export type * from "./content-types.js";
 
 export type SchemaVersion =
-  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3";
+  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4";
 
 export interface IrSettings {
   width: number;
@@ -137,9 +137,30 @@ export interface IrVideoV13 extends Omit<IrVideoV12, "schemaVersion"> {
   schemaVersion: "1.3";
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.3). */
+/** A CSV data table (task 035, ADR-0014): header names and the rows' cell text. */
+export interface IrTable {
+  columns: string[];
+  rows: string[][];
+}
+
+/** IR 1.4 (ADR-0014): IR 1.3 plus scene `props` (authored attributes) and `tables` (CSV data). */
+export interface IrSceneV14 extends IrSceneV11 {
+  props?: Record<string, string>;
+  tables?: Record<string, IrTable>;
+}
+
+/** IR 1.4 (ADR-0014): IR 1.3 plus scene props and tables. */
+export interface IrVideoV14 extends Omit<
+  IrVideoV12,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.4";
+  scenes: IrSceneV14[];
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.4). */
 export type IrVideoWithTimeline =
-  IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12 | IrVideoV13;
+  IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12 | IrVideoV13 | IrVideoV14;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -149,7 +170,8 @@ export type IrVideo =
   | IrVideoV10
   | IrVideoV11
   | IrVideoV12
-  | IrVideoV13;
+  | IrVideoV13
+  | IrVideoV14;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

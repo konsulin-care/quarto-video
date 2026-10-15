@@ -4,14 +4,13 @@
 // matches the IR (PRD §4.2, §9.1, §11.2). stdout: `NN%` progress lines, then
 // `Wrote <path>`. stderr: errors. Exit codes: 0 OK, 1 validation or render
 // failure, 2 usage or environment (preflight).
-import { mkdir, rename, rm } from "node:fs/promises";
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import type { RenderFn, RenderProgress } from "@quarto-video/remotion";
 import { checkOutput, hasErrors } from "@quarto-video/validator";
 import { checkProject } from "../check.js";
 import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { exitCodeFor } from "../exit-status.js";
-import { manifestPath } from "../filter.js";
 import { runPreflight } from "../preflight.js";
 import { explicitBackground, outputPath } from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
@@ -21,6 +20,8 @@ import { readOutputFacts } from "../output-probe.js";
 /** Partial output, inside the build dir; never left behind (see the CLI README). */
 const TEMP_RELATIVE = join(".video-build", "render.partial.mp4");
 const BUILD_RELATIVE = ".video-build";
+// The validated IR the renderer reads: CSV tables are resolved here (ADR-0014).
+const RESOLVED_RELATIVE = join(".video-build", "resolved.json");
 
 export interface RenderOptions {
   /** The path as the user typed it (directory or `.qmd` file). */
@@ -94,13 +95,20 @@ export async function runRender(
       return EXIT_USAGE;
     }
     await rm(temp, { force: true });
-    await renderer(manifestPath(project), temp, {
-      browserExecutable: options.browserExecutable,
-      onProgress: percentPrinter(),
-      theme: check.theme,
-      background: explicitBackground(project),
-      assetRoot: project.root,
-    });
+    const resolved = join(project.root, RESOLVED_RELATIVE);
+    await mkdir(dirname(resolved), { recursive: true });
+    await writeFile(resolved, `${JSON.stringify(check.ir, null, 2)}\n`);
+    try {
+      await renderer(resolved, temp, {
+        browserExecutable: options.browserExecutable,
+        onProgress: percentPrinter(),
+        theme: check.theme,
+        background: explicitBackground(project),
+        assetRoot: project.root,
+      });
+    } finally {
+      await rm(resolved, { force: true });
+    }
     const found = checkOutput(
       check.ir,
       readOutputFacts(temp, relative(project.root, output)),

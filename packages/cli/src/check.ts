@@ -39,7 +39,8 @@ export function checkProject(
     return { kind: "invalid", diagnostics: outcome.diagnostics };
   }
   const file = relative(project.root, manifestPath(project));
-  // Stage 3 checks the image files the IR names, inside the project root (ADR-0006).
+  // Stage 3 checks the image files the IR names, inside the project root (ADR-0006),
+  // and reads the CSV props of chart scenes (ADR-0013, ADR-0014).
   const stage2 = checkManifest(outcome.json, file, undefined, undefined, {
     root: project.root,
   });

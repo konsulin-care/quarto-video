@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E_COLUMN_UNKNOWN",
+    "line": 9,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_CSV_SYNTAX",
+    "line": 3,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_CSV_VALUE",
+    "line": 3,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_ASSET_MISSING",
+    "line": 18,
+    "sceneId": "scene-004"
+  }
+]

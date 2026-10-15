@@ -1,0 +1,30 @@
+---
+title: "Component chart"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" animation="fade-in"}
+# Charts from data
+
+::: {.subtitle}
+Bar and line charts read from CSV files.
+:::
+:::
+
+::: {.scene component="chart" duration="4s" animation="fade-in" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales by region"}
+::: {.caption}
+Source: internal sales report, 2026.
+:::
+:::
+
+::: {.scene component="chart" duration="4s" animation="slide-up" type="line" data="data/line-3.csv" x="month" y="users" unit="k" title="Monthly users"}
+:::
+
+::: {.scene component="chart" duration="4s" animation="fade-in" type="bar" data="data/bars-12.csv" x="month" y="orders" unit="pcs" title="Orders per month"}
+:::
+
+::: {.scene component="chart" duration="4s" animation="reveal" type="line" data="data/line-12.csv" x="week" y="visits" unit="sessions" title="Weekly visits"}
+:::

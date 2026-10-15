@@ -14,10 +14,20 @@ export interface SlotContract {
   items?: { minItems: number; maxItems: number };
 }
 
+/**
+ * A component prop. `csv`: a project CSV path, parsed by the validator (ADR-0014).
+ * `column`: a column of the csv prop named by `of`; `numeric` requires numbers.
+ */
 export interface PropContract {
-  type: "string" | "boolean" | "enum";
+  type: "string" | "boolean" | "enum" | "csv" | "column";
   enum?: string[];
   default?: string | boolean;
+  /** The prop must be given on every scene of the component. */
+  required?: boolean;
+  /** For `column`: the name of the `csv` prop whose header it names. */
+  of?: string;
+  /** For `column`: the cells must be finite numbers. */
+  numeric?: boolean;
 }
 
 export interface DurationBounds {

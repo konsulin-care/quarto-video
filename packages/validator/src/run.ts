@@ -22,6 +22,8 @@ import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
 import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
+import { resolveData } from "./stages/data.js";
+import { checkProps } from "./stages/props.js";
 import { checkTimeline } from "./stages/timeline.js";
 
 /**
@@ -37,6 +39,18 @@ export interface ManifestCheck {
   /** The manifest when it passed every stage; null when any stage failed. */
   ir: IrVideo | null;
   diagnostics: Diagnostic[];
+}
+
+/**
+ * Stable sort by line: the scenes' errors in document order, and the errors of
+ * one scene in the order its checks ran. Errors without a line come last.
+ */
+export function inDocumentOrder(list: readonly Diagnostic[]): Diagnostic[] {
+  const at = (d: Diagnostic) => d.line ?? Number.MAX_SAFE_INTEGER;
+  return list
+    .map((diagnostic, index) => ({ diagnostic, index }))
+    .sort((a, b) => at(a.diagnostic) - at(b.diagnostic) || a.index - b.index)
+    .map((entry) => entry.diagnostic);
 }
 
 /** Runs each stage in order and stops after the first one that reports an error. */
@@ -105,18 +119,22 @@ export function checkManifest(
     () => {
       const ir = state.ir;
       if (ir === undefined) return [];
-      return [
+      return inDocumentOrder([
         ...checkContracts(ir, components),
+        ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
-      ];
+      ]);
     },
     () => {
       if (assets === undefined) return [];
-      if (assets.refs !== undefined) {
-        return checkAssets(assets.refs, assets.root);
-      }
       const ir = state.ir;
-      return ir === undefined ? [] : checkAssets(assetRefsOf(ir), assets.root);
+      // Unset refs: the image blocks of the IR (ADR-0006, ADR-0013).
+      const refs = assets.refs ?? (ir === undefined ? [] : assetRefsOf(ir));
+      const assetErrors = checkAssets(refs, assets.root);
+      if (ir === undefined) return assetErrors;
+      const data = resolveData(ir, components, assets.root);
+      state.ir = data.ir;
+      return [...assetErrors, ...data.diagnostics];
     },
     () => {
       const ir = state.ir;

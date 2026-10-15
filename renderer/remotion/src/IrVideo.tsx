@@ -45,6 +45,16 @@ function blocksOf(
   return "text" in content ? {} : content.slots;
 }
 
+/** The scene's props; none before IR 1.4 (ADR-0014). */
+function propsOf(scene: IrManifest["scenes"][number]): Record<string, string> {
+  return "props" in scene ? (scene.props ?? {}) : {};
+}
+
+/** The scene's CSV tables; none before IR 1.4 (ADR-0014). */
+function tablesOf(scene: IrManifest["scenes"][number]) {
+  return "tables" in scene ? (scene.tables ?? {}) : {};
+}
+
 /** The IR's reduced-motion setting; IR 0.1 to 1.1 have none, so false (task 023). */
 function reducedMotionOf(ir: IrManifest): boolean {
   return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
@@ -84,6 +94,8 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                   <Component
                     slots={slotTexts(scene.content)}
                     blocks={blocksOf(scene.content)}
+                    props={propsOf(scene)}
+                    tables={tablesOf(scene)}
                   />
                 </AnimatedScene>
               </TransitionScene>

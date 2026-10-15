@@ -182,15 +182,17 @@ describe("video validate", () => {
     );
   });
 
-  it("prints the IR error under E_IR_SCHEMA with the JSON path and exits 1", () => {
+  // IR 1.4 allows a scene with no slots (ADR-0014), so this project, a title
+  // with no content, is now a stage 2 contract error rather than a schema error.
+  it("prints the contract error for a scene with no content and exits 1", () => {
     const project = copyProject("cli-validate-invalid-ir", "invalid-ir");
     const run = video(["validate", project]);
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      "ERROR .video-build/manifest.json\n" +
-        "/scenes/0/content/slots: must NOT have fewer than 1 properties\n",
+      'ERROR index.qmd:10\nComponent "title" needs content in slot "default".\n' +
+        'Slot "default" accepts paragraph, heading.\n',
     );
   });
 
@@ -199,9 +201,6 @@ describe("video validate", () => {
     const run = video(["validate", "--print-ir", project]);
     assert.equal(run.status, 1);
     assert.equal(run.stdout, "");
-    assert.match(
-      run.stderr,
-      /^ERROR \.video-build\/manifest\.json\n\/scenes\/0\/content\/slots: /,
-    );
+    assert.match(run.stderr, /^ERROR index\.qmd:10\n/);
   });
 });
