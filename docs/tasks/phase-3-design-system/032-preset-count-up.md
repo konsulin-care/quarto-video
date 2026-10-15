@@ -1,6 +1,6 @@
 # 032 — Preset `count-up`
 
-Phase 3 · Status: todo · Depends on: 031 · PRD: §5.6, §12 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 031 · PRD: §5.6, §12 · ADR: —
 
 ## Goal
 Release the `count-up` animation preset: animated count from zero to a statistic's value.
