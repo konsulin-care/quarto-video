@@ -170,3 +170,32 @@ describe("timeline render", () => {
     assert.equal(decodedFrames(join(root, "output.mp4")), expected);
   });
 });
+
+describe("transition presets (task 022)", () => {
+  it("transitions: one boundary per preset, on the timeline of expected.json", () => {
+    const run = video(["validate", "--print-ir", copyFixture("transitions")]);
+    assert.equal(run.status, 0, run.stderr);
+    const ir = JSON.parse(run.stdout) as { timeline: Timeline };
+    assert.deepEqual(ir.timeline, expectedOf("transitions"));
+  });
+
+  it("transitions: the rendered MP4 has the IR timeline's frame count", () => {
+    const root = copyFixture("transitions");
+    const run = video(["render", root], {
+      QV_BROWSER_EXECUTABLE: browserExecutable(),
+    });
+    assert.equal(run.status, 0, run.stderr);
+    const expected = (expectedOf("transitions") as Timeline).durationFrames;
+    assert.equal(decodedFrames(join(root, "output.mp4")), expected);
+  });
+
+  it("an unknown transition names every registered transition", () => {
+    const run = video(["validate", "--json", copyFixture("timeline-unknown")]);
+    assert.equal(run.status, 1, run.stderr);
+    const [found] = JSON.parse(run.stdout) as { suggestion?: string }[];
+    assert.equal(
+      found?.suggestion,
+      "Known transitions: cut, fade, slide, wipe, zoom.",
+    );
+  });
+});
