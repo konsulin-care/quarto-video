@@ -14,6 +14,7 @@ local locate = require("lib.locate")
 local content = require("lib.content")
 local content_lines = require("lib.content_lines")
 local transitions = require("lib.transitions")
+local animations = require("lib.animations")
 
 local M = {}
 
@@ -22,6 +23,7 @@ local ALLOWED_ATTRIBUTES = {
   duration = true,
   transition = true,
   transitionDuration = true,
+  animation = true,
 }
 local NESTED_MESSAGE =
   "'.scene' Divs must be top-level blocks (nested scenes are not supported yet)."
@@ -43,7 +45,7 @@ local function check_shape(div, id)
         string.format('Scene "%s" has an unknown attribute "%s".', id, key),
         {
           property = key,
-          suggestion = "Allowed attributes: component, duration, transition, transitionDuration.",
+          suggestion = "Allowed attributes: component, duration, transition, transitionDuration, animation.",
         }
       )
     end
@@ -71,7 +73,7 @@ local function scene_frames(div, id, fps, default_frames)
   )
 end
 
-local function scene_record(div, id, fps, default_frames, line, slots, transition)
+local function scene_record(div, id, fps, default_frames, line, slots, transition, animation)
   check_shape(div, id)
   local component = div.attributes.component
   if component == nil or component == "" then
@@ -86,6 +88,7 @@ local function scene_record(div, id, fps, default_frames, line, slots, transitio
     component = component,
     durationFrames = scene_frames(div, id, fps, default_frames),
     transition = transition,
+    animation = animation,
     slots = slots,
     line = line,
   }
@@ -201,8 +204,11 @@ function M.collect(doc, fps, default_frames, scan, default_transition)
       local transition = diagnostics.try(function()
         return transitions.resolve(entry.div, id, fps, i, default_transition)
       end, found, context)
+      local animation = diagnostics.try(function()
+        return animations.resolve(entry.div, id)
+      end, found, context)
       list[#list + 1] = diagnostics.try(function()
-        return scene_record(entry.div, id, fps, default_frames, line, slots, transition)
+        return scene_record(entry.div, id, fps, default_frames, line, slots, transition, animation)
       end, found, context)
     end
   end

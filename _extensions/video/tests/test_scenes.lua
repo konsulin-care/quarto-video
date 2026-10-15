@@ -60,9 +60,9 @@ return {
   end,
 
   ["rejects an unknown scene attribute"] = function()
-    local body = '::: {.scene component="title" duration="4s" animation="reveal"}\nX\n:::\n'
+    local body = '::: {.scene component="title" duration="4s" colour="red"}\nX\n:::\n'
     local err = h.error_of(collect_fn(body))
-    h.contains(err, 'unknown attribute "animation"', "error")
+    h.contains(err, 'unknown attribute "colour"', "error")
     h.code_is(collect_fn(body), "E_SCENE_SHAPE", "shape")
   end,
 
@@ -93,7 +93,7 @@ return {
   ["reports every bad scene in one pass"] = function()
     local body = '::: {.scene component="title"}\nA\n:::\n\n'
       .. '::: {.scene component="title" duration="2 seconds"}\nB\n:::\n\n'
-      .. '::: {.scene component="title" duration="4s" animation="x"}\nC\n:::\n'
+      .. '::: {.scene component="title" duration="4s" colour="red"}\nC\n:::\n'
     local list = h.diagnostics_of(collect_fn(body))
     h.eq(#list, 3, "diagnostic count")
     h.eq(list[1].code, "E_SCENE_NO_DURATION", "first code")
