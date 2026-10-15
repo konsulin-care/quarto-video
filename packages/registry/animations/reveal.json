@@ -2,7 +2,7 @@
   "id": "reveal",
   "version": "1.0.0",
   "purpose": "Content is uncovered left to right by a wipe at the start of its scene.",
-  "compatibleComponents": ["title"],
+  "compatibleComponents": ["title", "statement"],
   "minFrames": 15,
   "shortScene": "static",
   "reducedMotion": "static"

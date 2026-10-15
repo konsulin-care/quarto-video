@@ -22,7 +22,7 @@ describe("component lookups", () => {
   it("rejects an unknown component id with an error, not undefined", () => {
     expect(() => getComponent("statistic")).toThrow(RegistryError);
     expect(() => getComponent("statistic")).toThrow(
-      /unknown component "statistic" \(known: title\)/,
+      /unknown component "statistic" \(known: statement, title\)/,
     );
   });
 });

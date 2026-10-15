@@ -62,8 +62,11 @@ describe("animation presets", () => {
 
   it("returns copies, so a caller cannot change the registry", () => {
     const first = getAnimation("reveal");
-    first.compatibleComponents.push("statement");
-    expect(getAnimation("reveal").compatibleComponents).toEqual(["title"]);
+    first.compatibleComponents.push("bullets");
+    expect(getAnimation("reveal").compatibleComponents).toEqual([
+      "title",
+      "statement",
+    ]);
   });
 
   it("rejects an unknown preset id with an error, not undefined", () => {
