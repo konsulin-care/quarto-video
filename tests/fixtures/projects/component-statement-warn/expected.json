@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W_SLOT_TOO_MANY_BLOCKS",
+    "line": 9,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "W_TEXT_FIT",
+    "line": 15,
+    "sceneId": "scene-002"
+  }
+]

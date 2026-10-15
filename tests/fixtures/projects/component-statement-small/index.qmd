@@ -1,0 +1,15 @@
+---
+title: "Component statement small"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+Small frames shrink a statement so that it wraps and still fits the safe area.
+:::
+
+::: {.scene component="statement" duration="2s" animation="slide-up"}
+Short **emphasis** stays in the accent colour.
+:::

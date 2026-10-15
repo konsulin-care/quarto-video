@@ -1,0 +1,21 @@
+---
+title: "Component statement warnings"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+A statement is one paragraph.
+
+Its second paragraph is a warning.
+:::
+
+::: {.scene component="statement" duration="3s"}
+This sentence is far too long for one frame at the smallest legible size: it keeps going well past the bottom of a small 640 by 360 frame, so the text cannot fit in the safe area even when it is drawn at body size.
+:::
+
+::: {.scene component="statement" duration="2s"}
+A three-line sentence scales down.
+:::
