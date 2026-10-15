@@ -8,6 +8,7 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | Component | Page | Status |
 | --- | --- | --- |
 | `title` | [title.md](title.md) | Released (task 024: subtitle slot; placeholder task 004, contract 013, animations 021) |
+| `bullets` | [bullets.md](bullets.md) | Released (task 027: one list of 2 to 6 items, optional heading) |
 
 ## Presets
 A preset is a named motion or transition that an author may use. Presets are data in `packages/registry` (`animations/<id>.json`, `transitions.json`) and a pure frame function in `renderer/remotion`. Authors pick a preset by name; they never write motion code.
@@ -17,9 +18,9 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 
 | Id | Purpose | Compatible components | Min frames | Short scene | Reduced motion |
 | --- | --- | --- | --- | --- | --- |
-| `fade-in` | Content fades from transparent to opaque. | `title` | 15 | static | static |
-| `slide-up` | Content fades in while it rises into place. | `title` | 15 | static | static |
-| `reveal` | A wipe uncovers the content from left to right. | `title` | 15 | static | static |
+| `fade-in` | Content fades from transparent to opaque. | `title`, `bullets` | 15 | static | static |
+| `slide-up` | Content fades in while it rises into place. | `title`, `bullets` | 15 | static | static |
+| `reveal` | A wipe uncovers the content from left to right. | `title`, `bullets` | 15 | static | static |
 
 Rules that apply to every animation preset:
 - Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame.
