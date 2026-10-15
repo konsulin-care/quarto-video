@@ -12,11 +12,16 @@ form humans and AI agents can act on (PRD §9).
 - `parseDiagnostics` (`src/schema.ts`): checks JSON text against the schema.
 - Stage runner (`src/run.ts`, `checkManifest`) for PRD §9.1. Stage 2 is the IR
   schema, then the component contracts (`src/stages/contract.ts`: component,
-  slots, block kinds, duration; ADR-0004; `src/stages/animation.ts`: presets, ADR-0011). Stage 4 is the timeline
+  slots, block kinds, duration; ADR-0004; `src/stages/animation.ts`: presets, ADR-0011;
+  `src/stages/props.ts`: props against the contract, ADR-0013). Stage 3 has two parts:
+  asset references (`src/assets/`, `src/stages/assets.ts`), which run only when the
+  caller passes them, and data (`src/stages/data.ts`, `src/csv/parse.ts`, task 035):
+  each csv prop is read through the asset resolver and parsed (no code runs), column
+  props are checked against its header, and the parsed tables are added to the IR as
+  `tables` (ADR-0013). `video validate` and `video render` pass the project root, so
+  data runs for them. Stage 4 is the timeline
   (`src/stages/timeline.ts`: transition names, lengths, overlaps, and that the
-  manifest's timeline is the resolved one; ADR-0005). Stage 3 (`src/assets/`,
-  `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
-  carries none yet, so `video validate` does not run it. Stage 6 (`src/stages/output.ts`,
+  manifest's timeline is the resolved one; ADR-0005). Stage 6 (`src/stages/output.ts`,
   `checkOutput`) judges the rendered file from facts the CLI probes. Stage 1 is the Lua
   filter; stage 5 preflight is in the CLI. `checkTheme` (`src/stages/theme.ts`) resolves the theme name (stage 2).
 - Depends on `@quarto-video/ir` and `@quarto-video/registry` (contracts, themes); nothing depends on it except the CLI.

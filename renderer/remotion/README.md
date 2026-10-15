@@ -12,7 +12,7 @@ what is valid.
 - `src/Root.tsx` — `video` composition; size, fps and length come from the IR
   input props via `calculateMetadata`.
 - `src/IrVideo.tsx` — plays each scene with `<Sequence>` at its `startFrame` for its own `durationFrames` (`timelineOf`, `@quarto-video/ir/timeline`), on `settings.background`. A transition's overlap shows both scenes: the outgoing scene runs to its own end. Scene text comes from `plainText` (`@quarto-video/ir/text`).
-- `src/registry-map.ts` — registry id → implementation (`title` only); a component receives `slots`, the plain text of each slot (task 024).
+- `src/registry-map.ts` — registry id → implementation (`chart`, `title`); a component receives `slots` (plain text per slot, task 024), `props` (the authored attributes) and `tables` (CSV data by prop name, ADR-0013).
 - `src/AnimatedScene.tsx` — applies the scene's animation preset at the scene's own frame; no animation draws the scene as it is. `reducedMotion` (from the IR, via `IrVideo.tsx`) selects the preset's registry rule.
 - `src/TransitionScene.tsx` — applies the incoming transition on the scene's first frames and the outgoing one (from the next scene) on its last; no overlap draws the scene as it is. `reducedMotion` selects each transition's registry fallback.
 - `transitions/` — preset type (`types.ts`: `incoming(p)` and `outgoing(p)`, `p` in (0, 1], 1 on the overlap's last frame), one file per name, `index.ts` (`TRANSITIONS`, `transitionStyle`). Names and bounds come from `packages/registry/transitions/`.
@@ -25,6 +25,7 @@ what is valid.
 - `src/cli.ts` — `render` script entry (exit 0 on success, 1 on error, 2 on usage).
 - `src/errors.ts` — `IrRenderError`, thrown for rejected input.
 - `components/title/` — the `title` component (task 024): the default slot as the title, the optional `subtitle` slot under it; `components/<id>/` for the rest.
+- `components/chart/` — the `chart` component (task 035): bars or a line from the `tables.data` CSV table; `data.ts` (points), `scale.ts` (nice value axis, pure), `layout.ts` (plot geometry, pure), `Marks.tsx` (bars, line), `Chart.tsx` (title, axis, labels, caption). Colours from the accent and text tokens only.
 - `test/` — unit tests: invalid IR rejection (no browser), pinned versions, theme parity (`theme-parity.test.ts`), theme lint, safe area.
 - Planned, not yet present: `media/`.
 

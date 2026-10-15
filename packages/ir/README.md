@@ -28,6 +28,7 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 - IR 1.0 is IR 0.3 plus a required `generator: {extension, cli}` (semver strings). Nothing else changed.
 - IR 1.1 (ADR-0011) is 1.0 plus an optional scene `animation: {name}`, a preset id. Only shape is checked here; the registry is checked by the validator.
 - IR 1.2 (ADR-0012) is 1.1 plus an optional `settings.reducedMotion` boolean (absent means false). The filter always writes it; the renderer applies each preset's reduced-motion rule.
+- IR 1.3 (ADR-0013) is 1.2 plus, on a scene, `props` (strings: the authored attributes, checked by the validator against the contract) and `tables` (`{columns, rows}` per CSV prop, written by the validator only). A scene may have no slots; the contract decides which are required.
 - A released schema file never changes; `test/frozen.test.ts` checks its SHA-256. A change is a new file and an ADR.
 - Minor versions are additive; a major version may break. Pre-1.0 versions are read, never written.
 
