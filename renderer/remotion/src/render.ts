@@ -1,7 +1,8 @@
 // render(irPath, outPath): validates the IR, then bundles and encodes it.
 // Validation runs first, so an invalid manifest never starts a browser.
-import { mkdir, readFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { bundle, type WebpackConfiguration } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
@@ -39,6 +40,12 @@ export interface RenderOptions {
    * finds the files. Unset or null means no public directory.
    */
   assetRoot?: string | null;
+  /**
+   * Directory the Remotion bundle is built in. The bundle is removed when the
+   * call ends, on success or failure. Unset or null: the OS temp directory.
+   * The CLI passes the project's .video-build/.
+   */
+  workDir?: string | null;
 }
 
 /** Signature of render(); the CLI depends on this shape, not the module. */
@@ -121,12 +128,32 @@ export function inputPropsFor(
   };
 }
 
-/** Bundles the renderer entry point with `assetRoot` as its public directory; resolves to the serve URL. */
-export function bundleEntry(assetRoot: string | null = null): Promise<string> {
-  return bundle({
-    ...bundleOptions,
-    publicDir: assetRoot === null ? null : resolve(assetRoot),
-  });
+/**
+ * Bundles the renderer entry point, calls `use` with its serve URL, then removes
+ * the bundle whether `use` resolves or rejects. The bundle is built in a fresh
+ * directory under `workDir` (default: the OS temp directory). `assetRoot` is the
+ * public directory; it is symlinked, not copied, so a bundle inside the project
+ * never copies itself.
+ */
+export async function withBundle<T>(
+  assetRoot: string | null,
+  workDir: string | null,
+  use: (serveUrl: string) => Promise<T>,
+): Promise<T> {
+  const parent = workDir === null ? tmpdir() : resolve(workDir);
+  await mkdir(parent, { recursive: true });
+  const outDir = await mkdtemp(join(parent, "remotion-bundle-"));
+  try {
+    const serveUrl = await bundle({
+      ...bundleOptions,
+      outDir,
+      publicDir: assetRoot === null ? null : resolve(assetRoot),
+      symlinkPublicDir: true,
+    });
+    return await use(serveUrl);
+  } finally {
+    await rm(outDir, { recursive: true, force: true });
+  }
 }
 
 /** Renders a valid IR file to an H.264 MP4 at outPath. */
@@ -139,27 +166,32 @@ export async function render(
   const browserExecutable = options.browserExecutable ?? null;
   const inputProps = inputPropsFor(ir, options);
   const onProgress = options.onProgress;
-  const serveUrl = await bundleEntry(options.assetRoot ?? null);
-  const composition = await selectComposition({
-    serveUrl,
-    id: COMPOSITION_ID,
-    inputProps,
-    browserExecutable,
-  });
-  const output = resolve(outPath);
-  await mkdir(dirname(output), { recursive: true });
-  await renderMedia({
-    composition,
-    serveUrl,
-    codec: "h264",
-    outputLocation: output,
-    inputProps,
-    browserExecutable,
-    logLevel: "error",
-    onProgress: ({ encodedFrames }) =>
-      onProgress?.({
-        encodedFrames,
-        totalFrames: composition.durationInFrames,
-      }),
-  });
+  await withBundle(
+    options.assetRoot ?? null,
+    options.workDir ?? null,
+    async (serveUrl) => {
+      const composition = await selectComposition({
+        serveUrl,
+        id: COMPOSITION_ID,
+        inputProps,
+        browserExecutable,
+      });
+      const output = resolve(outPath);
+      await mkdir(dirname(output), { recursive: true });
+      await renderMedia({
+        composition,
+        serveUrl,
+        codec: "h264",
+        outputLocation: output,
+        inputProps,
+        browserExecutable,
+        logLevel: "error",
+        onProgress: ({ encodedFrames }) =>
+          onProgress?.({
+            encodedFrames,
+            totalFrames: composition.durationInFrames,
+          }),
+      });
+    },
+  );
 }

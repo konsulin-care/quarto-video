@@ -7,9 +7,9 @@ import { renderStill, selectComposition } from "@remotion/renderer";
 import { COMPOSITION_ID } from "./composition-id.js";
 import { IrRenderError } from "./errors.js";
 import {
-  bundleEntry,
   inputPropsFor,
   loadIr,
+  withBundle,
   type InputOptions,
 } from "./render.js";
 
@@ -31,39 +31,40 @@ export async function renderStills(
   const ir = await loadIr(irPath);
   const browserExecutable = options.browserExecutable ?? null;
   const inputProps = inputPropsFor(ir, options);
-  const serveUrl = await bundleEntry(options.assetRoot ?? null);
-  const composition = await selectComposition({
-    serveUrl,
-    id: COMPOSITION_ID,
-    inputProps,
-    browserExecutable,
-  });
-  const dir = resolve(outDir);
-  await mkdir(dir, { recursive: true });
-  const paths: string[] = [];
-  for (const frame of options.frames) {
-    if (
-      !Number.isInteger(frame) ||
-      frame < 0 ||
-      frame >= composition.durationInFrames
-    ) {
-      throw new IrRenderError(
-        `frame ${frame} is outside the composition (0..${composition.durationInFrames - 1})`,
-      );
-    }
-    const output = join(dir, `${frame}.png`);
-    await renderStill({
-      composition,
+  return withBundle(options.assetRoot ?? null, null, async (serveUrl) => {
+    const composition = await selectComposition({
       serveUrl,
-      output,
-      frame,
+      id: COMPOSITION_ID,
       inputProps,
-      imageFormat: "png",
       browserExecutable,
-      overwrite: true,
-      logLevel: "error",
     });
-    paths.push(output);
-  }
-  return paths;
+    const dir = resolve(outDir);
+    await mkdir(dir, { recursive: true });
+    const paths: string[] = [];
+    for (const frame of options.frames) {
+      if (
+        !Number.isInteger(frame) ||
+        frame < 0 ||
+        frame >= composition.durationInFrames
+      ) {
+        throw new IrRenderError(
+          `frame ${frame} is outside the composition (0..${composition.durationInFrames - 1})`,
+        );
+      }
+      const output = join(dir, `${frame}.png`);
+      await renderStill({
+        composition,
+        serveUrl,
+        output,
+        frame,
+        inputProps,
+        imageFormat: "png",
+        browserExecutable,
+        overwrite: true,
+        logLevel: "error",
+      });
+      paths.push(output);
+    }
+    return paths;
+  });
 }

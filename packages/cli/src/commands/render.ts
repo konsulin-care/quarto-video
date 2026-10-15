@@ -108,6 +108,7 @@ export async function runRender(
         theme: check.theme,
         background: explicitBackground(project),
         assetRoot: project.root,
+        workDir: join(project.root, BUILD_RELATIVE),
       });
     } finally {
       await rm(resolved, { force: true });
