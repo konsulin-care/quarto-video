@@ -1,6 +1,6 @@
 # 026 — Preset `kinetic`
 
-Phase 3 · Status: todo · Depends on: 025 · PRD: §5.6, §12 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 025 · PRD: §5.6, §12 · ADR: —
 
 ## Goal
 Release the `kinetic` animation preset: word-by-word kinetic typography for short statements.
