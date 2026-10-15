@@ -1,5 +1,5 @@
 # packages/registry/ — component contracts, presets, themes
-Status: Component contracts (task 013): `components/title.json` is the only entry. `listComponents()`, `getComponent(id)` and `video components` read it. Transition names (task 015): `transitions.json`, read by `listTransitions()`. Transition presets (task 022): `transitions/*.json`, read by `listTransitionPresets()`. Themes (task 019): `themes/modern.json`, read by `listThemes()` and `getTheme(id)`. Animation presets (task 021): `animations/*.json`, read by `listAnimations()` and `getAnimation(id)`.
+Status: Component contracts (task 013): `components/title.json` is the only entry (`default` and optional `subtitle` slots, task 024). `listComponents()`, `getComponent(id)` and `video components` read it. Transition names (task 015): `transitions.json`, read by `listTransitions()`. Transition presets (task 022): `transitions/*.json`, read by `listTransitionPresets()`. Themes (task 019): `themes/modern.json`, read by `listThemes()` and `getTheme(id)`. Animation presets (task 021): `animations/*.json`, read by `listAnimations()` and `getAnimation(id)`.
 Run: `npm run typecheck -w @quarto-video/registry`; tests: root `npm run check` (unit) and `npm run test:integration` (`video components`).
 
 ## Purpose
@@ -51,8 +51,8 @@ A theme is design tokens only: `colors` (five roles, `#RRGGBB`), `contrastPairs`
 - Registry content is static data; no functions in contract files.
 - An entry is "released" only when its renderer implementation, docs page
   (`docs/components/<id>.md`) and visual cases exist. Unreleased entries must
-  not be loadable. Known gap: `title` is listed before its visual cases exist
-  (task 020); see task 013 Notes.
+  not be loadable. `title` is released (task 024): contract, renderer, docs
+  page and `title-*` visual cases. Its `subtitle` slot is optional (task 024).
 - `npm run check` includes a parity test: every registry id has a renderer
   implementation and vice versa (`renderer/remotion/test/registry-parity.test.ts`).
 - Prop names are camelCase and semantic (`fit`, `frame`); never pixel values.

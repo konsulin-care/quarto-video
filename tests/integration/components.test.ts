@@ -41,7 +41,10 @@ describe("video components", () => {
     const title = lines.find((line) => line.startsWith("title "));
     assert.ok(title, `no title row in:\n${run.stdout}`);
     assert.match(title, /1s-30s/);
-    assert.match(title, /default \(required: paragraph, heading\)/);
+    assert.match(
+      title,
+      /default \(required: paragraph, heading\); subtitle \(optional: paragraph\)/,
+    );
     assert.equal(run.stderr, "");
   });
 
@@ -53,6 +56,7 @@ describe("video components", () => {
     assert.ok(title, "title is listed");
     assert.deepEqual(title["slots"], {
       default: { required: true, accepts: ["paragraph", "heading"] },
+      subtitle: { required: false, accepts: ["paragraph"] },
     });
     assert.deepEqual(title["props"], {});
     assert.deepEqual(title["duration"], { minMs: 1000, maxMs: 30000 });
