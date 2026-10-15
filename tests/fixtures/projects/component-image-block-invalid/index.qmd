@@ -1,0 +1,36 @@
+---
+title: "Component image block invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="image" duration="2s"}
+::: {.image alt="A photo with no src"}
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/photo.png"}
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/photo.png" fit="stretch" alt="A photo stretched"}
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/photo.png" alt="The first photo"}
+:::
+
+::: {.image src="assets/other.png" alt="The second photo"}
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/photo.png" alt="A photo with a caption inside"}
+A caption belongs in a slot.
+:::
+:::

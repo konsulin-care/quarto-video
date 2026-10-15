@@ -2,7 +2,7 @@
 // its startFrame and runs its own durationFrames, so a transition's overlap
 // shows both scenes. Frames come from the IR, never from the wall clock
 // (PRD §8.4). The theme's tokens are passed in as props.
-import type { IrVideo as IrManifest } from "@quarto-video/ir";
+import type { IrBlock, IrVideo as IrManifest } from "@quarto-video/ir";
 import type { ThemeTokens } from "@quarto-video/registry";
 // Subpaths, not the package index: the index pulls in the validator (node:fs)
 // and ajv, which the renderer bundle must not contain.
@@ -24,6 +24,13 @@ export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
 /** The scene's animation preset id; IR 0.1 to 1.0 scenes have none. */
 function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
   return "animation" in scene ? scene.animation?.name : undefined;
+}
+
+/** The typed blocks of each slot; IR 0.1 content has none (task 033). */
+function blocksOf(
+  content: IrManifest["scenes"][number]["content"],
+): Record<string, IrBlock[]> {
+  return "slots" in content ? content.slots : {};
 }
 
 /** The overlap a scene's transition makes; none for cut or no transition. */
@@ -74,7 +81,10 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >
-                  <Component slots={slotTexts(scene.content)} />
+                  <Component
+                    slots={slotTexts(scene.content)}
+                    blocks={blocksOf(scene.content)}
+                  />
                 </AnimatedScene>
               </TransitionScene>
             </Sequence>

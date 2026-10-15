@@ -18,6 +18,8 @@ export interface StillOptions extends InputOptions {
   browserExecutable?: string | null;
   /** Frame numbers to capture; each must lie inside the composition. */
   frames: number[];
+  /** The project root that image paths resolve in (render.ts, ADR-0013). */
+  assetRoot?: string | null;
 }
 
 /** Writes <outDir>/<frame>.png for each frame and returns the paths in order. */
@@ -29,7 +31,7 @@ export async function renderStills(
   const ir = await loadIr(irPath);
   const browserExecutable = options.browserExecutable ?? null;
   const inputProps = inputPropsFor(ir, options);
-  const serveUrl = await bundleEntry();
+  const serveUrl = await bundleEntry(options.assetRoot ?? null);
   const composition = await selectComposition({
     serveUrl,
     id: COMPOSITION_ID,

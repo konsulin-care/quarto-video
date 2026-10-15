@@ -1,0 +1,27 @@
+[
+  {
+    "code": "E_IMAGE_BLOCK",
+    "line": 10,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_IMAGE_BLOCK",
+    "line": 15,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_IMAGE_BLOCK",
+    "line": 20,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_IMAGE_BLOCK",
+    "line": 28,
+    "sceneId": "scene-004"
+  },
+  {
+    "code": "E_IMAGE_BLOCK",
+    "line": 33,
+    "sceneId": "scene-005"
+  }
+]
