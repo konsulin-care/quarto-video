@@ -1,6 +1,6 @@
 // Reads the render settings the filter wrote to .video-build/render.json:
-// the output destination and the theme name (container and visual settings,
-// kept out of the IR; PRD §5.2). Throws on a bad file.
+// the output destination, the theme name and an explicit canvas background
+// (settings kept out of the IR; PRD §5.2). Throws on a bad file.
 import { readFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import type { Project } from "./project.js";
@@ -10,6 +10,7 @@ const RENDER_RELATIVE = join(".video-build", "render.json");
 interface RenderConfig {
   output?: unknown;
   theme?: unknown;
+  background?: unknown;
 }
 
 function readRenderConfig(project: Project): RenderConfig {
@@ -34,4 +35,10 @@ export function outputPath(project: Project): string {
 export function themeName(project: Project): string | null {
   const theme = readRenderConfig(project).theme;
   return typeof theme === "string" ? theme : null;
+}
+
+/** The `video.background` the author set, or null: the theme then draws the canvas. */
+export function explicitBackground(project: Project): string | null {
+  const background = readRenderConfig(project).background;
+  return typeof background === "string" ? background : null;
 }

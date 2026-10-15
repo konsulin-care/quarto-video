@@ -68,7 +68,7 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run test:visual` — placeholder until task 020.
 - `npx video validate <path> [--print-ir] [--json]` — filter, IR, contract and timeline check; exit 0/1/2 (tasks 005, 008, 014, 015). From another directory: `npm exec --prefix <repo> -- video validate <path>`.
 - `npx video components [--json]` — list the component contracts: id, version, slots, props, duration (task 013).
-- `npx video render <path> [--json]` — validate, preflight (tools, writable output, disk), render to `video.output`, check the output against the IR (tasks 006, 008, 018). Progress on stdout; exit 0/1 as for validate, 2 for preflight. Needs `QV_BROWSER_EXECUTABLE` (a Chromium headless shell).
+- `npx video render <path> [--json] [--theme <name>]` — validate, preflight (tools, writable output, disk), render to `video.output`, check the output against the IR (tasks 006, 008, 018). Progress on stdout; exit 0/1 as for validate, 2 for preflight. Needs `QV_BROWSER_EXECUTABLE` (a Chromium headless shell).
 - `npx video doctor [--json]` — tools and versions, one ✓/✗ line each; exit 0 when all are ok, else 2 (task 018).
 - `quarto render videos/hello/index.qmd` (or `quarto render videos/hello`) — writes `videos/hello/output.mp4` through the project post-render hook (task 007a, ADR-0002). Needs the pinned Quarto and `QV_BROWSER_EXECUTABLE`; a failing render exits non-zero.
 

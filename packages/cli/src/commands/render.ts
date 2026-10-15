@@ -13,7 +13,7 @@ import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { exitCodeFor } from "../exit-status.js";
 import { manifestPath } from "../filter.js";
 import { runPreflight } from "../preflight.js";
-import { outputPath } from "../render-config.js";
+import { explicitBackground, outputPath } from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
 import { report } from "../report.js";
 import { readOutputFacts } from "../output-probe.js";
@@ -29,6 +29,8 @@ export interface RenderOptions {
   browserExecutable: string | null;
   /** Diagnostics as a JSON array on stdout (report.ts). */
   json: boolean;
+  /** Theme name from `--theme`; null or unset falls back to front matter, then `modern`. */
+  theme?: string | null;
 }
 
 /** Prints each whole-percent change once: `42%`. */
@@ -65,7 +67,7 @@ export async function runRender(
     return EXIT_USAGE;
   }
 
-  const check = checkProject(project);
+  const check = checkProject(project, options.theme ?? null);
   if (check.kind === "environment") {
     process.stderr.write(`video: ${check.message}\n`);
     return EXIT_USAGE;
@@ -96,6 +98,7 @@ export async function runRender(
       browserExecutable: options.browserExecutable,
       onProgress: percentPrinter(),
       theme: check.theme,
+      background: explicitBackground(project),
     });
     const found = checkOutput(
       check.ir,

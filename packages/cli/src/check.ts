@@ -21,7 +21,15 @@ export type CheckOutcome =
   /** Rejected; `diagnostics` hold at least one error (exit 1). */
   | { kind: "invalid"; diagnostics: Diagnostic[] };
 
-export function checkProject(project: Project): CheckOutcome {
+/**
+ * Runs stages 1–2. `themeOverride` is the render option (`--theme`); when it is
+ * set, the front matter `theme:` is not used (resolution order: option, front
+ * matter, the default theme).
+ */
+export function checkProject(
+  project: Project,
+  themeOverride: string | null = null,
+): CheckOutcome {
   const outcome = runFilter(project);
   if (outcome.kind === "environment") {
     return { kind: "environment", message: outcome.message };
@@ -32,7 +40,7 @@ export function checkProject(project: Project): CheckOutcome {
   const file = relative(project.root, manifestPath(project));
   const stage2 = checkManifest(outcome.json, file);
   const theme = checkTheme(
-    themeName(project),
+    themeOverride ?? themeName(project),
     relative(project.root, project.document),
   );
   const diagnostics = [

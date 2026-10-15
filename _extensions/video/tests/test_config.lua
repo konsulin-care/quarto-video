@@ -194,6 +194,17 @@ return {
     h.eq(config.scene_defaults(h.doc("", "").meta, 30).transition, nil, "transition")
   end,
 
+  ["an explicit video.background is stored for the renderer"] = function()
+    local stored = config.stored(h.doc("", front('  background: "#10131C"\n')).meta)
+    h.eq(stored.background, "#10131C", "background")
+  end,
+
+  ["an absent video.background is not stored, so the theme supplies the canvas"] = function()
+    local stored = config.stored(h.doc("", front("  fps: 30\n")).meta)
+    h.eq(stored.background, nil, "background")
+    h.eq(config.read(h.doc("", front("  fps: 30\n")).meta).background, "#000000", "IR default")
+  end,
+
   ["a list theme is E_SETTING_INVALID"] = function()
     local meta = h.doc("", "---\ntheme:\n  - modern\n---\n\n").meta
     h.code_is(function()

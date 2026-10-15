@@ -33,7 +33,8 @@ Numeric props, pixel or CSS values and functions are not allowed (PRD §5.5, AGE
 ## Theme tokens (task 019)
 A theme is design tokens only: `colors` (five roles, `#RRGGBB`), `contrastPairs` (text and background roles), `typography` (family, weights, px scale, line heights), `space`, `radius` (px), `safeArea` (percent of width and height per aspect ratio, `"16:9"`), `motion` (ms). Rules:
 - The file id equals its name. A declared text pair below WCAG AA (4.5:1) fails the load: a bad theme is a `RegistryError`.
-- A document without `theme` uses `DEFAULT_THEME` (`modern`). An unknown name is `E_THEME_UNKNOWN` (validator stage 2), listing the ids.
+- Resolution (task 019a): the `video render --theme` option, else front matter `theme:`, else `DEFAULT_THEME` (`modern`). The chosen name is checked by the validator, so an unknown name is `E_THEME_UNKNOWN` (stage 2) listing the ids, from either source.
+- The canvas is filled with the theme's `colors.background`, unless `video.background` is set explicitly (`renderer/remotion/themes/canvas.ts`).
 - Tokens never change the IR or the timeline (PRD §10.2). The renderer reads them through `useTheme()`.
 
 ## Loader API (`src/index.ts`)

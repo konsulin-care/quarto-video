@@ -1,0 +1,11 @@
+---
+title: "Theme render background"
+video:
+  width: 640
+  height: 360
+  background: "#2E7D32"
+---
+
+::: {.scene component="title" duration="1s"}
+The author sets the canvas colour.
+:::

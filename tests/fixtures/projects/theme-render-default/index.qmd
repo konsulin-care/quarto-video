@@ -1,0 +1,10 @@
+---
+title: "Theme render default"
+video:
+  width: 640
+  height: 360
+---
+
+::: {.scene component="title" duration="1s"}
+No theme is named.
+:::

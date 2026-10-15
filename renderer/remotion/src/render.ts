@@ -9,6 +9,7 @@ import { validateIr, type IrVideo } from "@quarto-video/ir";
 import { COMPOSITION_ID } from "./composition-id.js";
 import { COMPONENTS } from "./registry-map.js";
 import { IrRenderError } from "./errors.js";
+import { canvasBackground } from "../themes/canvas.js";
 import { DEFAULT_THEME_ID, themeIds, themeTokens } from "../themes/tokens.js";
 
 export { IrRenderError } from "./errors.js";
@@ -26,6 +27,11 @@ export interface RenderOptions {
   onProgress?: (progress: RenderProgress) => void;
   /** Theme id (themes/tokens.ts); unset means the default theme. */
   theme?: string;
+  /**
+   * The author's video.background ("#RRGGBB"). Unset or null draws the
+   * theme's background token instead (themes/canvas.ts).
+   */
+  background?: string | null;
 }
 
 /** Signature of render(); the CLI depends on this shape, not the module. */
@@ -93,7 +99,12 @@ export async function render(
       `Unknown theme "${themeId}" (known: ${themeIds().join(", ")})`,
     );
   }
-  const inputProps = { ir, theme: themeTokens(themeId) };
+  const tokens = themeTokens(themeId);
+  const background = canvasBackground(tokens, options.background);
+  const inputProps = {
+    ir: { ...ir, settings: { ...ir.settings, background } },
+    theme: tokens,
+  };
   const onProgress = options.onProgress;
   const serveUrl = await bundle(bundleOptions);
   const composition = await selectComposition({

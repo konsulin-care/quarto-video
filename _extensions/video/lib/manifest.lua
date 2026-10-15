@@ -1,6 +1,7 @@
 -- Builds the Video IR 1.0 manifest and writes it to
 -- <project>/.video-build/manifest.json, plus the render settings that stay
--- outside the IR (<project>/.video-build/render.json: output and theme name).
+-- outside the IR (<project>/.video-build/render.json: output, theme name and an
+-- explicit background).
 -- These are the only files the filter writes (see _extensions/video/README.md).
 local json = require("lib.json")
 local timeline = require("lib.timeline")
@@ -17,7 +18,7 @@ function M.path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, FILE_NAME })
 end
 
---- Path of the render settings file (container settings, not IR; PRD §5.2).
+--- Path of the render settings file (container and theme settings, not IR; PRD §5.2).
 function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end

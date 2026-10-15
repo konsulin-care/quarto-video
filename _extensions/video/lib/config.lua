@@ -210,12 +210,30 @@ function M.scene_defaults(meta, fps)
   return { frames = frames, transition = transition }
 end
 
---- Returns the stored-only settings { title, theme } (nil when absent). They
---- are validated here and resolved by task 019; they stay out of the IR.
+-- The author's video.background as written, or nil when it is not set. The
+-- value was checked by M.read; a block or list here is ignored, not reported
+-- twice. Only an explicit value is kept: the theme supplies the default canvas.
+local function explicit_background(meta)
+  local video = meta.video
+  if not shapes.is_map(video) then
+    return nil
+  end
+  local value = video.background
+  if value == nil or shapes.is_map(value) or shapes.is_list(value) then
+    return nil
+  end
+  return shapes.text(value)
+end
+
+--- Returns the stored-only settings { title, theme, background } (nil when
+--- absent). They are validated here and resolved by the CLI and validator
+--- (task 019, 019a); they stay out of the IR. `background` is set only when
+--- video.background is written, so the renderer can tell it from the default.
 function M.stored(meta)
   return {
     title = stored_text(meta.title, "title"),
     theme = stored_text(meta.theme, "theme"),
+    background = explicit_background(meta),
   }
 end
 

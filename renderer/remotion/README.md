@@ -15,8 +15,8 @@ what is valid.
 - `src/registry-map.ts` — registry id → implementation (`title` only).
 - `src/index.ts` — public API used by `packages/cli`: `render`, `loadIr`, `IrRenderError`, types `RenderFn`, `RenderOptions`, `RenderProgress`.
 - `src/composition-id.ts` — the composition id, apart from `Root.tsx` so Node never loads browser code.
-- `themes/` — `tokens.ts` (theme id to registry tokens; `DEFAULT_THEME_ID`), `ThemeProvider.tsx` (`ThemeProvider`, `useTheme`; holds the frame until the fonts load), `fonts.ts` (bundled font files per family and weight), `safe-area.ts` (margins for a frame size), `fonts/` (Inter 5.2.8, latin woff2, from `@fontsource/inter`; `LICENSE` is SIL OFL 1.1).
-- `src/render.ts` — `render(irPath, outPath, opts)`: validate, bundle, encode. `opts.onProgress({ encodedFrames, totalFrames })` is called while encoding; `opts.theme` is a theme id (default `modern`), and an unknown id is an `IrRenderError` before the browser starts.
+- `themes/` — `canvas.ts` (`canvasBackground`: explicit colour or the theme's background token), `tokens.ts` (theme id to registry tokens; `DEFAULT_THEME_ID`), `ThemeProvider.tsx` (`ThemeProvider`, `useTheme`; holds the frame until the fonts load), `fonts.ts` (bundled font files per family and weight), `safe-area.ts` (margins for a frame size), `fonts/` (Inter 5.2.8, latin woff2, from `@fontsource/inter`; `LICENSE` is SIL OFL 1.1).
+- `src/render.ts` — `render(irPath, outPath, opts)`: validate, bundle, encode. `opts.onProgress({ encodedFrames, totalFrames })` is called while encoding; `opts.theme` is a theme id (default `modern`), and an unknown id is an `IrRenderError` before the browser starts. `opts.background` (`#RRGGBB`, the explicit `video.background`) is the canvas colour; unset or null draws the theme's `background` token. The IR's `settings.background` is not drawn (`themes/canvas.ts`).
 - `src/cli.ts` — `render` script entry (exit 0 on success, 1 on error, 2 on usage).
 - `src/errors.ts` — `IrRenderError`, thrown for rejected input.
 - `components/title/` — placeholder centred title; `components/<id>/` for the rest.
@@ -61,7 +61,7 @@ add it to `src/registry-map.ts`. 3. Add visual cases in `tests/visual/cases/`.
 
 ## Testing
 - Unit (`npm run test`): invalid-IR rejection, pinned versions.
-- Integration (`npm run test:integration`): `render-theme.test.ts` renders the `modern` theme with unreachable proxies (the fonts are local).
+- Integration (`npm run test:integration`): `render-theme.test.ts` renders the `modern` theme with unreachable proxies (the fonts are local), and checks the canvas pixel: the theme token by default, the explicit colour when given.
 - Integration (`npm run test:integration`): renders `packages/ir/examples/minimal.json`
   shrunk to 640×360 and 1 s, and a two-scene IR; ffprobe checks size, 30 fps and
   frame count = sum of `durationFrames`.

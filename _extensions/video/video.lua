@@ -83,5 +83,10 @@ function Pandoc(doc)
   diagnostics.write(diagnostics_path, {})
   manifest.write(path, manifest.build(video, list, file_name))
   -- The theme name is resolved by the validator (E_THEME_UNKNOWN), not here.
-  manifest.write(render_path, { output = output, theme = stored and stored.theme })
+  -- The explicit background is kept too; the renderer's canvas default is the theme's.
+  manifest.write(render_path, {
+    output = output,
+    theme = stored and stored.theme,
+    background = stored and stored.background,
+  })
 end
