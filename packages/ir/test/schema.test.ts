@@ -1,7 +1,13 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const SCHEMAS = ["ir-0.1.json", "ir-0.2.json", "ir-0.3.json", "ir-1.0.json"];
+const SCHEMAS = [
+  "ir-0.1.json",
+  "ir-0.2.json",
+  "ir-0.3.json",
+  "ir-1.0.json",
+  "ir-1.1.json",
+];
 
 describe.each(SCHEMAS)("schema/%s", (name) => {
   it("contains no renderer, React or CSS terms", () => {

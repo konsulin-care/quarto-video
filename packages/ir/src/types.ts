@@ -1,11 +1,11 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3 and 1.0 (ir-1.0.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 and 1.1 (ir-1.1.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
 
-export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0";
+export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0" | "1.1";
 
 export interface IrSettings {
   width: number;
@@ -54,6 +54,17 @@ export interface IrSceneV03 extends IrSceneV02 {
   transition?: IrTransition;
 }
 
+/** Animation preset of a scene (ADR-0011). Absent when the scene has none. */
+export interface IrAnimation {
+  /** A preset id from the registry, e.g. "fade-in". */
+  name: string;
+}
+
+/** IR 1.1 scene: IR 0.3 plus an optional animation (ADR-0011). */
+export interface IrSceneV11 extends IrSceneV03 {
+  animation?: IrAnimation;
+}
+
 /** Resolved timeline (ADR-0005): where each scene starts and the total length. */
 export interface IrTimeline {
   durationFrames: number;
@@ -97,11 +108,21 @@ export interface IrVideoV10 extends Omit<IrVideoV03, "schemaVersion"> {
   generator: IrGenerator;
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3 and 1.0). */
-export type IrVideoWithTimeline = IrVideoV03 | IrVideoV10;
+/** IR 1.1 (ADR-0011): IR 1.0 whose scenes may carry an animation. */
+export interface IrVideoV11 extends Omit<
+  IrVideoV10,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.1";
+  scenes: IrSceneV11[];
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 and 1.1). */
+export type IrVideoWithTimeline = IrVideoV03 | IrVideoV10 | IrVideoV11;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
-export type IrVideo = IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10;
+export type IrVideo =
+  IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10 | IrVideoV11;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

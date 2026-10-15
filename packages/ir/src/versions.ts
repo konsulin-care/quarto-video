@@ -3,12 +3,12 @@
 // declares; any other value is an error that names the supported versions.
 
 /** Every version `validateIr` accepts, oldest first. Each has a schema file. */
-export const SUPPORTED_VERSIONS = ["0.1", "0.2", "0.3", "1.0"] as const;
+export const SUPPORTED_VERSIONS = ["0.1", "0.2", "0.3", "1.0", "1.1"] as const;
 
 export type SupportedVersion = (typeof SUPPORTED_VERSIONS)[number];
 
 /** The version the filter writes. Pre-1.0 versions are read, never written. */
-export const LATEST_VERSION: SupportedVersion = "1.0";
+export const LATEST_VERSION: SupportedVersion = "1.1";
 
 /** Code of the version-gate error (`/schemaVersion`). */
 export const UNSUPPORTED_VERSION_CODE = "E_IR_UNSUPPORTED_VERSION";

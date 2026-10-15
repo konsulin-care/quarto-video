@@ -1,5 +1,5 @@
 # docs/decisions/ — Architecture Decision Records
-Status: ADR-0001 to ADR-0007 and ADR-0010 accepted. Other ADRs are written by the tasks listed below.
+Status: ADR-0001 to ADR-0007, ADR-0010 and ADR-0011 accepted. Other ADRs are written by the tasks listed below.
 
 ## Purpose
 Record every decision that shapes parsing, timing, portability, or the
@@ -32,6 +32,7 @@ Numbers follow task order. Each ADR is written by the task shown.
 | 0008 | Supported media formats                          | §18.8   | 037  |
 | 0009 | Audio architecture                               | §18.6   | 044  |
 | 0010 | Dev environment, hooks, CI, testing policy       | §11.1   | 000  |
+| 0011 | Scene animation in IR 1.1                        | §5.6    | 021  |
 
 ## Rules for agents
 - If your task says "writes ADR-NNNN", the ADR must reach `accepted` (or be
