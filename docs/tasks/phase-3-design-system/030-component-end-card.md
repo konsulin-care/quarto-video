@@ -33,7 +33,7 @@ Human check:
 ## Notes
 - Contract: slots `default` (paragraph, heading), `cta` (paragraph), `credits` (list). Compatible with fade-in, slide-up and reveal. Duration 2s to 30s.
 - Credits: at most half the safe-area height. Ten lines fit at the caption size; a longer list is drawn smaller, never clipped. No validator warning: the renderer scales instead. Items that wrap are not measured.
-- Animations: `fade-in` and `slide-up` are checked mid-entrance; `reveal` only at its end state (recorded deviation).
+- Animations: `fade-in` and `slide-up` are checked mid-entrance; `reveal` only at its end state. The reveal entrance no longer clips (task 021 redesign, 2026-10-15), but this case does not capture it.
 - Shared files changed: `renderer/remotion/src/registry-map.ts` (one import, one entry); `packages/registry/animations/{fade-in,slide-up,reveal}.json` (`end-card` in `compatibleComponents`); `docs/components/README.md` (status sentence, one row, the three animation rows); `package.json` (integration test appended); `packages/registry/test/animations.test.ts` and `components.test.ts` and `tests/integration/contract.test.ts` (expected lists now include `end-card`).
 - Gates: `scripts/check.sh --all` exit 0; `scripts/test.sh --all` exit 0, run on a scratch copy of the committed tree (see Completion log).
 - Open, not caused by this task: in the first worktree gate run, a registry test once listed a `comparison` component that is not in this tree (it exists in another worktree). It did not recur in isolation or in the scratch-copy gates; cause not found.

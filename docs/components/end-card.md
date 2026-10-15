@@ -48,5 +48,5 @@ The credits take at most half the safe-area height. While the lines fit at the c
 ## Known limits
 - Each credits item must be one line. An item that wraps takes more height than the rule counts, so it can cross into the message area. Keep credits short. The validator does not warn about long lists: the renderer scales them instead.
 - The message is not shrunk. A message that fills the free space can run into the call to action or the credits. No visual case covers that.
-- `reveal` wipes the content during its entrance, so the card is partly hidden for that part of the scene. The end state is not clipped (recorded deviation, task 021).
+- `reveal` fades the card in while it grows from 96% to full size over its entrance. Nothing is clipped at any frame (task 021, redesigned 2026-10-15).
 - Only plain text is drawn: emphasis and quotes are shown as their text (ADR-0004).

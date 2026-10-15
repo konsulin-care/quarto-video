@@ -37,6 +37,6 @@ The statement is the only content. Its text uses the theme's text colour, and `s
 
 ## Known limits
 - The fit estimates 0.6 em per glyph instead of measuring glyphs. It can step the size down earlier than the glyphs need, but it does not leave a text that the estimate says fits running past the frame.
-- `reveal` wipes the content during its entrance, so the statement is partly hidden for that part of the scene. The end state is not clipped (recorded deviation, task 021).
+- `reveal` fades the statement in while it grows from 96% to full size over its entrance. Nothing is clipped at any frame (task 021, redesigned 2026-10-15).
 - No preset is incompatible with the statement today, so `E_ANIMATION_INCOMPATIBLE` is not exercised by a fixture.
 - Errors: as for `title` (`E_SLOT_REQUIRED`, `E_SLOT_UNKNOWN`, `E_SLOT_BLOCK_KIND`, `E_DURATION_BOUNDS`, `E_ANIMATION_UNKNOWN`); a scene with only an unknown slot gets two errors (the unknown slot and the missing `default`).

@@ -23,11 +23,11 @@ Automated:
 - [x] Each contract violation in the invalid fixture yields its code and line.
 - [x] Long title (≥ 80 characters) wraps within safe area, never clipped. Met at 1920x1080 (`title-long`); at 640x360 it is clipped (Known limits).
 - [x] Missing subtitle → layout recentres (visual case `title-no-subtitle`).
-- [ ] Partly met: every compatible animation renders without clipping, except `reveal`'s entrance, which clips by design (task 021 deviation, not changed here). Its end state is unclipped; fade-in and slide-up are unclipped throughout.
+- [x] Met (2026-10-15): every compatible animation renders without clipping. `reveal` no longer clips (task 021 redesign); fade-in and slide-up never did.
 
 Human check:
 1. [ ] Partly met: `npx video render` ran (exit 0, 1920x1080, 30 fps, 450 frames). Reviewed from stills, not played back.
-2. [x] Review against `docs/components/title.md`: legible at 1080p, theme-consistent, no clipped or overlapping text, apart from the reveal entrance (recorded deviation).
+2. [x] Review against `docs/components/title.md`: legible at 1080p, theme-consistent, no clipped or overlapping text, reveal included (the task 021 redesign).
 3. [x] `npx video validate tests/fixtures/projects/component-title-invalid`: six errors, one per violating scene, each with a line and a suggestion.
 
 ## Notes
@@ -35,7 +35,7 @@ Human check:
 - Renderer: scenes get `slots` (plain text per slot, `ir/text` `slotTexts`) instead of `text`. Title draws `default` above `subtitle` in one centred column. `title-basic`'s approved references are unchanged (single-title look is pixel-identical).
 - Visual checks: `title-subtitle`, `title-long`, `title-no-subtitle`, `title-animations`, `title-reduced-motion` (its fixture `reduced-motion-title` is an addition: reduced motion for the subtitle layout). Long-title and reveal results are in the boxes above.
 - Known limit: text is not shrunk. A title of about 100 characters at 640x360 is clipped top and bottom (checked by rendering a scratch project). Follow-up: a fit rule or a line limit.
-- Reveal: in the human render the frame at 6.3 s is blank. The wipe starts at the left edge and the centred text appears only when it reaches it. Recorded, not fixed (task 021).
+- Reveal: in the human render the frame at 6.3 s is blank. The wipe starts at the left edge and the centred text appears only when it reaches it. Resolved 2026-10-15 by the task 021 reveal redesign: the text now fades in whole, so the wipe no longer hides it.
 - Tests: `tests/integration/component-title.test.ts`, `components.test.ts`, `contract.test.ts`, `packages/registry/test/components.test.ts`, `packages/ir/test/content.test.ts` (`slotTexts`), visual `title-*` and `animations-*`.
 
 ## Completion log

@@ -37,6 +37,6 @@ The title and subtitle are the only content. Colour and size come from the theme
 
 ## Known limits
 - The text is not shrunk to fit, and the contract sets no line limit. At 640x360 a title of about 100 characters runs past the top and bottom of the frame and is clipped (rendered check, task 024). Use 1920x1080 for long titles; the 80-character case passes at 1920x1080.
-- `reveal` wipes the content during its entrance, so the title is partly hidden for that part of the scene. The end state is not clipped (recorded deviation, task 021).
+- `reveal` fades the title in while it grows from 96% to full size over its entrance. Nothing is clipped at any frame (task 021, redesigned 2026-10-15).
 - The subtitle accepts paragraphs only. A heading in the subtitle is an error, not a second title.
 - Only plain text is drawn: emphasis and quotes are shown as their text (ADR-0004).

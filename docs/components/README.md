@@ -24,15 +24,15 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 | --- | --- | --- | --- | --- | --- |
 | `fade-in` | Content fades from transparent to opaque. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets` | 15 | static | static |
 | `slide-up` | Content fades in while it rises into place. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets` | 15 | static | static |
-| `reveal` | A wipe uncovers the content from left to right. | `title`, `end-card`, `statement`, `comparison`, `bullets` | 15 | static | static |
+| `reveal` | The content fades in while it grows from 96% to full size. | `title`, `end-card`, `statement`, `comparison`, `bullets` | 15 | static | static |
 
 Rules that apply to every animation preset:
 - Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame.
-- Easing: `fade-in` and `slide-up` ease out (cubic); `reveal` moves at constant speed.
+- Easing: `fade-in`, `slide-up` and `reveal` ease out (cubic).
 - Short scene: a scene shorter than `minFrames` shows its end state from its first frame. No motion.
 - Reduced motion: each preset declares `static`, which is the end state from its first frame. The switch that applies it is task 023; until then the rule is declared, not applied.
 - A preset is a pure function of the frame, the scene length and the theme tokens. The same frame always gives the same picture (PRD §11.1).
-- `slide-up` rises by `space.lg` of the theme. `reveal` hides part of the content while it wipes in; at the end nothing is clipped.
+- `slide-up` rises by `space.lg` of the theme. `reveal` grows from 96% to full size. No preset clips or masks content, so no glyph is cut at any frame (task 021: the earlier wipe was replaced on 2026-10-15).
 
 Example:
 ```markdown

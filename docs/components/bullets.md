@@ -42,5 +42,5 @@ The points and the optional heading are the only content. Colour and size come f
 ## Known limits
 - The list is not shrunk to fit and has no line limit beyond the item count. Six long points at 1920x1080 fit (`bullets-long`). Smaller frames are not checked: a long list at 640x360 may run past the frame. Use 1920x1080 for long lists, or split them (follow-up: a fit rule, as for `title`).
 - An item is drawn from its lines. A line break inside one item (for example a nested list or a second paragraph in an item) becomes a separate row. Keep each item to one paragraph.
-- `reveal` wipes the content during its entrance, so the list is partly hidden for that part of the scene. The end state is not clipped (recorded deviation, task 021; not changed here).
+- `reveal` fades the list in while it grows from 96% to full size over its entrance. Nothing is clipped at any frame (task 021, redesigned 2026-10-15).
 - Only plain text is drawn: emphasis and quotes are shown as their text (ADR-0004).

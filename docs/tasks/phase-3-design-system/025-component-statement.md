@@ -23,11 +23,11 @@ Automated:
 - [x] Each contract violation in the invalid fixture yields its code and line.
 - [x] A 3-line statement scales down within its token range, never below the minimum legible size; beyond that → validation warning. (`layout.test.ts`; `component-statement-warn` yields `W_TEXT_FIT`; visual `statement-small`.)
 - [x] `strong` text uses the accent colour (visual case `statement-basic`; accent check below).
-- [ ] Partly met: `fade-in` and `slide-up` checked mid-entrance and at end (`statement-animations`); `reveal` only at its end state, per the task 021 deviation.
+- [x] Met (2026-10-15): `fade-in` and `slide-up` checked mid-entrance and at end (`statement-animations`). `reveal` clips nothing (task 021 redesign); its visual case covers the end state only, so its entrance is not captured here.
 
 Human check:
 1. [ ] Partly met: `video render` exit 0 (1920x1080, 30 fps, 450 frames); reviewed from stills at 1 s, 7.5 s and 14.7 s, not played back.
-2. [x] Legible at 1080p, theme-consistent, no clipped or overlapping text (stills; `reveal` entrance excepted).
+2. [x] Legible at 1080p, theme-consistent, no clipped or overlapping text (stills; `reveal` clips nothing by design since the task 021 redesign).
 3. [ ] Partly met: 5 scenes, 6 errors. Scene 1 has two (`E_SLOT_UNKNOWN` and `E_SLOT_REQUIRED`): a statement with only an unknown slot has no default, and an empty scene is an IR schema error.
 
 ## Notes

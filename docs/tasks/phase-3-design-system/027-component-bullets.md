@@ -42,8 +42,7 @@ Human check:
 - Renderer: one row per list item, bullet in `colors.accent`, text wraps
   (`overflowWrap: anywhere`). Items are split on newlines, so a list
   item that itself spans lines in IR is not supported.
-- Reveal: the known wipe is untouched. Reveal visual cases capture only
-  the end state, so reveal mid-animation clipping is not verified.
+- Reveal: the wipe was replaced by the task 021 redesign (2026-10-15), which clips nothing. The reveal visual case captures only the end state, so the entrance is not checked here.
 - Visual references are 640x360 (harness size). Not verified at 1080p;
   the human check covers that.
 - Quarto render test (`quarto render videos/hello`) fails only when the
