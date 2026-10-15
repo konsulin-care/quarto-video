@@ -1,8 +1,8 @@
 ---
 title: "Preset count-up"
 video:
-  width: 640
-  height: 360
+  width: 1280
+  height: 720
   fps: 30
 ---
 
