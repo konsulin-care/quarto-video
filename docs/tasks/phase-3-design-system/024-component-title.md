@@ -1,6 +1,6 @@
 # 024 — Component `title`
 
-Phase 3 · Status: todo · Depends on: 023 · PRD: §5.4 (1), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 023 · PRD: §5.4 (1), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `title` component: opening title with optional subtitle.
