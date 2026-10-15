@@ -6,6 +6,7 @@ import { runDoctor } from "./commands/doctor.js";
 import { runRender } from "./commands/render.js";
 import { runValidate } from "./commands/validate.js";
 import { parseRenderArgs } from "./render-args.js";
+import { runPreflight } from "./preflight.js";
 import { selectRenderer } from "./renderer-port.js";
 
 const USAGE =
@@ -35,6 +36,10 @@ async function renderCommand(args: string[]): Promise<number> {
       browserExecutable: process.env["QV_BROWSER_EXECUTABLE"] ?? null,
       json: parsed.json,
       theme: parsed.theme,
+      // Stage 5 (tools, browser, writable output, disk) runs here, at the CLI
+      // boundary, once stages 1–4 have passed inside runRender.
+      preflight: (output, buildDir) =>
+        runPreflight(output, buildDir, process.cwd()),
     },
     process.cwd(),
     renderer,
