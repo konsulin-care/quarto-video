@@ -19,9 +19,14 @@ export interface SlotContract {
  * `column`: a column of the csv prop named by `of`; `numeric` requires numbers.
  */
 export interface PropContract {
-  type: "string" | "boolean" | "enum" | "csv" | "column";
+  type: "string" | "boolean" | "enum" | "number" | "csv" | "column";
   enum?: string[];
-  default?: string | boolean;
+  default?: string | boolean | number;
+  /** For `number`: the smallest and largest allowed values, inclusive (ADR-0015). */
+  min?: number;
+  max?: number;
+  /** For `number`: the value must be a whole number (ADR-0015). */
+  integer?: boolean;
   /** The prop must be given on every scene of the component. */
   required?: boolean;
   /** For `column`: the name of the `csv` prop whose header it names. */

@@ -99,10 +99,26 @@ describe("contract schema", () => {
     );
   });
 
-  it("rejects a numeric prop type (no pixel-like values)", () => {
+  it("accepts a number prop with bounds and integer (ADR-0015)", () => {
     const value = contract();
-    value["props"] = { width: { type: "number" } };
-    expect(() => parse(value)).toThrow(/props\/width\/type/);
+    value["props"] = {
+      decimals: { type: "number", integer: true, min: 0, max: 6, default: 0 },
+    };
+    expect(() => parse(value)).not.toThrow();
+  });
+
+  it("rejects min, max or integer on a prop that is not a number", () => {
+    const value = contract();
+    value["props"] = { label: { type: "string", min: 0 } };
+    expect(() => parse(value)).toThrow(/props\/label/);
+  });
+
+  it("rejects a number prop whose min is above its max", () => {
+    const value = contract();
+    value["props"] = { value: { type: "number", min: 5, max: 1 } };
+    expect(() => parse(value)).toThrow(
+      /props\/value: min \(5\) is above max \(1\)/,
+    );
   });
 
   it("rejects an enum prop without its enum list", () => {

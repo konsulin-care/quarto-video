@@ -24,14 +24,14 @@ accepts. The validator enforces it; the renderer implements it.
 | `version` | `MAJOR.MINOR.PATCH`. |
 | `purpose` | One sentence, 1–200 characters. |
 | `slots` | At least one slot. Each slot is `{required, accepts, maxBlocks?}`; `accepts` lists block kinds from ADR-0004: `paragraph`, `heading`, `list`, `code-block`, and `image` (ADR-0013). `maxBlocks` (1–100, task 025): more blocks is the warning W_SLOT_TOO_MANY_BLOCKS. |
-| `props` | Object of camelCase names. Each prop is `{type, enum?, default?}`; `type` is `string`, `boolean` or `enum` (`enum` requires `enum`, a non-empty list). |
+| `props` | Object of camelCase names. Each prop is `{type, enum?, default?, min?, max?, integer?, required?, of?, numeric?}`. `type` is `string`, `boolean`, `enum`, `number` (ADR-0015) or the ADR-0014 types `csv` and `column`; `enum` requires `enum`, a non-empty list. `min`, `max` (inclusive) and `integer` are for `number` only, and `min` may not be above `max`. |
 | `placements` | Unique values from `background`, `framed`; may be empty (PRD §6). |
 | `compatibleAnimations`, `compatibleTransitions` | Preset ids. Each animation id must be a shipped preset whose `compatibleComponents` lists the component (both sides agree; test-checked). Transitions: not checked against scenes yet; empty for every component. |
 | `duration` | `{minMs, maxMs}`: integers ≥ 1, `maxMs` ≥ `minMs`. Milliseconds keep bounds fps-independent (ADR-0003). |
 | `accessibility` | Notes on text, motion and media behaviour, 1–400 characters. |
 | `textFit` | Optional `{max, min}`, each a theme type-scale name (`caption`, `body`, `subtitle`, `title`). The `default` slot's text takes the largest size in the range that fits the safe area (`src/layout.ts`, task 025); text that does not fit at `min` is the warning W_TEXT_FIT. An optional `subtitle: {max, min}` gives the `subtitle` slot its own range; `fitStack` fits the title first and the subtitle beside it (task 026). |
 
-Numeric props, pixel or CSS values and functions are not allowed (PRD §5.5, AGENT.md).
+Pixel or CSS values and functions are not allowed (PRD §5.5, AGENT.md). A `number` prop carries a value, never a size: the component decides how it is drawn (ADR-0015).
 
 ## Theme tokens (task 019)
 A theme is design tokens only: `colors` (five roles, `#RRGGBB`), `contrastPairs` (text and background roles), `typography` (family, weights, px scale, line heights), `space`, `radius` (px), `safeArea` (percent of width and height per aspect ratio, `"16:9"`), `motion` (ms). Rules:
@@ -59,7 +59,7 @@ A theme is design tokens only: `colors` (five roles, `#RRGGBB`), `contrastPairs`
 - Prop names are camelCase and semantic (`fit`, `frame`); never pixel values.
 
 ## Testing
-- `test/contract.test.ts`: every shipped contract validates; each rule above rejects its bad input (missing `slots`, unknown field, numeric prop, enum without list, bad id, inverted bounds, non-JSON, stray file).
+- `test/contract.test.ts`: every shipped contract validates; each rule above rejects its bad input (missing `slots`, unknown field, `min` on a string prop, inverted prop bounds, enum without list, bad id, inverted duration bounds, non-JSON, stray file); a number prop with bounds is accepted.
 - `test/components.test.ts`: lookups, copies, unknown id.
 - `test/transitions.test.ts`: the shipped names, and each rule that rejects a bad file.
 - `test/transition-presets.test.ts`: the shipped presets (cut has no length, others have bounds, fallbacks are listed names), each rule that rejects a bad preset file, the match with `transitions.json`.

@@ -32,6 +32,8 @@ function valueProblem(prop: Prop, value: string): string | null {
       return value.toLowerCase().endsWith(".csv")
         ? null
         : "must be a path to a .csv file";
+    case "number": // checked by the number rules (ADR-0015), next change
+      return null;
     case "string":
     case "column":
       return null;

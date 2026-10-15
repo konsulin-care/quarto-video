@@ -117,7 +117,19 @@
       "required": ["type"],
       "properties": {
         "type": {
-          "enum": ["string", "boolean", "enum", "csv", "column"]
+          "enum": ["string", "boolean", "enum", "number", "csv", "column"]
+        },
+        "min": {
+          "type": "number",
+          "description": "For number: the smallest allowed value (inclusive). ADR-0015."
+        },
+        "max": {
+          "type": "number",
+          "description": "For number: the largest allowed value (inclusive). ADR-0015."
+        },
+        "integer": {
+          "type": "boolean",
+          "description": "For number: the value must be a whole number. ADR-0015."
         },
         "enum": {
           "type": "array",
@@ -135,6 +147,21 @@
         "default": {}
       },
       "allOf": [
+        {
+          "if": {
+            "required": ["type"],
+            "properties": { "type": { "const": "number" } }
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                { "required": ["min"], "properties": { "min": {} } },
+                { "required": ["max"], "properties": { "max": {} } },
+                { "required": ["integer"], "properties": { "integer": {} } }
+              ]
+            }
+          }
+        },
         {
           "if": { "properties": { "type": { "const": "enum" } } },
           "then": {
