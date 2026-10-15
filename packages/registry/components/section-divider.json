@@ -1,0 +1,24 @@
+{
+  "id": "section-divider",
+  "version": "1.0.0",
+  "purpose": "Chapter or topic break between sections: a section title, with an optional kicker above it.",
+  "slots": {
+    "default": {
+      "required": true,
+      "accepts": ["paragraph", "heading"]
+    },
+    "kicker": {
+      "required": false,
+      "accepts": ["paragraph"]
+    }
+  },
+  "props": {},
+  "placements": [],
+  "compatibleAnimations": ["fade-in", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 8000
+  },
+  "accessibility": "The section title and the optional kicker are the only content. Colour and size come from the theme (task 019). The kicker uses the accent colour; the title uses the text colour."
+}
