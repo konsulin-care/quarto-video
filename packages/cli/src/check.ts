@@ -5,6 +5,7 @@ import { relative } from "node:path";
 import type { IrVideo } from "@quarto-video/ir";
 import {
   checkManifest,
+  checkTextFit,
   checkTheme,
   hasErrors,
   type Diagnostic,
@@ -43,10 +44,16 @@ export function checkProject(
     themeOverride ?? themeName(project),
     relative(project.root, project.document),
   );
+  // Text-fit warnings need the resolved theme and a valid manifest (task 025).
+  const fit =
+    stage2.ir !== null && theme.theme !== null
+      ? checkTextFit(stage2.ir, theme.theme)
+      : [];
   const diagnostics = [
     ...outcome.diagnostics,
     ...stage2.diagnostics,
     ...theme.diagnostics,
+    ...fit,
   ];
   if (stage2.ir === null || hasErrors(diagnostics) || theme.theme === null) {
     return { kind: "invalid", diagnostics };
