@@ -1,6 +1,6 @@
 # 022 — Transition presets
 
-Phase 3 · Status: todo · Depends on: 021 · PRD: §5.6, §8.3 · ADR: reads 0005
+Phase 3 · Status: in-progress · Depends on: 021 · PRD: §5.6, §8.3 · ADR: reads 0005
 
 ## Goal
 Visual transitions `cut`, `fade`, `slide`, `wipe`, `zoom` implementing the
