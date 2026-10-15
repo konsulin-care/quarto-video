@@ -1,6 +1,6 @@
 # 023 — Reduced motion
 
-Phase 3 · Status: todo · Depends on: 022 · PRD: §5.6, §12 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 022 · PRD: §5.6, §12 · ADR: —
 
 ## Goal
 A project-level option that replaces non-essential motion with each preset's
