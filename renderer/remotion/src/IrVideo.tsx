@@ -12,6 +12,7 @@ import { AbsoluteFill, Sequence } from "remotion";
 import { ThemeProvider } from "../themes/ThemeProvider.js";
 import { AnimatedScene } from "./AnimatedScene.js";
 import { TransitionScene } from "./TransitionScene.js";
+import { effectiveAnimation } from "../animations/index.js";
 import { COMPONENTS } from "./registry-map.js";
 import type { Overlap } from "../transitions/index.js";
 
@@ -21,9 +22,13 @@ export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
   unknown
 >;
 
-/** The scene's animation preset id; IR 0.1 to 1.0 scenes have none. */
+/**
+ * The scene's animation as drawn: its preset id, or fade-in for a kinetic
+ * statement over its word limit (task 026). IR 0.1 to 1.0 scenes have none.
+ */
 function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
-  return "animation" in scene ? scene.animation?.name : undefined;
+  const name = "animation" in scene ? scene.animation?.name : undefined;
+  return effectiveAnimation(name, slotTexts(scene.content)["default"] ?? "");
 }
 
 /** The overlap a scene's transition makes; none for cut or no transition. */

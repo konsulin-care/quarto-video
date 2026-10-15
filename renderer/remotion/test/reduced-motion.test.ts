@@ -13,6 +13,7 @@ const DURATION = 45;
 /** The end state each animation draws with reduced motion, by id. */
 const END_STATE: Record<string, object> = {
   "fade-in": { opacity: 1 },
+  kinetic: {},
   "slide-up": { opacity: 1, transform: "translateY(0px)" },
   reveal: { opacity: 1, transform: "scale(1)" },
 };
@@ -30,11 +31,15 @@ describe("reduced motion: animations", () => {
     },
   );
 
-  it.each(animationIds())("%s without reduced motion still moves", (name) => {
-    const start = animationStyle(name, 0, DURATION, tokens, false);
-    const end = animationStyle(name, DURATION - 1, DURATION, tokens, false);
-    expect(start).not.toEqual(end);
-  });
+  // kinetic moves its words, not the scene: kinetic.test.ts checks its motion.
+  it.each(animationIds().filter((name) => name !== "kinetic"))(
+    "%s without reduced motion still moves",
+    (name) => {
+      const start = animationStyle(name, 0, DURATION, tokens, false);
+      const end = animationStyle(name, DURATION - 1, DURATION, tokens, false);
+      expect(start).not.toEqual(end);
+    },
+  );
 
   it("every animation id has an end state in this test", () => {
     expect(Object.keys(END_STATE).sort()).toEqual(animationIds());

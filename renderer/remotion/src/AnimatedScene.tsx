@@ -5,6 +5,10 @@
 import type { ReactNode } from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { animationStyle } from "../animations/index.js";
+import {
+  WordMotionContext,
+  type WordMotion,
+} from "../animations/word-motion.js";
 import { useTheme } from "../themes/ThemeProvider.js";
 
 export interface AnimatedSceneProps {
@@ -25,12 +29,22 @@ export function AnimatedScene({
   const frame = useCurrentFrame();
   const theme = useTheme();
   if (animation === undefined) return <>{children}</>;
+  const reduced = reducedMotion === true;
   const style = animationStyle(
     animation,
     frame,
     durationFrames,
     theme,
-    reducedMotion === true,
+    reduced,
   );
-  return <AbsoluteFill style={style}>{children}</AbsoluteFill>;
+  // kinetic moves its words, not the scene: the statement reads this (task 026).
+  const words: WordMotion | undefined =
+    animation === "kinetic"
+      ? { frame, durationFrames, tokens: theme, reducedMotion: reduced }
+      : undefined;
+  return (
+    <WordMotionContext.Provider value={words}>
+      <AbsoluteFill style={style}>{children}</AbsoluteFill>
+    </WordMotionContext.Provider>
+  );
 }
