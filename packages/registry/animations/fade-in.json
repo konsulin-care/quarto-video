@@ -2,7 +2,17 @@
   "id": "fade-in",
   "version": "1.0.0",
   "purpose": "Content fades from transparent to opaque at the start of its scene.",
-  "compatibleComponents": ["title", "section-divider", "end-card", "statement", "comparison", "bullets", "image", "chart"],
+  "compatibleComponents": [
+    "title",
+    "section-divider",
+    "end-card",
+    "statement",
+    "comparison",
+    "bullets",
+    "image",
+    "chart",
+    "statistic"
+  ],
   "minFrames": 15,
   "shortScene": "static",
   "reducedMotion": "static"

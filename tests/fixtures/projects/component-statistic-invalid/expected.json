@@ -1,0 +1,57 @@
+[
+  {
+    "code": "E_SLOT_REQUIRED",
+    "line": 9,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_PROP_TYPE",
+    "line": 15,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_PROP_REQUIRED",
+    "line": 21,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_PROP_VALUE",
+    "line": 27,
+    "sceneId": "scene-004"
+  },
+  {
+    "code": "E_SCENE_SHAPE",
+    "line": 33,
+    "sceneId": "scene-005"
+  },
+  {
+    "code": "E_SLOT_BLOCK_KIND",
+    "line": 39,
+    "sceneId": "scene-006"
+  },
+  {
+    "code": "E_SLOT_UNKNOWN",
+    "line": 46,
+    "sceneId": "scene-007"
+  },
+  {
+    "code": "E_DURATION_BOUNDS",
+    "line": 56,
+    "sceneId": "scene-008"
+  },
+  {
+    "code": "E_ANIMATION_UNKNOWN",
+    "line": 62,
+    "sceneId": "scene-009"
+  },
+  {
+    "code": "E_PROP_VALUE",
+    "line": 68,
+    "sceneId": "scene-010"
+  },
+  {
+    "code": "E_PROP_VALUE",
+    "line": 74,
+    "sceneId": "scene-011"
+  }
+]

@@ -72,6 +72,7 @@ describe("animation presets", () => {
       "bullets",
       "image",
       "chart",
+      "statistic",
     ]);
   });
 

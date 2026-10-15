@@ -25,6 +25,7 @@ what is valid.
 - `src/cli.ts` — `render` script entry (exit 0 on success, 1 on error, 2 on usage).
 - `src/errors.ts` — `IrRenderError`, thrown for rejected input.
 - `components/title/` — the `title` component (task 024): the default slot as the title, the optional `subtitle` slot under it; `components/<id>/` for the rest.
+- `components/statistic/` — the `statistic` component (task 031): the number from `format.ts` (`formatNumber`, locale-fixed, reused by task 032), the size rule in `size.ts`, and `Statistic.tsx` (number, unit, prefix, label and context).
 - `components/chart/` — the `chart` component (task 035): bars or a line from the `tables.data` CSV table; `data.ts` (points), `scale.ts` (nice value axis, pure), `layout.ts` (plot geometry, pure), `Marks.tsx` (bars, line), `Chart.tsx` (title, axis, labels, caption). Colours from the accent and text tokens only.
 - `test/` — unit tests: invalid IR rejection (no browser), pinned versions, theme parity (`theme-parity.test.ts`), theme lint, safe area.
 - Planned, not yet present: `media/`.

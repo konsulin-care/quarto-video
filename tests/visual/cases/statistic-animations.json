@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/component-statistic",
+  "theme": "modern",
+  "frames": [0, 10, 20, 89, 180, 195, 210, 269, 270, 290, 310, 389],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

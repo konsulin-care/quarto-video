@@ -65,9 +65,9 @@ describe("component lookups", () => {
   });
 
   it("rejects an unknown component id with an error, not undefined", () => {
-    expect(() => getComponent("statistic")).toThrow(RegistryError);
-    expect(() => getComponent("statistic")).toThrow(
-      /unknown component "statistic" \(known: bullets, chart, comparison, end-card, image, section-divider, statement, title\)/,
+    expect(() => getComponent("gallery")).toThrow(RegistryError);
+    expect(() => getComponent("gallery")).toThrow(
+      /unknown component "gallery" \(known: bullets, chart, comparison, end-card, image, section-divider, statement, statistic, title\)/,
     );
   });
 });

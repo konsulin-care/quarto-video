@@ -54,7 +54,11 @@ export function parseContract(text: string, file: string): ComponentContract {
     );
   }
   for (const [name, prop] of Object.entries(contract.props)) {
-    if (prop.min !== undefined && prop.max !== undefined && prop.min > prop.max) {
+    if (
+      prop.min !== undefined &&
+      prop.max !== undefined &&
+      prop.min > prop.max
+    ) {
       throw new RegistryError(
         `${file}: /props/${name}: min (${prop.min}) is above max (${prop.max})`,
       );

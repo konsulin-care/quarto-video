@@ -1,0 +1,43 @@
+---
+title: "Component statistic"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="statistic" duration="3s" value="42" unit="%" decimals="0" animation="fade-in"}
+::: {.label}
+Of learners finished the course
+:::
+
+::: {.context}
+Survey of 1,200 learners in 2026
+:::
+:::
+
+::: {.scene component="statistic" duration="3s" value="1e9" decimals="0"}
+::: {.label}
+Parameters in the largest model
+:::
+:::
+
+::: {.scene component="statistic" duration="3s" value="-3.456" decimals="1" prefix="$" unit="M" animation="slide-up"}
+::: {.label}
+Change in quarterly revenue
+:::
+
+::: {.context}
+Compared with the same quarter last year
+:::
+:::
+
+::: {.scene component="statistic" duration="4s" value="0.5" decimals="2" animation="reveal"}
+::: {.label}
+A long label wraps inside the safe area and is never shrunk, so it stays readable at the body size of the theme
+:::
+
+::: {.context}
+Context under the label is drawn in the muted text colour
+:::
+:::

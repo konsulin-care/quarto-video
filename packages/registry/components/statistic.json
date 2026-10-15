@@ -1,0 +1,44 @@
+{
+  "id": "statistic",
+  "version": "1.0.0",
+  "purpose": "Headline number with a label and optional context, from a number prop.",
+  "slots": {
+    "label": {
+      "required": true,
+      "accepts": ["paragraph"]
+    },
+    "context": {
+      "required": false,
+      "accepts": ["paragraph"]
+    }
+  },
+  "props": {
+    "value": {
+      "type": "number",
+      "required": true,
+      "min": -1000000000000000.0,
+      "max": 1000000000000000.0
+    },
+    "unit": {
+      "type": "string"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "decimals": {
+      "type": "number",
+      "integer": true,
+      "min": 0,
+      "max": 6,
+      "default": 0
+    }
+  },
+  "placements": [],
+  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "accessibility": "The value, label and optional context are the only content. The value is bold in the text colour, at the largest size up to twice the title size that fits the safe-area width; the unit is smaller and muted. The label uses the text colour and the context the muted text colour. Both wrap inside the safe area and are not shrunk. Colour and size come from the theme; both pairs meet WCAG AA."
+}
