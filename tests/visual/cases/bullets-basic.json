@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/component-bullets",
+  "theme": "modern",
+  "frames": [89, 179, 269, 449],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}
