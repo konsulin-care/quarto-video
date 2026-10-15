@@ -26,6 +26,13 @@ function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
   return "animation" in scene ? scene.animation?.name : undefined;
 }
 
+/** The typed blocks of each slot; IR 0.1 content has none (task 033). */
+function blocksOf(
+  content: IrManifest["scenes"][number]["content"],
+): Record<string, IrBlock[]> {
+  return "slots" in content ? content.slots : {};
+}
+
 /** The overlap a scene's transition makes; none for cut or no transition. */
 function overlapOf(
   scene: IrManifest["scenes"][number] | undefined,

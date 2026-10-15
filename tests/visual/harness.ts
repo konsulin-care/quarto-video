@@ -165,6 +165,7 @@ export async function runVisual(options: VisualOptions): Promise<VisualRun> {
       theme: testCase.theme,
       frames: testCase.frames,
       browserExecutable,
+      assetRoot: join(caseScratch, "project"),
       ...(options.tokens === undefined ? {} : { tokens: options.tokens }),
     });
     for (const [index, frame] of testCase.frames.entries()) {

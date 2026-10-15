@@ -39,7 +39,10 @@ export function checkProject(
     return { kind: "invalid", diagnostics: outcome.diagnostics };
   }
   const file = relative(project.root, manifestPath(project));
-  const stage2 = checkManifest(outcome.json, file);
+  // Stage 3 checks the image files the IR names, inside the project root (ADR-0006).
+  const stage2 = checkManifest(outcome.json, file, undefined, undefined, {
+    root: project.root,
+  });
   const theme = checkTheme(
     themeOverride ?? themeName(project),
     relative(project.root, project.document),

@@ -1,6 +1,6 @@
-// IR 1.2 over the golden manifests (ADR-0007, ADR-0011, ADR-0012): every expected.json in
-// tests/fixtures/projects that describes an IR is version 1.2, validates
-// against ir-1.2.json, and records the generator versions the filter writes.
+// IR 1.3 over the golden manifests (ADR-0007, ADR-0011, ADR-0012, ADR-0013): every expected.json in
+// tests/fixtures/projects that describes an IR is version 1.3, validates
+// against ir-1.3.json, and records the generator versions the filter writes.
 // The golden tests (minimal-filter, content-nodes, front-matter, scene-lines)
 // check that the filter writes these exact files.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
@@ -39,7 +39,7 @@ function goldenManifests(): [string, Record<string, unknown>][] {
   });
 }
 
-describe("IR 1.2 golden manifests", () => {
+describe("IR 1.3 golden manifests", () => {
   const golden = goldenManifests();
 
   it("finds the golden IR fixtures", () => {
@@ -47,8 +47,8 @@ describe("IR 1.2 golden manifests", () => {
   });
 
   for (const [name, json] of golden) {
-    it(`${name}: is IR 1.2, validates, and records the generator versions`, () => {
-      assert.equal(json["schemaVersion"], "1.2");
+    it(`${name}: is IR 1.3, validates, and records the generator versions`, () => {
+      assert.equal(json["schemaVersion"], "1.3");
       assert.deepEqual(validateIr(json), { ok: true, errors: [] });
       assert.deepEqual(json["generator"], expectedGenerator());
     });

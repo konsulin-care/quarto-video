@@ -99,6 +99,7 @@ export async function runRender(
       onProgress: percentPrinter(),
       theme: check.theme,
       background: explicitBackground(project),
+      assetRoot: project.root,
     });
     const found = checkOutput(
       check.ir,

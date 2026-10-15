@@ -33,6 +33,12 @@ export interface RenderOptions {
    * theme's background token instead (themes/canvas.ts).
    */
   background?: string | null;
+  /**
+   * The project root that image `src` paths resolve in (ADR-0006, ADR-0013).
+   * It is copied into the bundle as the public directory, so staticFile()
+   * finds the files. Unset or null means no public directory.
+   */
+  assetRoot?: string | null;
 }
 
 /** Signature of render(); the CLI depends on this shape, not the module. */
@@ -115,9 +121,12 @@ export function inputPropsFor(
   };
 }
 
-/** Bundles the renderer entry point; resolves to the serve URL. */
-export function bundleEntry(): Promise<string> {
-  return bundle(bundleOptions);
+/** Bundles the renderer entry point with `assetRoot` as its public directory; resolves to the serve URL. */
+export function bundleEntry(assetRoot: string | null = null): Promise<string> {
+  return bundle({
+    ...bundleOptions,
+    publicDir: assetRoot === null ? null : resolve(assetRoot),
+  });
 }
 
 /** Renders a valid IR file to an H.264 MP4 at outPath. */
@@ -130,7 +139,7 @@ export async function render(
   const browserExecutable = options.browserExecutable ?? null;
   const inputProps = inputPropsFor(ir, options);
   const onProgress = options.onProgress;
-  const serveUrl = await bundleEntry();
+  const serveUrl = await bundleEntry(options.assetRoot ?? null);
   const composition = await selectComposition({
     serveUrl,
     id: COMPOSITION_ID,

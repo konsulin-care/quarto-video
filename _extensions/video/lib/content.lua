@@ -6,6 +6,7 @@
 local json = require("lib.json")
 local inlines = require("lib.content_inlines")
 local diagnostics = require("lib.diagnostics")
+local image_block = require("lib.image_block")
 
 local M = {}
 
@@ -56,9 +57,20 @@ local function describe(finding)
   return string.format("a %s element", tostring(finding.t)), "Remove it."
 end
 
---- The E_CONTENT_UNSUPPORTED diagnostic for a finding of scene `id`. Its line
---- is the finding's `line` (nil when no line was found).
+--- The diagnostic for a finding of scene `id`. A finding with its own `code`
+--- (an image block, below) carries its message, which has the scene id in
+--- its `%s`. Otherwise it is E_CONTENT_UNSUPPORTED. Its line is the
+--- finding's `line` (nil when no line was found).
 function M.problem(finding, id, component)
+  if finding.code then
+    return diagnostics.new(finding.code, string.format(finding.message, id), {
+      property = "content",
+      suggestion = finding.suggestion,
+      sceneId = id,
+      component = component,
+      line = finding.line,
+    })
+  end
   local label, suggestion = describe(finding)
   return diagnostics.new(
     "E_CONTENT_UNSUPPORTED",
@@ -98,6 +110,9 @@ end
 -- One Pandoc block -> one node, or a finding for each unsupported part.
 local function convert_one(el, found, in_slot)
   local t = el.t
+  if t == "Div" and image_block.is_image(el) then
+    return image_block.node(el, found)
+  end
   if t == "Para" or t == "Plain" then
     return { type = "paragraph", inlines = inlines.convert(el.content, found) }
   elseif t == "Header" then
@@ -197,10 +212,11 @@ end
 function M.convert(div)
   local found, slots = {}, {}
   local loose = json.array({})
+  image_block.reset()
   -- How many Divs of each first class came before (the `nth` of a finding).
   local counts = {}
   for _, el in ipairs(div.content) do
-    if el.t == "Div" then
+    if el.t == "Div" and not image_block.is_image(el) then
       local key = el.classes[1]
       local nth = nil
       if key then

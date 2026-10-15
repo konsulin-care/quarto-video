@@ -96,7 +96,7 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "enum": ["paragraph", "heading", "list", "code-block"]
+            "enum": ["paragraph", "heading", "list", "code-block", "image"]
           }
         },
         "maxBlocks": { "type": "integer", "minimum": 1, "maximum": 100 },

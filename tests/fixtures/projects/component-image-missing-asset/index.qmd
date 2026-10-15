@@ -1,0 +1,12 @@
+---
+title: "Component image missing asset"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/missing.png" alt="A photo that is not in the project"}
+:::
+:::

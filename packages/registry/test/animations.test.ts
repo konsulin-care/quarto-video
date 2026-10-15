@@ -70,6 +70,7 @@ describe("animation presets", () => {
       "statement",
       "comparison",
       "bullets",
+      "image",
     ]);
   });
 

@@ -8,6 +8,7 @@ import { Title } from "../components/title/Title.js";
 import { Bullets } from "../components/bullets/Bullets.js";
 import { Comparison } from "../components/comparison/Comparison.js";
 import { EndCard } from "../components/end-card/EndCard.js";
+import { Image } from "../components/image/Image.js";
 
 export interface SceneProps {
   /** Plain text of each slot the scene has, by slot name (task 024). */
@@ -23,4 +24,5 @@ export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   title: Title,
   "end-card": EndCard,
   bullets: Bullets,
+  image: Image,
 };

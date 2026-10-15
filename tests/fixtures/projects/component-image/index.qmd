@@ -1,0 +1,69 @@
+---
+title: "Component image"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+Each scene holds one image: a portrait, a landscape and an extreme 1:4
+picture, each with fit cover and fit contain, and one SVG without a caption.
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/portrait.png" fit="cover" alt="A blue to amber gradient, portrait"}
+:::
+
+::: {.caption}
+Portrait, cover: the picture fills the frame and is cropped.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/portrait.png" fit="contain" alt="A blue to amber gradient, portrait"}
+:::
+
+::: {.caption}
+Portrait, contain: the whole picture shows inside the frame.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/landscape.jpg" fit="cover" alt="A teal to rose gradient, landscape"}
+:::
+
+::: {.caption}
+Landscape, cover.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/landscape.jpg" fit="contain" alt="A teal to rose gradient, landscape"}
+:::
+
+::: {.caption}
+Landscape, contain.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/tall.webp" fit="cover" alt="A violet to green gradient, extreme 1 to 4"}
+:::
+
+::: {.caption}
+Extreme 1:4, cover.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/tall.webp" fit="contain" alt="A violet to green gradient, extreme 1 to 4"}
+:::
+
+::: {.caption}
+Extreme 1:4, contain.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/diagram.svg" fit="contain" alt="A blue circle and an amber square"}
+:::
+:::

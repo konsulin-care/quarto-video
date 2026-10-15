@@ -44,6 +44,9 @@ function blockText(block: IrBlock): string {
         .join("\n");
     case "code-block":
       return block.text;
+    case "image":
+      // An image has no text: its alt text is metadata, not drawn content.
+      return "";
   }
 }
 
