@@ -1,0 +1,19 @@
+---
+title: "Component chart data invalid"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/bars-3.csv" x="region" y="revenue" unit="kEUR" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="4s" type="line" data="data/broken.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/text.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/missing.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+:::

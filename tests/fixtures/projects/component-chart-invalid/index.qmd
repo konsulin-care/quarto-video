@@ -1,0 +1,31 @@
+---
+title: "Component chart invalid"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/bars-3.csv" x="region" y="sales" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales" colour="red"}
+:::
+
+::: {.scene component="chart" duration="4s" type="pie" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/bars.txt" x="region" y="sales" unit="kEUR" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="1s" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+:::
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title=""}
+:::
+
+::: {.scene component="chart" duration="4s" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+::: {.caption}
+- A list is not a caption.
+:::
+:::

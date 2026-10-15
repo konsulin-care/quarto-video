@@ -1,0 +1,37 @@
+[
+  {
+    "code": "E_PROP_REQUIRED",
+    "line": 9,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_SCENE_SHAPE",
+    "line": 12,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_PROP_VALUE",
+    "line": 15,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_PROP_VALUE",
+    "line": 18,
+    "sceneId": "scene-004"
+  },
+  {
+    "code": "E_DURATION_BOUNDS",
+    "line": 21,
+    "sceneId": "scene-005"
+  },
+  {
+    "code": "E_PROP_VALUE",
+    "line": 24,
+    "sceneId": "scene-006"
+  },
+  {
+    "code": "E_SLOT_BLOCK_KIND",
+    "line": 27,
+    "sceneId": "scene-007"
+  }
+]
