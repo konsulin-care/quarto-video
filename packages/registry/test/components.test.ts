@@ -7,6 +7,7 @@ describe("component lookups", () => {
     expect(title).toBeDefined();
     expect(title?.slots).toEqual({
       default: { required: true, accepts: ["paragraph", "heading"] },
+      subtitle: { required: false, accepts: ["paragraph"] },
     });
     expect(title?.props).toEqual({});
     expect(title?.duration).toEqual({ minMs: 1000, maxMs: 30000 });
