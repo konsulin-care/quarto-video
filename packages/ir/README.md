@@ -9,7 +9,7 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 | `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1 to 1.2 (timeline, transitions, `generator`), content nodes, `IrError`, `IrValidation` |
 | `src/versions.ts` | `SUPPORTED_VERSIONS`, `LATEST_VERSION` (1.2), `UNSUPPORTED_VERSION_CODE`, the gate's message |
 | `src/validate.ts` | `validateIr(json)`: the version gate, then the schema for the declared version; all errors, JSON Pointer paths |
-| `src/text.ts` | `plainText(content)`: the `default` slot as text (subpath `@quarto-video/ir/text`) |
+| `src/text.ts` | `plainText(content)`: the `default` slot as text; `slotTexts(content)`: each slot's text by name (task 024; subpath `@quarto-video/ir/text`) |
 | `src/check.ts` | File text → `OK` or `<path>: <message>` lines (pure) |
 | `src/cli.ts` | `ir:check` entry point (tsx); exit 0 valid, 1 otherwise |
 | `src/duration.ts` | `durationToFrames(text, fps)`: `"<n>s"`/`"<n>ms"` → frames (ADR-0003) |

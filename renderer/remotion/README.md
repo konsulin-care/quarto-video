@@ -1,5 +1,5 @@
 # renderer/remotion/ — Remotion reference renderer
-Status: Minimal render (task 004): any valid IR renders to MP4 with a placeholder `title` scene; the title shows the `default` slot's text (task 012). Scenes play on the IR timeline. Transition presets (task 022): `cut`, `fade`, `slide`, `wipe`, `zoom`, applied over each boundary's overlap by `TransitionScene`. Themes (task 019): tokens from the registry, bundled Inter fonts; `title` is styled from them. Animation presets (task 021): `fade-in`, `slide-up`, `reveal`, applied to the whole scene by `AnimatedScene`. Reduced motion (task 023, `settings.reducedMotion` in IR 1.2): each preset draws its registry rule (`static`: the end state from its first frame) and each transition its fallback (`slide`, `wipe`, `zoom` draw `fade`), over the same overlap. Other components and transitions: tasks 022–035, 039–046.
+Status: Minimal render (task 004): any valid IR renders to MP4; the `title` scene shows its `default` slot as the title and its optional `subtitle` slot under it (task 024, replacing the placeholder of task 004). Scenes play on the IR timeline. Transition presets (task 022): `cut`, `fade`, `slide`, `wipe`, `zoom`, applied over each boundary's overlap by `TransitionScene`. Themes (task 019): tokens from the registry, bundled Inter fonts; `title` is styled from them. Animation presets (task 021): `fade-in`, `slide-up`, `reveal`, applied to the whole scene by `AnimatedScene`. Reduced motion (task 023, `settings.reducedMotion` in IR 1.2): each preset draws its registry rule (`static`: the end state from its first frame) and each transition its fallback (`slide`, `wipe`, `zoom` draw `fade`), over the same overlap. Other components and transitions: tasks 022–035, 039–046.
 Run: `npm run render -w renderer/remotion -- <ir.json> <out.mp4>`; typecheck: `npm run typecheck -w @quarto-video/remotion`; unit tests: root `npm run test`; render tests: root `npm run test:integration`.
 
 ## Purpose
@@ -12,7 +12,7 @@ what is valid.
 - `src/Root.tsx` — `video` composition; size, fps and length come from the IR
   input props via `calculateMetadata`.
 - `src/IrVideo.tsx` — plays each scene with `<Sequence>` at its `startFrame` for its own `durationFrames` (`timelineOf`, `@quarto-video/ir/timeline`), on `settings.background`. A transition's overlap shows both scenes: the outgoing scene runs to its own end. Scene text comes from `plainText` (`@quarto-video/ir/text`).
-- `src/registry-map.ts` — registry id → implementation (`title` only).
+- `src/registry-map.ts` — registry id → implementation (`title` only); a component receives `slots`, the plain text of each slot (task 024).
 - `src/AnimatedScene.tsx` — applies the scene's animation preset at the scene's own frame; no animation draws the scene as it is. `reducedMotion` (from the IR, via `IrVideo.tsx`) selects the preset's registry rule.
 - `src/TransitionScene.tsx` — applies the incoming transition on the scene's first frames and the outgoing one (from the next scene) on its last; no overlap draws the scene as it is. `reducedMotion` selects each transition's registry fallback.
 - `transitions/` — preset type (`types.ts`: `incoming(p)` and `outgoing(p)`, `p` in (0, 1], 1 on the overlap's last frame), one file per name, `index.ts` (`TRANSITIONS`, `transitionStyle`). Names and bounds come from `packages/registry/transitions/`.
@@ -24,7 +24,7 @@ what is valid.
 - `src/still.ts` — `renderStills(irPath, outDir, opts)`: one PNG per frame (`<outDir>/<frame>.png`) from the same bundle, theme and canvas as `render()`. `opts.frames` must lie inside the composition. Used by the visual harness (`tests/visual/`, task 020). `opts.tokens` is a test seam: tokens to draw instead of the theme's; production callers omit it.
 - `src/cli.ts` — `render` script entry (exit 0 on success, 1 on error, 2 on usage).
 - `src/errors.ts` — `IrRenderError`, thrown for rejected input.
-- `components/title/` — placeholder centred title; `components/<id>/` for the rest.
+- `components/title/` — the `title` component (task 024): the default slot as the title, the optional `subtitle` slot under it; `components/<id>/` for the rest.
 - `test/` — unit tests: invalid IR rejection (no browser), pinned versions, theme parity (`theme-parity.test.ts`), theme lint, safe area.
 - Planned, not yet present: `media/`.
 

@@ -7,7 +7,7 @@ import type { ThemeTokens } from "@quarto-video/registry";
 // Subpaths, not the package index: the index pulls in the validator (node:fs)
 // and ajv, which the renderer bundle must not contain.
 import { timelineOf } from "@quarto-video/ir/timeline";
-import { plainText } from "@quarto-video/ir/text";
+import { slotTexts } from "@quarto-video/ir/text";
 import { AbsoluteFill, Sequence } from "remotion";
 import { ThemeProvider } from "../themes/ThemeProvider.js";
 import { AnimatedScene } from "./AnimatedScene.js";
@@ -74,7 +74,7 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >
-                  <Component text={plainText(scene.content)} />
+                  <Component slots={slotTexts(scene.content)} />
                 </AnimatedScene>
               </TransitionScene>
             </Sequence>

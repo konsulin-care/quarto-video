@@ -4,7 +4,8 @@ import type { FC } from "react";
 import { Title } from "../components/title/Title.js";
 
 export interface SceneProps {
-  text: string;
+  /** Plain text of each slot the scene has, by slot name (task 024). */
+  slots: Readonly<Record<string, string>>;
 }
 
 export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
