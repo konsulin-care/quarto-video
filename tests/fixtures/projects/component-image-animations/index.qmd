@@ -31,6 +31,6 @@ Slide up: the scene rises into place.
 :::
 
 ::: {.caption}
-Reveal: a wipe uncovers the scene.
+Reveal: the picture fades in and grows into place.
 :::
 :::
