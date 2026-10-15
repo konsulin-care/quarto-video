@@ -1,0 +1,50 @@
+---
+title: "Component section divider invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="section-divider" duration="1s"}
+::: {.kicker}
+Only a kicker, no section title.
+:::
+:::
+
+::: {.scene component="section-divider" duration="1s"}
+Section title.
+
+::: {.caption}
+A slot the divider does not have.
+:::
+:::
+
+::: {.scene component="section-divider" duration="1s"}
+- A list is not a section title.
+- Second item.
+:::
+
+::: {.scene component="section-divider" duration="1s"}
+Section title.
+
+::: {.kicker}
+- A list is not a kicker.
+:::
+:::
+
+::: {.scene component="section-divider" duration="0.5s"}
+Too short to read.
+:::
+
+::: {.scene component="section-divider" duration="10s"}
+Too long for a divider.
+:::
+
+::: {.scene component="section-divider" duration="1s" animation="bounce"}
+Unknown animation.
+:::
+
+::: {.scene component="section-divider" duration="1s" animation="reveal"}
+Animation this divider does not accept.
+:::
