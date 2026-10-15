@@ -1,0 +1,12 @@
+[
+  {
+    "code": "W_ANIMATION_FALLBACK",
+    "line": 9,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "W_TEXT_FIT",
+    "line": 9,
+    "sceneId": "scene-001"
+  }
+]

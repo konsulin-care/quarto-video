@@ -1,0 +1,15 @@
+---
+title: "Preset kinetic"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="3s" animation="kinetic"}
+Small steps **compound** into real results every single day.
+:::
+
+::: {.scene component="statement" duration="1s" animation="kinetic"}
+A one second scene still reveals each word in turn.
+:::
