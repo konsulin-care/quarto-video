@@ -1,6 +1,6 @@
 # 031 — Component `statistic`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (4), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (4), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `statistic` component: headline number with label and optional context.
