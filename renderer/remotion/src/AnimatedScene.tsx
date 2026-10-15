@@ -6,6 +6,10 @@ import type { ReactNode } from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { animationStyle } from "../animations/index.js";
 import {
+  CountMotionContext,
+  type CountMotion,
+} from "../animations/count-motion.js";
+import {
   WordMotionContext,
   type WordMotion,
 } from "../animations/word-motion.js";
@@ -51,10 +55,17 @@ export function AnimatedScene({
     animation === "stagger"
       ? { frame, durationFrames, tokens: theme, reducedMotion: reduced }
       : undefined;
+  // count-up changes the number of its statistic, not the scene (task 032).
+  const count: CountMotion | undefined =
+    animation === "count-up"
+      ? { frame, durationFrames, reducedMotion: reduced }
+      : undefined;
   return (
     <WordMotionContext.Provider value={words}>
       <StaggerMotionContext.Provider value={items}>
-        <AbsoluteFill style={style}>{children}</AbsoluteFill>
+        <CountMotionContext.Provider value={count}>
+          <AbsoluteFill style={style}>{children}</AbsoluteFill>
+        </CountMotionContext.Provider>
       </StaggerMotionContext.Provider>
     </WordMotionContext.Provider>
   );

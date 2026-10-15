@@ -62,9 +62,22 @@ describe("scene animations", () => {
       component: "title",
       property: "animation",
       suggestion:
-        "Known animations: fade-in, kinetic, reveal, slide-up, stagger.",
+        "Known animations: count-up, fade-in, kinetic, reveal, slide-up, stagger.",
     });
     expect(run(animated("spin")).ir).toBeNull();
+  });
+
+  it("reports count-up on a component other than statistic as incompatible", () => {
+    // The first scene of the 1.1 example is a title, which does not list count-up.
+    const [found] = run(animated("count-up")).diagnostics;
+    expect(found).toMatchObject({
+      severity: "error",
+      code: "E_ANIMATION_INCOMPATIBLE",
+      message: 'Animation "count-up" does not apply to component "title".',
+      sceneId: "scene-001",
+      property: "animation",
+    });
+    expect(found?.suggestion).toMatch(/^Animations for "title": /);
   });
 
   it("reports a preset that the component does not list as compatible", () => {

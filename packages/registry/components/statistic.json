@@ -34,7 +34,7 @@
     }
   },
   "placements": [],
-  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleAnimations": ["count-up", "fade-in", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
     "minMs": 1000,

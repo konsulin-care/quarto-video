@@ -12,6 +12,7 @@ const DURATION = 45;
 
 /** The end state each animation draws with reduced motion, by id. */
 const END_STATE: Record<string, object> = {
+  "count-up": {},
   "fade-in": { opacity: 1 },
   kinetic: {},
   "slide-up": { opacity: 1, transform: "translateY(0px)" },
@@ -32,10 +33,12 @@ describe("reduced motion: animations", () => {
     },
   );
 
-  // kinetic and stagger move their words or items, not the scene: their
-  // tests check their motion (kinetic.test.ts, stagger.test.ts).
+  // kinetic, stagger and count-up move their words, items or number, not the
+  // scene: their tests check their motion (kinetic, stagger, count-up tests).
   it.each(
-    animationIds().filter((name) => name !== "kinetic" && name !== "stagger"),
+    animationIds().filter(
+      (name) => !["count-up", "kinetic", "stagger"].includes(name),
+    ),
   )("%s without reduced motion still moves", (name) => {
     const start = animationStyle(name, 0, DURATION, tokens, false);
     const end = animationStyle(name, DURATION - 1, DURATION, tokens, false);

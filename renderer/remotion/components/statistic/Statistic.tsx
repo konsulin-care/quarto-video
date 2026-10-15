@@ -7,6 +7,7 @@
 // and sizes come from the theme tokens (task 019); text wraps inside the safe area.
 import { safeAreaPixels, safeBox } from "@quarto-video/registry/layout";
 import { AbsoluteFill, useVideoConfig } from "remotion";
+import { countedValue, useCountMotion } from "../../animations/count-motion.js";
 import { useTheme } from "../../themes/ThemeProvider.js";
 import { formatNumber } from "./format.js";
 import { UNIT_SCALE, numberFontPx } from "./size.js";
@@ -39,12 +40,16 @@ export function Statistic({ slots, props }: StatisticProps) {
     typeof props["decimals"] === "number" ? props["decimals"] : 0;
   const prefix = textProp(props, "prefix");
   const unit = textProp(props, "unit");
-  const digits = formatNumber(value, decimals);
+  // The number drawn now: the counted value under count-up (task 032), else the value.
+  const count = useCountMotion();
+  const digits = formatNumber(countedValue(count, value), decimals);
   // The sign comes before the prefix: "-$3.5", not "$-3.5".
   const sign = digits.startsWith("-") ? "-" : "";
   const magnitude = digits.slice(sign.length);
+  // The size is that of the final text, so the number keeps its size while it counts.
+  const finalDigits = formatNumber(value, decimals).replace(/^-/, "");
   const size = numberFontPx(
-    { prefix, digits: magnitude, unit },
+    { prefix, digits: finalDigits, unit },
     safeBox(theme, width, height).width,
     typography.scale.title * 2,
     typography.scale.body,
