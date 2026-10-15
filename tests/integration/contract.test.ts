@@ -122,7 +122,7 @@ describe("contract diagnostics for authors", () => {
     assert.equal(run.stdout, "");
     assert.ok(
       run.stderr.includes(
-        'ERROR index.qmd:15\nUnknown component "hero-title".\nAvailable components: title.\n',
+        'ERROR index.qmd:15\nUnknown component "hero-title".\nAvailable components: chart, title.\n',
       ),
       run.stderr,
     );
@@ -149,7 +149,7 @@ describe("contract diagnostics for authors", () => {
     assert.equal(run.status, 1);
     assert.ok(
       run.stderr.includes(
-        `ERROR index.qmd:${line}\nUnknown component "hero-title".\nAvailable components: title.\n`,
+        `ERROR index.qmd:${line}\nUnknown component "hero-title".\nAvailable components: chart, title.\n`,
       ),
       run.stderr,
     );
@@ -176,7 +176,7 @@ describe("contract diagnostics for authors", () => {
       message: string;
     }[];
     assert.equal(error?.code, "E_SCENE_SHAPE");
-    assert.equal(error?.property, "colour");
+    assert.equal(error?.property, "props.colour");
     assert.match(error?.message ?? "", /unknown attribute "colour"/);
   });
 
