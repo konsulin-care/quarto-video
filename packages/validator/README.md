@@ -99,6 +99,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
 | `W_SLOT_TOO_MANY_BLOCKS` | 2 contract | Warning. A slot holds more blocks than its contract's `maxBlocks` (the statement's `default` shows one); the suggestion says how many to keep | 025 |
 | `W_TEXT_FIT` | 2 text fit | Warning. A component's text (contract `textFit`: the `default` slot, or the `subtitle` slot beside it) does not fit the frame even at the smallest size of its range; the suggestion says to shorten it or use a larger frame | 025, 026 |
+| `W_ANIMATION_FALLBACK` | 2 animation | Warning. A `kinetic` statement has more than 12 words (`KINETIC_MAX_WORDS`, `registry/kinetic`); its scene is drawn with `fade-in`. The suggestion says to shorten it or choose another preset | 026 |
 
 `E_SETTING_MISSING` (task 008) was retired in task 010 (every setting has a default).
 It is not emitted and must not be reused.

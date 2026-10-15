@@ -52,6 +52,7 @@ export const DIAGNOSTIC_CODES = [
   "E_FILTER_FAILED",
   "W_SLOT_TOO_MANY_BLOCKS",
   "W_TEXT_FIT",
+  "W_ANIMATION_FALLBACK",
 ] as const;
 
 export type DiagnosticCode = (typeof DIAGNOSTIC_CODES)[number];

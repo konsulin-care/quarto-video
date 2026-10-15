@@ -20,6 +20,7 @@ import {
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
+import { checkKinetic } from "./stages/kinetic.js";
 import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { resolveData } from "./stages/data.js";
@@ -124,6 +125,7 @@ export function checkManifest(
         ...checkContracts(ir, components),
         ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
+        ...checkKinetic(ir),
       ]);
       // Number props become JSON numbers (ADR-0015); with errors the run stops here.
       state.ir = withNumbers(ir, components);
