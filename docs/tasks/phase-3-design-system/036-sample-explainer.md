@@ -1,6 +1,6 @@
 # 036 — Sample explainer `videos/gpu`
 
-Phase 3 · Status: todo · Depends on: 026–035 · PRD: §1.3, §15 (Phase 3 exit) · ADR: —
+Phase 3 · Status: in-progress · Depends on: 026–035 · PRD: §1.3, §15 (Phase 3 exit) · ADR: —
 
 ## Goal
 Prove the design system end to end: the PRD's "Why GPUs Matter" explainer
