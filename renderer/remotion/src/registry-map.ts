@@ -2,6 +2,7 @@
 // render.ts rejects any other component before the browser starts.
 import type { FC } from "react";
 import { Title } from "../components/title/Title.js";
+import { EndCard } from "../components/end-card/EndCard.js";
 
 export interface SceneProps {
   /** Plain text of each slot the scene has, by slot name (task 024). */
@@ -10,4 +11,5 @@ export interface SceneProps {
 
 export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   title: Title,
+  "end-card": EndCard,
 };
