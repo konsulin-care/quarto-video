@@ -61,7 +61,8 @@ describe("scene animations", () => {
       sceneId: "scene-001",
       component: "title",
       property: "animation",
-      suggestion: "Known animations: fade-in, kinetic, reveal, slide-up.",
+      suggestion:
+        "Known animations: fade-in, kinetic, reveal, slide-up, stagger.",
     });
     expect(run(animated("spin")).ir).toBeNull();
   });
