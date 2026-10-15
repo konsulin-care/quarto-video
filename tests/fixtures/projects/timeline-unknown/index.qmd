@@ -7,6 +7,6 @@ video:
 Plain.
 :::
 
-::: {.scene component="title" duration="4s" transition="wipe" transitionDuration="1s" #second}
+::: {.scene component="title" duration="4s" transition="spin" transitionDuration="1s" #second}
 No such transition.
 :::

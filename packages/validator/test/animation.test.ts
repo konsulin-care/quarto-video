@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import {
   listAnimations,
   listComponents,
-  listTransitions,
+  listTransitionPresets,
   type AnimationPreset,
   type ComponentContract,
 } from "@quarto-video/registry";
@@ -37,7 +37,7 @@ const run = (
     json,
     "index.qmd",
     components,
-    listTransitions(),
+    listTransitionPresets(),
     undefined,
     presets,
   );

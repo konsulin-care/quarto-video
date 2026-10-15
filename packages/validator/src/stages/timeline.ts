@@ -1,6 +1,7 @@
-// Stage 4 timeline checks (PRD §8.3; ADR-0005): transition names, lengths and
-// overlaps, and that the manifest's timeline is the one its scenes resolve to.
-// Pure: the transition names are passed in. Negative values never reach this
+// Stage 4 timeline checks (PRD §8.3; ADR-0005): transition names, durations
+// (task 022: each preset's bounds), lengths and overlaps, and that the
+// manifest's timeline is the one its scenes resolve to.
+// Pure: the transition presets are passed in. Negative values never reach this
 // stage: the filter (ADR-0003) and the IR schema (minimum 0) reject them first.
 // IR 0.1 and 0.2 have no transitions or timeline, so there is nothing to check.
 import {
@@ -10,6 +11,7 @@ import {
   type IrVideo,
   type IrVideoWithTimeline,
 } from "@quarto-video/ir";
+import type { TransitionPreset } from "@quarto-video/registry";
 import type { Diagnostic, DiagnosticCode } from "../diagnostic.js";
 import { seconds } from "./contract.js";
 
@@ -50,22 +52,43 @@ function framesText(frames: number, fps: number): string {
 function checkScene(
   scenes: readonly IrSceneV03[],
   index: number,
-  transitions: readonly string[],
+  transitions: readonly TransitionPreset[],
   fps: number,
 ): Diagnostic[] {
   const scene = scenes[index];
   if (scene === undefined) return [];
   const found: Diagnostic[] = [];
   const transition = scene.transition;
-  if (transition !== undefined && !transitions.includes(transition.name)) {
+  const preset = transitions.find((t) => t.id === transition?.name);
+  const names = transitions.map((t) => t.id).join(", ");
+  if (transition !== undefined && preset === undefined) {
     found.push(
       problem(
         scene,
         "E_TRANSITION_UNKNOWN",
         `Unknown transition "${transition.name}" on scene "${scene.id}".`,
-        `Known transitions: ${transitions.join(", ")}.`,
+        `Known transitions: ${names}.`,
       ),
     );
+  }
+  if (transition !== undefined && preset !== undefined) {
+    const bounds = preset.duration;
+    const frames = transition.durationFrames;
+    if (
+      frames * 1000 < bounds.minMs * fps ||
+      frames * 1000 > bounds.maxMs * fps
+    ) {
+      found.push(
+        problem(
+          scene,
+          "E_TRANSITION_DURATION",
+          `Transition "${preset.id}" on scene "${scene.id}" lasts ${framesText(frames, fps)}; "${preset.id}" takes ${seconds(bounds.minMs)} to ${seconds(bounds.maxMs)}.`,
+          preset.id === "cut"
+            ? "Remove transitionDuration: cut takes no frames."
+            : `Use a transitionDuration from ${seconds(bounds.minMs)} to ${seconds(bounds.maxMs)}.`,
+        ),
+      );
+    }
   }
   const incoming = index > 0 ? (transition?.durationFrames ?? 0) : 0;
   if (index === 0 && (transition?.durationFrames ?? 0) > 0) {
@@ -162,7 +185,7 @@ function checkTimelineSection(ir: IrVideoWithTimeline): Diagnostic[] {
 /** Every timeline error in `ir`, scene by scene in order. IR 0.2 yields none. */
 export function checkTimeline(
   ir: IrVideo,
-  transitions: readonly string[],
+  transitions: readonly TransitionPreset[],
 ): Diagnostic[] {
   if (!hasTimeline(ir)) return [];
   const fps = ir.settings.fps;

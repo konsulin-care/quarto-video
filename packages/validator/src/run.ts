@@ -13,9 +13,10 @@ import {
 import {
   listAnimations,
   listComponents,
-  listTransitions,
+  listTransitionPresets,
   type AnimationPreset,
   type ComponentContract,
+  type TransitionPreset,
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
@@ -72,7 +73,7 @@ export function checkManifest(
   json: unknown,
   file: string,
   components: readonly ComponentContract[] = listComponents(),
-  transitions: readonly string[] = listTransitions(),
+  transitions: readonly TransitionPreset[] = listTransitionPresets(),
   assets?: AssetCheck,
   animations: readonly AnimationPreset[] = listAnimations(),
 ): ManifestCheck {
