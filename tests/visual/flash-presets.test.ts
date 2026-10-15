@@ -28,6 +28,8 @@ const PROJECTS = [
   "tests/fixtures/projects/reduced-motion-transitions",
   "tests/fixtures/projects/preset-kinetic",
   "tests/fixtures/projects/reduced-motion-kinetic",
+  "tests/fixtures/projects/preset-stagger",
+  "tests/fixtures/projects/reduced-motion-stagger",
 ];
 const TIMEOUT_MS = 900_000;
 
