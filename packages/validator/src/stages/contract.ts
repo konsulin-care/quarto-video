@@ -9,7 +9,7 @@ import type { Diagnostic, DiagnosticCode } from "../diagnostic.js";
 type Where = Pick<Diagnostic, "file" | "line" | "sceneId" | "component">;
 
 /** Where a scene is: its file, opening line, id and component (PRD §9.2). */
-function where(scene: IrSceneV02): Where {
+export function where(scene: IrSceneV02): Where {
   const { file, line } = scene.source;
   return {
     file,
@@ -20,7 +20,7 @@ function where(scene: IrSceneV02): Where {
 }
 
 /** One error about a scene. */
-function problem(
+export function problem(
   scene: IrSceneV02,
   code: DiagnosticCode,
   message: string,

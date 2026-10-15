@@ -51,7 +51,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_SCENE_NO_COMPONENT` | 1 filter | A `.scene` has no `component` attribute | 008 |
 | `E_SCENE_NO_DURATION` | 1 filter | A `.scene` has no `duration` attribute | 008 |
 | `E_SCENE_NESTED` | 1 filter | A `.scene` is nested inside another block | 008 |
-| `E_SCENE_SHAPE` | 1 filter | A `.scene` has an unknown class or attribute, its `{...}` cannot be read, or Pandoc does not read its fence as a block | 008 (widened 011, 015) |
+| `E_SCENE_SHAPE` | 1 filter, 2 contract | A `.scene` has an unknown class, its `{...}` cannot be read, or Pandoc does not read its fence as a block (filter); stage 2: an attribute that is not a scene attribute is not a prop of its component (ADR-0013) | 008 (widened 011, 015, 035) |
 | `E_SCENE_ID_INVALID` | 1 filter | A scene id (`#id`) is not a letter then lowercase letters, digits and hyphens (max 64); the suggestion is a valid id | 011 |
 | `E_SCENE_DUPLICATE_ID` | 1 filter | Two scenes have the same id (author ids or generated `scene-NNN`); the message names both lines | 011 |
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 (widened 015) |
@@ -63,6 +63,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_SLOT_UNKNOWN` | 2 contract | A scene has content in a slot its component does not declare; the suggestion lists the slots | 014 |
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
+| `E_PROP_REQUIRED` | 2 contract | A prop the contract marks `required` is missing from the scene | 035 (ADR-0013) |
+| `E_PROP_VALUE` | 2 contract | A prop's value is empty, not one of its `enum`, not `true`/`false` for a boolean, or not a `.csv` path for a `csv` prop | 035 (ADR-0013) |
 | `E_DURATION_BOUNDS` | 2 contract | A scene's duration is outside the component's `duration` bounds (inclusive, in ms as in the contract) | 014 |
 | `E_ANIMATION_UNKNOWN` | 1 filter, 2 contract | A scene's `animation` is not an animation name (filter: the syntax); stage 2: not a registered preset (`packages/registry/animations/`); the suggestion lists the known presets (ADR-0011) | 021 |
 | `E_ANIMATION_INCOMPATIBLE` | 2 contract | A registered preset does not apply to the scene's component (the component or the preset lacks the other); the suggestion lists the component's animations | 021 |
@@ -79,6 +81,9 @@ form humans and AI agents can act on (PRD §9).
 | `E_ASSET_SYMLINK` | 3 assets | An asset resolves, through a symlink, to a file outside the project root. The target is not printed | 016 |
 | `E_ASSET_URL` | 3 assets | An asset path has a URL scheme (`https:`, `file:`, `data:`, ...). Remote assets are not supported | 016 |
 | `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
+| `E_CSV_SYNTAX` | 3 data | A CSV prop's file is malformed: an unclosed or misplaced quote, a blank line, a row with the wrong number of fields, a missing or repeated header name, or no data rows. `line` is the CSV line | 035 (ADR-0013) |
+| `E_COLUMN_UNKNOWN` | 3 data | A column prop (for example `x` or `y` of `chart`) names no column of its CSV; the message lists the available columns | 035 (ADR-0013) |
+| `E_CSV_VALUE` | 3 data | A numeric column (`numeric` in the contract) has a cell that is not a number. `line` is the CSV line | 035 (ADR-0013) |
 | `E_OUTPUT_MISSING` | 6 output | No file at `video.output` after the render, or an empty one; the render fails and nothing is renamed into place | 018 |
 | `E_OUTPUT_UNREADABLE` | 6 output | The rendered file has no readable video stream | 018 |
 | `E_OUTPUT_MISMATCH` | 6 output | The rendered width, height, fps or frame count differs from the IR; `property` names it | 018 |

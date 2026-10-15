@@ -38,7 +38,11 @@ export function checkProject(
     return { kind: "invalid", diagnostics: outcome.diagnostics };
   }
   const file = relative(project.root, manifestPath(project));
-  const stage2 = checkManifest(outcome.json, file);
+  // Stage 3 runs for the project root: CSV props are read and checked (ADR-0013).
+  const stage2 = checkManifest(outcome.json, file, undefined, undefined, {
+    root: project.root,
+    refs: [],
+  });
   const theme = checkTheme(
     themeOverride ?? themeName(project),
     relative(project.root, project.document),
