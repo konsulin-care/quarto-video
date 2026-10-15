@@ -45,8 +45,10 @@ function blocksOf(
   return "text" in content ? {} : content.slots;
 }
 
-/** The scene's props; none before IR 1.4 (ADR-0014). */
-function propsOf(scene: IrManifest["scenes"][number]): Record<string, string> {
+/** The scene's props; none before IR 1.4 (ADR-0014); numbers from IR 1.5 (ADR-0015). */
+function propsOf(
+  scene: IrManifest["scenes"][number],
+): Record<string, string | number> {
   return "props" in scene ? (scene.props ?? {}) : {};
 }
 

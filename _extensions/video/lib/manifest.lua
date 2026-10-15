@@ -1,4 +1,4 @@
--- Builds the Video IR 1.4 manifest and writes it to
+-- Builds the Video IR 1.5 manifest and writes it to
 -- <project>/.video-build/manifest.json, plus the render settings that stay
 -- outside the IR (<project>/.video-build/render.json: output, theme name and an
 -- explicit background).
@@ -23,7 +23,7 @@ function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
---- Assembles the IR table. Field names follow schema/ir-1.4.json. The
+--- Assembles the IR table. Field names follow schema/ir-1.5.json. The
 --- timeline (ADR-0005) is resolved here from the scenes' durations and
 --- transitions.
 function M.build(settings, scenes, source_file)
@@ -44,7 +44,7 @@ function M.build(settings, scenes, source_file)
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
   return {
-    schemaVersion = "1.4",
+    schemaVersion = "1.5",
     type = "video",
     settings = settings,
     scenes = list,

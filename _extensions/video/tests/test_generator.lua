@@ -9,9 +9,9 @@ local SETTINGS = { width = 1920, height = 1080, fps = 30, background = "#10131C"
 
 local tests = {}
 
-tests["a built manifest is IR 1.4 with the generator versions"] = function()
+tests["a built manifest is IR 1.5 with the generator versions"] = function()
   local ir = manifest.build(SETTINGS, {}, "index.qmd")
-  h.eq(ir.schemaVersion, "1.4", "schema version")
+  h.eq(ir.schemaVersion, "1.5", "schema version")
   h.eq(ir.generator.extension, generator.extension, "extension version")
   h.eq(ir.generator.cli, generator.cli, "cli version")
 end

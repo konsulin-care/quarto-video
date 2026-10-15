@@ -1,4 +1,4 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3 and 1.4 (ir-1.4.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4 and 1.5 (ir-1.5.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
@@ -6,7 +6,7 @@ import type { IrContentV02 } from "./content-types.js";
 export type * from "./content-types.js";
 
 export type SchemaVersion =
-  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4";
+  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5";
 
 export interface IrSettings {
   width: number;
@@ -158,9 +158,29 @@ export interface IrVideoV14 extends Omit<
   scenes: IrSceneV14[];
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.4). */
+/** IR 1.5 (ADR-0015): a scene prop may be a number (written by the validator). */
+export interface IrSceneV15 extends Omit<IrSceneV14, "props"> {
+  props?: Record<string, string | number>;
+}
+
+/** IR 1.5 (ADR-0015): IR 1.4 with number prop values. */
+export interface IrVideoV15 extends Omit<
+  IrVideoV14,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.5";
+  scenes: IrSceneV15[];
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.5). */
 export type IrVideoWithTimeline =
-  IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12 | IrVideoV13 | IrVideoV14;
+  | IrVideoV03
+  | IrVideoV10
+  | IrVideoV11
+  | IrVideoV12
+  | IrVideoV13
+  | IrVideoV14
+  | IrVideoV15;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -171,7 +191,8 @@ export type IrVideo =
   | IrVideoV11
   | IrVideoV12
   | IrVideoV13
-  | IrVideoV14;
+  | IrVideoV14
+  | IrVideoV15;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

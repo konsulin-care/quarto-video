@@ -121,7 +121,7 @@ local function background(video)
 end
 
 --- Returns { width, height, fps, background, reducedMotion } with defaults applied.
---- These are the only settings the IR carries (schema/ir-1.4.json). Every invalid
+--- These are the only settings the IR carries (schema/ir-1.5.json). Every invalid
 --- key is reported, not only the first.
 function M.read(meta)
   local video = block(meta, "video", "video")

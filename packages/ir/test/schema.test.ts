@@ -10,6 +10,7 @@ const SCHEMAS = [
   "ir-1.2.json",
   "ir-1.3.json",
   "ir-1.4.json",
+  "ir-1.5.json",
 ];
 
 describe.each(SCHEMAS)("schema/%s", (name) => {

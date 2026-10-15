@@ -17,7 +17,7 @@ export interface SceneProps {
   /** The slots' blocks, for components that draw inline emphasis (task 025). IR 0.1 has none. */
   blocks: Readonly<Record<string, IrBlock[]>>;
   /** The scene's authored props, as written (task 035, ADR-0014). */
-  props: Readonly<Record<string, string>>;
+  props: Readonly<Record<string, string | number>>;
   /** The parsed CSV tables by prop name, from the validator (ADR-0014). */
   tables: Readonly<Record<string, IrTable>>;
 }

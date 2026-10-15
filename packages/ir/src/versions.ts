@@ -12,12 +12,13 @@ export const SUPPORTED_VERSIONS = [
   "1.2",
   "1.3",
   "1.4",
+  "1.5",
 ] as const;
 
 export type SupportedVersion = (typeof SUPPORTED_VERSIONS)[number];
 
 /** The version the filter writes. Pre-1.0 versions are read, never written. */
-export const LATEST_VERSION: SupportedVersion = "1.4";
+export const LATEST_VERSION: SupportedVersion = "1.5";
 
 /** Code of the version-gate error (`/schemaVersion`). */
 export const UNSUPPORTED_VERSION_CODE = "E_IR_UNSUPPORTED_VERSION";

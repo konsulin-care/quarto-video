@@ -17,7 +17,7 @@ export interface ChartProps {
   /** Plain text of each slot: `caption` (optional). */
   slots: Readonly<Record<string, string>>;
   /** The authored props, as written (ADR-0014). */
-  props: Readonly<Record<string, string>>;
+  props: Readonly<Record<string, string | number>>;
   /** The parsed CSV tables by prop name (ADR-0014). */
   tables: Readonly<Record<string, IrTable>>;
 }
@@ -112,6 +112,15 @@ function Axes({
   );
 }
 
+/** A text prop by name; chart props are text (ADR-0014), so a number reads as absent. */
+function textProp(
+  props: Readonly<Record<string, string | number>>,
+  name: string,
+): string {
+  const value = props[name];
+  return typeof value === "string" ? value : "";
+}
+
 export function Chart({ slots, props, tables }: ChartProps) {
   const theme = useTheme();
   const { width, height } = useVideoConfig();
@@ -119,7 +128,7 @@ export function Chart({ slots, props, tables }: ChartProps) {
   const { colors, typography, space, radius } = theme;
   const family = `${typography.fontFamily}, sans-serif`;
   const caption = slots["caption"] ?? "";
-  const title = props["title"] ?? "";
+  const title = textProp(props, "title");
   const font = typography.scale.caption;
   const titleBlock =
     typography.scale.subtitle * typography.lineHeight.tight + space.md;
@@ -136,9 +145,9 @@ export function Chart({ slots, props, tables }: ChartProps) {
       ? undefined
       : seriesOf(
           table,
-          props["x"] ?? "",
-          props["y"] ?? "",
-          props["unit"] ?? "",
+          textProp(props, "x"),
+          textProp(props, "y"),
+          textProp(props, "unit"),
         );
   const axis = ticksOf(series?.points.map((p) => p.value) ?? [0], font);
   const plot = layoutPlot({
@@ -209,7 +218,7 @@ export function Chart({ slots, props, tables }: ChartProps) {
               ink={colors.text}
               muted={colors.mutedText}
             />
-            {props["type"] === "line" ? (
+            {textProp(props, "type") === "line" ? (
               <Line
                 plot={plot}
                 points={series.points}
