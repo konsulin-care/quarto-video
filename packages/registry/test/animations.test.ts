@@ -27,9 +27,10 @@ const text = (patch: Record<string, unknown>) =>
   JSON.stringify({ ...BASE, ...patch });
 
 describe("animation presets", () => {
-  it("lists fade-in, reveal and slide-up, sorted", () => {
+  it("lists fade-in, kinetic, reveal and slide-up, sorted", () => {
     expect(listAnimations().map((preset) => preset.id)).toEqual([
       "fade-in",
+      "kinetic",
       "reveal",
       "slide-up",
     ]);
@@ -77,9 +78,9 @@ describe("animation presets", () => {
   });
 
   it("rejects an unknown preset id with an error, not undefined", () => {
-    expect(() => getAnimation("kinetic")).toThrow(RegistryError);
-    expect(() => getAnimation("kinetic")).toThrow(
-      /unknown animation "kinetic" \(known: fade-in, reveal, slide-up\)/,
+    expect(() => getAnimation("spin")).toThrow(RegistryError);
+    expect(() => getAnimation("spin")).toThrow(
+      /unknown animation "spin" \(known: fade-in, kinetic, reveal, slide-up\)/,
     );
   });
 

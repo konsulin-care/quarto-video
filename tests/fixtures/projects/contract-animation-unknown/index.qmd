@@ -10,6 +10,6 @@ video:
 Known preset
 :::
 
-::: {#intro .scene component="title" duration="2s" animation="kinetic"}
+::: {#intro .scene component="title" duration="2s" animation="spin"}
 Preset not registered yet
 :::

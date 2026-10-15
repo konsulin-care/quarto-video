@@ -1,0 +1,9 @@
+{
+  "id": "kinetic",
+  "version": "1.0.0",
+  "purpose": "The words of a short statement appear one after another, each fading in while it rises into place, and all are in place by 80% of the scene.",
+  "compatibleComponents": ["statement"],
+  "minFrames": 30,
+  "shortScene": "static",
+  "reducedMotion": "static"
+}

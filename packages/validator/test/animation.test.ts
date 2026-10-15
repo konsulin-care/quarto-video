@@ -53,17 +53,17 @@ describe("scene animations", () => {
   });
 
   it("reports an unknown preset on its scene, listing the known ones", () => {
-    const [found] = run(animated("kinetic")).diagnostics;
+    const [found] = run(animated("spin")).diagnostics;
     expect(found).toMatchObject({
       severity: "error",
       code: "E_ANIMATION_UNKNOWN",
-      message: 'Unknown animation "kinetic" on scene "scene-001".',
+      message: 'Unknown animation "spin" on scene "scene-001".',
       sceneId: "scene-001",
       component: "title",
       property: "animation",
-      suggestion: "Known animations: fade-in, reveal, slide-up.",
+      suggestion: "Known animations: fade-in, kinetic, reveal, slide-up.",
     });
-    expect(run(animated("kinetic")).ir).toBeNull();
+    expect(run(animated("spin")).ir).toBeNull();
   });
 
   it("reports a preset that the component does not list as compatible", () => {

@@ -164,8 +164,8 @@ describe("preset API", () => {
   });
 
   it("throws for a name the renderer does not know", () => {
-    expect(() => style("kinetic", 0, 90)).toThrow(
-      'unknown animation "kinetic" (known: fade-in, reveal, slide-up)',
+    expect(() => style("spin", 0, 90)).toThrow(
+      'unknown animation "spin" (known: fade-in, kinetic, reveal, slide-up)',
     );
   });
 });
