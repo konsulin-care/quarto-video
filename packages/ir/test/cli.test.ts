@@ -55,7 +55,7 @@ describe("ir:check", () => {
     expect(runCheck(file)).toEqual({
       status: 1,
       stdout:
-        '/schemaVersion: E_IR_UNSUPPORTED_VERSION "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1\n',
+        '/schemaVersion: E_IR_UNSUPPORTED_VERSION "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2\n',
     });
   });
 

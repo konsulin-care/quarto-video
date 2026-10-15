@@ -1,11 +1,11 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 and 1.1 (ir-1.1.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1 and 1.2 (ir-1.2.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
 
-export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0" | "1.1";
+export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2";
 
 export interface IrSettings {
   width: number;
@@ -117,12 +117,27 @@ export interface IrVideoV11 extends Omit<
   scenes: IrSceneV11[];
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 and 1.1). */
-export type IrVideoWithTimeline = IrVideoV03 | IrVideoV10 | IrVideoV11;
+/** IR 1.2 (ADR-0012): IR 1.1 with an optional `reducedMotion` setting. */
+export interface IrSettingsV12 extends IrSettings {
+  /** Draw each preset's reduced-motion rule (task 023). Absent means false. */
+  reducedMotion?: boolean;
+}
+
+export interface IrVideoV12 extends Omit<
+  IrVideoV11,
+  "schemaVersion" | "settings"
+> {
+  schemaVersion: "1.2";
+  settings: IrSettingsV12;
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0, 1.1 and 1.2). */
+export type IrVideoWithTimeline =
+  IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
-  IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10 | IrVideoV11;
+  IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10 | IrVideoV11 | IrVideoV12;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

@@ -1,13 +1,13 @@
 # packages/ir/ — Video IR schema, types, time rules
-Status: IR 0.1, 0.2, 0.3 and frozen 1.0 and 1.1 schemas (1.1: scene `animation`, task 021, ADR-0011), types, `validateIr()` and `ir:check` (tasks 002, 012, 015, 017); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004); timeline and transitions (015, ADR-0005); versions, the 1.0 freeze and the version gate (017, ADR-0007).
+Status: IR 0.1, 0.2, 0.3 and frozen 1.0, 1.1 and 1.2 schemas (1.1: scene `animation`, task 021, ADR-0011; 1.2: `settings.reducedMotion`, task 023, ADR-0012), types, `validateIr()` and `ir:check` (tasks 002, 012, 015, 017); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004); timeline and transitions (015, ADR-0005); versions, the 1.0 freeze and the version gate (017, ADR-0007).
 Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video/ir -- <file.json>`; tests: root `npm run test`.
 
 ## Layout
 | Path | Owns |
 | --- | --- |
-| `schema/ir-0.1.json` … `ir-1.1.json` | JSON Schemas, draft 2020-12, `additionalProperties: false`. Released files are frozen (ADR-0007) |
-| `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1 to 1.1 (timeline, transitions, `generator`), content nodes, `IrError`, `IrValidation` |
-| `src/versions.ts` | `SUPPORTED_VERSIONS`, `LATEST_VERSION` (1.1), `UNSUPPORTED_VERSION_CODE`, the gate's message |
+| `schema/ir-0.1.json` … `ir-1.2.json` | JSON Schemas, draft 2020-12, `additionalProperties: false`. Released files are frozen (ADR-0007) |
+| `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1 to 1.2 (timeline, transitions, `generator`), content nodes, `IrError`, `IrValidation` |
+| `src/versions.ts` | `SUPPORTED_VERSIONS`, `LATEST_VERSION` (1.2), `UNSUPPORTED_VERSION_CODE`, the gate's message |
 | `src/validate.ts` | `validateIr(json)`: the version gate, then the schema for the declared version; all errors, JSON Pointer paths |
 | `src/text.ts` | `plainText(content)`: the `default` slot as text (subpath `@quarto-video/ir/text`) |
 | `src/check.ts` | File text → `OK` or `<path>: <message>` lines (pure) |
@@ -17,16 +17,17 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 | `src/index.ts` | Package exports (`PACKAGE_NAME`, `validateIr`, versions, durations, timeline, types) |
 | `test-vectors/durations.json`, `timeline.json` | Shared vectors, run by TS and Lua |
 | `examples/minimal.json` (0.1), `content-nodes.json` (0.2), `timeline.json` (0.3) | Older reference manifests; must validate |
-| `examples/v1.json`, `v1.1.json` | IR 1.0 reference (the 0.3 timeline example with `generator`); 1.1 adds one scene `animation` |
-| `test/` | `validate`, `versions`, `v1`, `frozen` (schema hashes), `generator` (versions match the repo), `content`, `timeline`, `schema`, `cli`, `duration`, smoke |
+| `examples/v1.json`, `v1.1.json`, `v1.2.json` | IR 1.0 reference (the 0.3 timeline example with `generator`); 1.1 adds one scene `animation`; 1.2 adds `settings.reducedMotion` |
+| `test/` | `validate`, `versions`, `v1`, `v11`, `v12`, `frozen` (schema hashes), `generator` (versions match the repo), `content`, `timeline`, `schema`, `cli`, `duration`, smoke |
 
 ## Versions (ADR-0007)
-- `schemaVersion` is `"MAJOR.MINOR"`, one file per version. The filter writes `1.1` only.
-- `validateIr` reads 0.1, 0.2, 0.3, 1.0 and 1.1. Any other `schemaVersion` is
+- `schemaVersion` is `"MAJOR.MINOR"`, one file per version. The filter writes `1.2` only.
+- `validateIr` reads 0.1, 0.2, 0.3, 1.0, 1.1 and 1.2. Any other `schemaVersion` is
   `E_IR_UNSUPPORTED_VERSION` at `/schemaVersion`, and the message lists the supported versions.
   A missing `schemaVersion` is `is required` at `/schemaVersion` and nothing else.
 - IR 1.0 is IR 0.3 plus a required `generator: {extension, cli}` (semver strings). Nothing else changed.
 - IR 1.1 (ADR-0011) is 1.0 plus an optional scene `animation: {name}`, a preset id. Only shape is checked here; the registry is checked by the validator.
+- IR 1.2 (ADR-0012) is 1.1 plus an optional `settings.reducedMotion` boolean (absent means false). The filter always writes it; the renderer applies each preset's reduced-motion rule.
 - A released schema file never changes; `test/frozen.test.ts` checks its SHA-256. A change is a new file and an ADR.
 - Minor versions are additive; a major version may break. Pre-1.0 versions are read, never written.
 
