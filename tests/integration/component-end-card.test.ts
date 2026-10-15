@@ -99,6 +99,7 @@ describe("component end-card fixtures", () => {
       "fade-in",
       "reveal",
       "slide-up",
+      "stagger",
     ]);
   });
 });
