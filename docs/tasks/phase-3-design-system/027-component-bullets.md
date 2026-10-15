@@ -1,6 +1,6 @@
 # 027 — Component `bullets`
 
-Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (3), §5.5, §10.2 · ADR: —
+Phase 3 · Status: done · Depends on: 024 · PRD: §5.4 (3), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `bullets` component: sequential points or a compact list.
@@ -26,11 +26,12 @@ Automated:
 - [x] Every compatible animation renders without clipping (visual cases `bullets-animations`; see Notes on reveal).
 
 Human check:
-1. `npx video render tests/fixtures/projects/component-bullets` and watch it.
-2. Review against `docs/components/bullets.md`: legible at 1080p, consistent
-   with the theme, no clipped or overlapping text.
-3. `npx video validate tests/fixtures/projects/component-bullets-invalid` → one
-   actionable error per violating scene.
+1. [ ] `npx video render tests/fixtures/projects/component-bullets` and watch it.
+   Awaiting human playback (see Notes).
+2. [x] Review against `docs/components/bullets.md`: legible at 1080p, consistent
+   with the theme, no clipped or overlapping text. Stills viewed 2026-10-15.
+3. [x] `npx video validate tests/fixtures/projects/component-bullets-invalid` → one
+   actionable error per violating scene. Output verified 2026-10-15.
 
 ## Notes
 - Contract: `default` slot `accepts: ["list"]`, `items: {minItems: 2, maxItems: 6}`
@@ -42,7 +43,7 @@ Human check:
 - Renderer: one row per list item, bullet in `colors.accent`, text wraps
   (`overflowWrap: anywhere`). Items are split on newlines, so a list
   item that itself spans lines in IR is not supported.
-- Reveal: the wipe was replaced by the task 021 redesign (2026-10-15), which clips nothing. The reveal visual case captures only the end state, so the entrance is not checked here.
+- Reveal: the wipe was replaced by the task 021 redesign (2026-10-15), which clips nothing. The `bullets-animations` case samples the reveal at frames 179, 210 and 269, so the entrance is covered by pixel comparison.
 - Visual references are 640x360 (harness size). Not verified at 1080p;
   the human check covers that.
 - Quarto render test (`quarto render videos/hello`) fails only when the
@@ -54,8 +55,10 @@ Human check:
   `docs/components/README.md`, `contract.test.ts` expectations
   ("Available components: bullets, title."), registry tests,
   validator README and `DIAGNOSTIC_CODES`.
-- Human checks 1–3 are not run here; they need a person watching the
-  render at 1080p.
+- Awaiting human playback: human check 1 (watching the render in motion).
+  It stays unticked by project-owner decision (a task may close as `done`
+  with only such items open). Render exit 0 is verified: 1920x1080, 450
+  frames, 15 s.
 
 ## Completion log
 - 2026-10-15: `check.sh --all` exit 0 (`scratchpad/check-all.log`).
@@ -66,3 +69,14 @@ Human check:
   Blocked: the gate is not exit 0 on the worktree path. Status stays
   in-progress until the gate runs green from a dot-free checkout or the
   quarto test is made path-independent.
+- 2026-10-15: closed as `done` in the main checkout (`/home/user/quarto-video`,
+  dot-free path). All automated boxes re-verified by command: registry
+  vitest 94/94; renderer parity 8/8; `video components` lists bullets;
+  `video validate --json` on component-bullets-invalid matches expected.json
+  (9 errors, one per scene); the 7-item case is `E_SLOT_CONSTRAINT` with
+  "the limit is 2 to 6 items" (`component-bullets.test.ts` 4/4); visual
+  `bullets-basic`, `bullets-animations`, `bullets-long` 0 px diff.
+  Gates: `check.sh --all` exit 0 (`scratchpad/check-all.log`);
+  `test.sh --all` exit 0, `EXIT=0` (`scratchpad/bullets-test.log`; the quarto
+  test passes on this path); `npm run test:visual` exit 0
+  (`scratchpad/test-visual.log`). Human check 1 is awaiting human playback.
