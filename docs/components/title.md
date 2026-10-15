@@ -1,6 +1,6 @@
 # Component `title`
 
-Status: placeholder released with task 004; contract in task 013 (`packages/registry/components/title.json`). Visual case: `title-basic` (task 020).
+Status: placeholder released with task 004; contract in task 013 (`packages/registry/components/title.json`); animations in task 021. Visual cases: `title-basic` (task 020), `animations-basic` (task 021).
 
 ## Purpose
 Opening title and subtitle for a video or a chapter.
@@ -23,7 +23,8 @@ The title has no props. Its text is drawn as plain lines, one per block (ADR-000
 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
-- Placements, animations and transitions: none yet (tasks 021, 022, 038).
+- Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)).
+- Placements and transitions: none yet (tasks 022, 038).
 
 ## Accessibility
 The text is the only content. Colour and size come from the theme (task 019).

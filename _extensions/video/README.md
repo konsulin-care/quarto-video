@@ -1,5 +1,5 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 1.0 manifest (tasks 003, 012, 015, 017; ADR-0007); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
+Status: `.scene` Divs → IR 1.1 manifest (tasks 003, 012, 015, 017, 021; ADR-0007, ADR-0011); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
@@ -53,11 +53,11 @@ Rules:
 | `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | `defaults.scene.duration`, else required | 003 (form 009, default 010) |
 | `transition` | `.scene` | a transition name; `cut` takes no time | `defaults.scene.transition` for scenes after the first, else none | 015 (ADR-0005) |
 | `transitionDuration` | `.scene` | as `duration` (> 0, rounds to frames); required for a non-cut transition, forbidden for `cut` or without a transition | none | 015 |
+| `animation` | `.scene` | a preset name (`[a-z][a-z0-9-]*`); the registry check (preset and component) is the validator's, stage 2 | none | 021 (ADR-0011) |
 
 Rules:
-- Scene ids: the author's `#id`, else `scene-NNN` where NNN is the scene's position among all scene Divs (1-based, document order). An author id does not renumber the others. A document with no scenes gives `"scenes": []`.
+- Scene ids: the author's `#id`, else `scene-NNN` (its 1-based position among all scene Divs, in document order); an author id does not renumber the others. No scenes gives `"scenes": []`. Each scene's `source.line` is the 1-based line of its opening fence.
 - Id rule: a letter, then lowercase letters, digits and hyphens, at most 64 characters (`#1` and `#Intro` are `E_SCENE_ID_INVALID` with a suggestion). Two scenes with one id, including a generated id, are `E_SCENE_DUPLICATE_ID`; the message names both lines.
-- Each scene's `source.line` in the IR is the 1-based line of its opening fence in `index.qmd`.
 - Content is typed blocks in slots (ADR-0004; table below). Each Markdown element outside the node set is `E_CONTENT_UNSUPPORTED` at its line.
 - Any other attribute or class on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error (with its line).
 - Transitions (ADR-0005): a transition belongs to the scene it enters and overlaps the previous scene by its length. The first scene takes none (`E_TRANSITION_FIRST_SCENE` for `fade`). Errors: `E_TRANSITION_DURATION` (missing, or on a cut), `E_TRANSITION_UNKNOWN` (bad syntax here; unknown names in stage 4). Lengths and overlaps are checked by the validator (stage 4).
@@ -88,7 +88,7 @@ line of each unsupported element. No recognised text means no line, never a wron
 - `test_content.lua`, `test_content_lines.lua`: nodes, slots, each unsupported kind, lines.
 - `tests/integration/scene-lines.test.ts` checks ids and lines through the CLI (fixtures `tests/fixtures/projects/scene-lines-*`).
 - `tests/integration/content-nodes.test.ts`: the golden `content-nodes` IR, read with the filter alone (its components are not registered yet), and `E_CONTENT_UNSUPPORTED` at the line (fixtures `content-unsupported-*`).
-- `test_transitions.lua` (each transition rule and error), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
+- `test_transitions.lua` (each transition rule and error), `test_animations.lua` (the animation attribute), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
 - `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
 
 ## Rules

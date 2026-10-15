@@ -12,7 +12,7 @@ form humans and AI agents can act on (PRD §9).
 - `parseDiagnostics` (`src/schema.ts`): checks JSON text against the schema.
 - Stage runner (`src/run.ts`, `checkManifest`) for PRD §9.1. Stage 2 is the IR
   schema, then the component contracts (`src/stages/contract.ts`: component,
-  slots, block kinds, duration; ADR-0004). Stage 4 is the timeline
+  slots, block kinds, duration; ADR-0004; `src/stages/animation.ts`: presets, ADR-0011). Stage 4 is the timeline
   (`src/stages/timeline.ts`: transition names, lengths, overlaps, and that the
   manifest's timeline is the resolved one; ADR-0005). Stage 3 (`src/assets/`,
   `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
@@ -90,13 +90,11 @@ It is not emitted and must not be reused.
 ## Testing
 - Unit tests per stage in `test/`: formats, schema, exit predicate, the code table
   (`codes.test.ts`). Lua: `_extensions/video/tests/test_diagnostics.lua`.
-- Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`).
-- Stage 6: `test/output.test.ts` (each rule); `tests/integration/preflight-output.test.ts` (wrong frame count).
+- Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`). Stage 6: `test/output.test.ts`; `tests/integration/preflight-output.test.ts`.
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`
-  (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure).
-- Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects, symlinks created per test), `test/assets-stage.test.ts` (diagnostic shape, runner), `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`).
-- Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`). Theme: `test/theme.test.ts`; `tests/integration/theme.test.ts`.
+  (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure). Animations: `test/animation.test.ts` (unknown, incompatible, valid).
+- Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects), `test/assets-stage.test.ts`, `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`). Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`), Theme: `test/theme.test.ts`, `tests/integration/theme.test.ts`.
 
 ## Related
-Tasks 008, 011, 012, 014–018, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.
+Tasks 008, 011, 012, 014–018, 021, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.

@@ -1,5 +1,5 @@
 # packages/registry/ — component contracts, presets, themes
-Status: Component contracts (task 013): `components/title.json` is the only entry. `listComponents()`, `getComponent(id)` and `video components` read it. Transition names (task 015): `transitions.json`, read by `listTransitions()`. Themes (task 019): `themes/modern.json`, read by `listThemes()` and `getTheme(id)`. Presets: tasks 021+.
+Status: Component contracts (task 013): `components/title.json` is the only entry. `listComponents()`, `getComponent(id)` and `video components` read it. Transition names (task 015): `transitions.json`, read by `listTransitions()`. Themes (task 019): `themes/modern.json`, read by `listThemes()` and `getTheme(id)`. Animation presets (task 021): `animations/*.json`, read by `listAnimations()` and `getAnimation(id)`.
 Run: `npm run typecheck -w @quarto-video/registry`; tests: root `npm run check` (unit) and `npm run test:integration` (`video components`).
 
 ## Purpose
@@ -13,7 +13,8 @@ accepts. The validator enforces it; the renderer implements it.
 - `src/load.ts` (checks files against the schema), `src/components.ts` (lookups), `src/types.ts`.
 - `transitions.json`: `{ "transitions": [...] }`, the transition names an author may use (PRD §5.6; ADR-0005). `cut` must be listed. `src/transitions.ts` (`listTransitions`, `parseTransitions`) checks it at load.
 - `schema/theme.json` and `themes/<id>.json`: theme tokens (task 019; PRD §10). `src/themes.ts` (`listThemes`, `getTheme`, `parseTheme`, `DEFAULT_THEME`), `src/contrast.ts` (WCAG ratio). Font files are renderer assets: `renderer/remotion/themes/fonts/`.
-- Planned, not yet present: animation presets `animations/`, transition presets with motion (task 022); `frames/`.
+- `schema/animation.json` and `animations/<id>.json`: animation presets (PRD §5.6; task 021). `src/animations.ts` (`listAnimations`, `getAnimation`, `parseAnimation`, `loadAnimationDir`). Frame functions: `renderer/remotion/animations/`.
+- Planned, not yet present: transition presets with motion (task 022); `frames/`.
 
 ## Contract fields (task 013, PRD §5.5)
 | Field | Rule |
@@ -24,7 +25,7 @@ accepts. The validator enforces it; the renderer implements it.
 | `slots` | At least one slot. Each slot is `{required, accepts}`; `accepts` lists block kinds from ADR-0004: `paragraph`, `heading`, `list`, `code-block`. |
 | `props` | Object of camelCase names. Each prop is `{type, enum?, default?}`; `type` is `string`, `boolean` or `enum` (`enum` requires `enum`, a non-empty list). |
 | `placements` | Unique values from `background`, `framed`; may be empty (PRD §6). |
-| `compatibleAnimations`, `compatibleTransitions` | Preset ids; empty until tasks 021–022. |
+| `compatibleAnimations`, `compatibleTransitions` | Preset ids. Each animation id must be a shipped preset whose `compatibleComponents` lists the component (both sides agree; test-checked). Transitions: empty until task 022. |
 | `duration` | `{minMs, maxMs}`: integers ≥ 1, `maxMs` ≥ `minMs`. Milliseconds keep bounds fps-independent (ADR-0003). |
 | `accessibility` | Notes on text, motion and media behaviour, 1–400 characters. |
 
@@ -59,9 +60,10 @@ A theme is design tokens only: `colors` (five roles, `#RRGGBB`), `contrastPairs`
 - `test/contract.test.ts`: every shipped contract validates; each rule above rejects its bad input (missing `slots`, unknown field, numeric prop, enum without list, bad id, inverted bounds, non-JSON, stray file).
 - `test/components.test.ts`: lookups, copies, unknown id.
 - `test/transitions.test.ts`: the shipped names, and each rule that rejects a bad file.
+- `test/animations.test.ts`: the shipped presets, each rule that rejects a bad preset file, the two-way link to component contracts.
 - `test/theme.test.ts`: the shipped theme validates; the AA contrast floor; each schema rule rejects its bad input; lookups list the known ids.
 - `renderer/remotion/test/registry-parity.test.ts`: registry ids ⇔ `src/registry-map.ts`.
 - `tests/integration/components.test.ts`: `video components` table and `--json`.
 
 ## Related
-Tasks 013, 014, 015, 019, 021–035, 040–043. PRD §5.5, §5.6, §10. ADR-0004 (slot block kinds), ADR-0005 (transitions).
+Tasks 013, 014, 015, 019, 021–035, 040–043. PRD §5.5, §5.6, §10. ADR-0004 (slot block kinds), ADR-0005 (transitions), ADR-0011 (animation in IR 1.1).
