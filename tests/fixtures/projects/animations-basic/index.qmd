@@ -1,0 +1,19 @@
+---
+title: "Animations basic"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="1.5s" animation="fade-in"}
+Fade in
+:::
+
+::: {.scene component="title" duration="1.5s" animation="slide-up"}
+Slide up
+:::
+
+::: {.scene component="title" duration="1.5s" animation="reveal"}
+Reveal
+:::
