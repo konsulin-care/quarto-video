@@ -47,7 +47,7 @@ tests["ADR-0005 worked example: three 4 s scenes with 1 s fades at 30 fps"] = fu
   }, "\n")
   local list = scenes.collect(h.doc(body), 30)
   local ir = manifest.build(SETTINGS, list, "index.qmd")
-  h.eq(ir.schemaVersion, "1.1", "schema version")
+  h.eq(ir.schemaVersion, "1.2", "schema version")
   h.eq(ir.timeline.durationFrames, 300, "total frames")
   h.eq(ir.timeline.scenes[1].startFrame, 0, "first start")
   h.eq(ir.timeline.scenes[2].startFrame, 90, "second start")

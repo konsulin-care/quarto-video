@@ -11,7 +11,14 @@ local M = {}
 
 -- Allowed keys per block. A table value is a nested block; `true` is a leaf.
 local ALLOWED = {
-  video = { width = true, height = true, fps = true, output = true, background = true },
+  video = {
+    width = true,
+    height = true,
+    fps = true,
+    output = true,
+    background = true,
+    reducedMotion = true,
+  },
   defaults = { scene = { duration = true, transition = true } },
 }
 

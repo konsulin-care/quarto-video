@@ -1,0 +1,12 @@
+---
+title: "Front matter reduced motion"
+video:
+  width: 640
+  height: 360
+  fps: 30
+  reducedMotion: true
+---
+
+::: {.scene component="title" duration="1s" animation="fade-in"}
+Reduced
+:::

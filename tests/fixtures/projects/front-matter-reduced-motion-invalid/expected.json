@@ -1,0 +1,10 @@
+[
+  {
+    "code": "E_SETTING_INVALID",
+    "file": "index.qmd",
+    "message": "video.reducedMotion must be true or false, not text",
+    "property": "video.reducedMotion",
+    "severity": "error",
+    "suggestion": "Write true or false without quotes, for example reducedMotion: true."
+  }
+]

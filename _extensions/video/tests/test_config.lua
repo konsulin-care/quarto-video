@@ -226,4 +226,20 @@ return {
     end, "E_SETTING_INVALID", "list output")
     h.eq(diagnostic.property, "video.output", "property")
   end,
+  ["reducedMotion defaults to false"] = function()
+    h.eq(read_fields(FULL).reducedMotion, false, "default")
+    h.eq(read_fields("").reducedMotion, false, "no video block")
+  end,
+
+  ["reducedMotion true and false are read as booleans"] = function()
+    h.eq(read_fields(FULL .. "  reducedMotion: true\n").reducedMotion, true, "true")
+    h.eq(read_fields(FULL .. "  reducedMotion: false\n").reducedMotion, false, "false")
+  end,
+
+  ["reducedMotion as text is E_SETTING_INVALID"] = function()
+    local diagnostic = h.code_is(function()
+      config.read(h.doc("", front(FULL .. '  reducedMotion: "true"\n')).meta)
+    end, "E_SETTING_INVALID", "video.reducedMotion")
+    h.eq(diagnostic.suggestion:find("true or false", 1, true) ~= nil, true, "suggestion")
+  end,
 }

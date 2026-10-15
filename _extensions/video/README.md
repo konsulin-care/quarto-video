@@ -1,5 +1,5 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 1.1 manifest (tasks 003, 012, 015, 017, 021; ADR-0007, ADR-0011); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
+Status: `.scene` Divs → IR 1.2 manifest (tasks 003, 012, 015, 017, 021, 023; ADR-0007, ADR-0011, ADR-0012); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
@@ -35,6 +35,7 @@ Every value that is present must be valid. Omitted values take the default. An e
 | `video.fps` | integer ≥ 1 | 30 | no | Scene durations convert at this fps (ADR-0003). |
 | `video.output` | relative path ending `.mp4`, no `..` | `output.mp4` | no | `render.json`, not the IR. |
 | `video.background` | `"#RRGGBB"` | `"#000000"` in the IR only | no | Unset: the canvas is the selected theme's `background` token (task 019a). Set: the canvas is this colour, and it is written to `render.json`. |
+| `video.reducedMotion` | `true` or `false` (YAML boolean, unquoted) | `false` | no | In the IR (`settings.reducedMotion`, IR 1.2). `true`: each animation and transition draws its preset's reduced-motion rule (task 023). Text such as `"true"` is `E_SETTING_INVALID`. Per-scene overrides are not supported. |
 | `title` | text | none | no | Stored; not in the IR yet. |
 | `theme` | text | none | no | Written to `render.json`; the validator resolves it (`E_THEME_UNKNOWN`, task 019). Absent means `modern`. |
 | `defaults.scene.duration` | `<n>s` or `<n>ms` (ADR-0003) | none | no | Applies to every `.scene` without `duration`. An explicit scene `duration` wins. |
@@ -89,7 +90,8 @@ line of each unsupported element. No recognised text means no line, never a wron
 - `tests/integration/scene-lines.test.ts` checks ids and lines through the CLI (fixtures `tests/fixtures/projects/scene-lines-*`).
 - `tests/integration/content-nodes.test.ts`: the golden `content-nodes` IR, read with the filter alone (its components are not registered yet), and `E_CONTENT_UNSUPPORTED` at the line (fixtures `content-unsupported-*`).
 - `test_transitions.lua` (each transition rule and error), `test_animations.lua` (the animation attribute), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
-- `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
+- `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values, `reducedMotion` on and invalid; fixtures `tests/fixtures/projects/front-matter-*`).
+- `test_config.lua`: `reducedMotion` defaults to false, reads true and false, and rejects text.
 
 ## Rules
 - Lua code is pure: no `os.execute`, `io.popen`, network, or reading files other than the document. Attribute names are case-sensitive; unknown attributes are errors, never dropped.
