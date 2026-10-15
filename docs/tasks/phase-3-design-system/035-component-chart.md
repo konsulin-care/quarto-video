@@ -1,6 +1,6 @@
 # 035 — Component `chart`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (7), §12, §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (7), §12, §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `chart` component: data visualisation from a defined chart specification.
