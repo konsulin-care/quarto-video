@@ -10,7 +10,7 @@
   },
   "props": {},
   "placements": [],
-  "compatibleAnimations": [],
+  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
     "minMs": 1000,

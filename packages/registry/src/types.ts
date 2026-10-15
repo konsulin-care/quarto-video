@@ -67,3 +67,17 @@ export interface ThemeTokens {
   safeArea: Record<string, SafeArea>;
   motion: { fastMs: number; baseMs: number; slowMs: number };
 }
+
+/** An animation preset's data (schema/animation.json, PRD §5.6). */
+export interface AnimationPreset {
+  id: string;
+  version: string;
+  purpose: string;
+  compatibleComponents: string[];
+  /** Shortest scene, in frames, that plays the preset as designed. */
+  minFrames: number;
+  /** Shown for a scene shorter than minFrames. */
+  shortScene: "static";
+  /** Shown when reduced motion is requested (task 023). */
+  reducedMotion: "static";
+}
