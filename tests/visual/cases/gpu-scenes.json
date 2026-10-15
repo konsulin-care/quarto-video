@@ -1,0 +1,6 @@
+{
+  "project": "videos/gpu",
+  "theme": "modern",
+  "frames": [75, 258, 310, 460, 700, 820, 940, 1050, 1170, 1300, 1440],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}
