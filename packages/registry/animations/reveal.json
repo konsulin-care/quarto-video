@@ -1,7 +1,7 @@
 {
   "id": "reveal",
   "version": "1.0.0",
-  "purpose": "Content is uncovered left to right by a wipe at the start of its scene.",
+  "purpose": "Content is revealed at the start of its scene: it fades in while it grows from 96% to full size.",
   "compatibleComponents": ["title", "end-card", "statement", "comparison", "bullets"],
   "minFrames": 15,
   "shortScene": "static",

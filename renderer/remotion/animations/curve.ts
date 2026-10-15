@@ -20,14 +20,10 @@ export function easeOut(t: number): number {
   return 1 - (1 - clamped) ** 3;
 }
 
-/** Constant speed: `t` clamped to [0, 1]. Used by wipes, which read as steady. */
-export function linear(t: number): number {
-  return Math.min(1, Math.max(0, t));
-}
-
 /**
  * Entrance progress in [0, 1]: 0 at the first frame, 1 from the end of the
- * entrance on, shaped by `ease`. Below `minFrames` the progress is 1 at every frame.
+ * entrance on, shaped by `ease` (ease-out cubic by default). Below `minFrames`
+ * the progress is 1 at every frame.
  */
 export function progress(
   frame: number,

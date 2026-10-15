@@ -1,12 +1,16 @@
-// reveal (registry: animations/reveal.json): a wipe uncovers the scene from
-// left to right at constant speed over its entrance. The scene is fully
-// uncovered at the end, so nothing stays clipped. Its minimum comes from the registry.
+// reveal (registry: animations/reveal.json): the scene fades in while it grows
+// from 96% to its full size over its entrance. Nothing is clipped or masked, so
+// no glyph is ever cut through (task 021 deviation, resolved in the redesign).
+// The entrance eases out like fade-in and slide-up; its minimum comes from the registry.
 import preset from "@quarto-video/registry/animations/reveal.json" with { type: "json" };
-import { css, linear, progress } from "./curve.js";
+import { css, progress } from "./curve.js";
 import type { AnimationFn } from "./types.js";
 
+/** The scale the entrance starts from: 96% of full size. */
+export const REVEAL_START_SCALE = 0.96;
+
 export const reveal: AnimationFn = (frame, durationFrames) => {
-  const shown = progress(frame, durationFrames, preset.minFrames, linear);
-  const hidden = (1 - shown) * 100;
-  return { clipPath: `inset(0 ${css(hidden)}% 0 0)` };
+  const p = progress(frame, durationFrames, preset.minFrames);
+  const scale = 1 - (1 - p) * (1 - REVEAL_START_SCALE);
+  return { opacity: p, transform: `scale(${css(scale)})` };
 };

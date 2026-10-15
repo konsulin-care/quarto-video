@@ -82,18 +82,45 @@ describe("slide-up", () => {
 });
 
 describe("reveal", () => {
-  it("hides the scene at the first frame and uncovers it fully at the end", () => {
-    expect(style("reveal", 0, 90)).toEqual({ clipPath: "inset(0 100% 0 0)" });
-    expect(style("reveal", 90, 90)).toEqual({ clipPath: "inset(0 0% 0 0)" });
+  it("is transparent and 96% size at the first frame, opaque and full size at the end", () => {
+    expect(style("reveal", 0, 90)).toEqual({
+      opacity: 0,
+      transform: "scale(0.96)",
+    });
+    expect(style("reveal", enterFrames(90), 90)).toEqual({
+      opacity: 1,
+      transform: "scale(1)",
+    });
   });
 
-  it("uncovers monotonically from left to right", () => {
-    const hidden = Array.from({ length: 30 }, (_, f) =>
-      Number(
-        /inset\(0 ([\d.]+)%/.exec(style("reveal", f, 90).clipPath ?? "")?.[1],
-      ),
+  it("never clips or masks: only opacity and scale, at every frame", () => {
+    for (const duration of [15, 45, 90, 300]) {
+      for (let frame = 0; frame < duration; frame += 1) {
+        const drawn = style("reveal", frame, duration);
+        expect(Object.keys(drawn).sort()).toEqual(["opacity", "transform"]);
+        expect(drawn.transform).toMatch(/^scale\([\d.]+\)$/);
+      }
+    }
+  });
+
+  it("grows and rises in opacity monotonically, within [0.96, 1]", () => {
+    const frames = Array.from({ length: 30 }, (_, f) => f);
+    const opacity = frames.map((f) => style("reveal", f, 90).opacity ?? NaN);
+    const scale = frames.map((f) =>
+      Number(/^scale\(([\d.]+)\)$/.exec(style("reveal", f, 90).transform ?? "")?.[1]),
     );
-    expect(hidden).toEqual([...hidden].sort((a, b) => b - a));
+    expect(opacity).toEqual([...opacity].sort((a, b) => a - b));
+    expect(scale).toEqual([...scale].sort((a, b) => a - b));
+    for (const value of scale) {
+      expect(value).toBeGreaterThanOrEqual(0.96);
+      expect(value).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("is distinct from fade-in and slide-up during the entrance", () => {
+    expect(style("reveal", 7, 90)).not.toEqual(style("fade-in", 7, 90));
+    expect(style("reveal", 7, 90)).not.toEqual(style("slide-up", 7, 90));
+    expect(style("reveal", 7, 90).transform).not.toMatch(/translate/);
   });
 });
 

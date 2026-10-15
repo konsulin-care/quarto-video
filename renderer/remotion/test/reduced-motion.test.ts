@@ -14,7 +14,7 @@ const DURATION = 45;
 const END_STATE: Record<string, object> = {
   "fade-in": { opacity: 1 },
   "slide-up": { opacity: 1, transform: "translateY(0px)" },
-  reveal: { clipPath: "inset(0 0% 0 0)" },
+  reveal: { opacity: 1, transform: "scale(1)" },
 };
 
 describe("reduced motion: animations", () => {
