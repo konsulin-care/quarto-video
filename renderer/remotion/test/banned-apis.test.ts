@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { BANNED_RULES, findViolations } from "./banned-apis.js";
 
 const RENDERER = fileURLToPath(new URL("..", import.meta.url));
-const DIRS = ["src", "components", "themes", "animations"];
+const DIRS = ["src", "components", "themes", "animations", "transitions"];
 
 /** Every .ts and .tsx file under `dir`, recursively. */
 function sources(dir: string): string[] {

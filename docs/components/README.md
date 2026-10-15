@@ -1,5 +1,5 @@
 # docs/components/ — component and preset pages
-Status: `title` is the only released component (task 024 replaces its placeholder). Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: task 022.
+Status: `title` is the only released component (task 024 replaces its placeholder). Animation presets: `fade-in`, `slide-up`, `reveal` (task 021). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
 
 ## Purpose
 One page per released component (`<id>.md`), plus this index. A page says what an author writes, what the component accepts and how it behaves. The registry (`packages/registry`) is the source of truth for slots, props and bounds; these pages explain it.
@@ -39,7 +39,30 @@ Example:
 Errors (validator, stage 2): `E_ANIMATION_UNKNOWN` for a name that is not a registered preset (the message lists the known ones); `E_ANIMATION_INCOMPATIBLE` when the preset does not apply to the scene's component (the message lists that component's animations). A name that is not a name at all (for example `Fade In`) is `E_ANIMATION_UNKNOWN` from the filter.
 
 ### Transitions (task 022)
-Not yet released. See `transitions.json` for the names that already parse; until task 022 each one is drawn as a hard cut.
+Written as `transition="<id>"` and `transitionDuration="<n>s"` (or `ms`) on a `.scene`. A transition belongs to the scene it enters (ADR-0005); the first scene has none. The scene starts `transitionDuration` before the previous one ends, so both are on screen for those frames. Each scene keeps its own length.
+
+| Id | Purpose | Duration (min to max) | Reduced motion |
+| --- | --- | --- | --- |
+| `cut` | No overlap; no `transitionDuration`. | 0 | cut |
+| `fade` | The incoming scene fades in over the outgoing one (a crossfade). | 0.1s to 3s | fade |
+| `slide` | The outgoing scene slides out left while the incoming one slides in from the right. | 0.1s to 3s | fade |
+| `wipe` | A left-to-right wipe uncovers the incoming scene. | 0.1s to 3s | fade |
+| `zoom` | The incoming scene grows from 60% size while it fades in. | 0.1s to 3s | fade |
+
+Rules that apply to every transition:
+- Frames: the overlap is `transitionDuration` rounded to frames (ADR-0003). On the overlap's first frame the incoming side has barely started; on its last frame the incoming scene is complete and the outgoing one is gone.
+- `cut` draws no blended frame: the next scene's first frame is the previous scene's end.
+- Reduced motion: the table's fallback draws the same overlap without movement (task 023 applies it; until then the rule is declared, not applied). `cut` stays `cut`, so the timeline never changes.
+- `defaultMs` in the registry is documentation only: every non-cut transition states `transitionDuration` (ADR-0005).
+
+Example:
+```markdown
+::: {.scene component="title" duration="4s" transition="slide" transitionDuration="500ms"}
+# Next
+:::
+```
+
+Errors (validator, stage 4): `E_TRANSITION_UNKNOWN` for a name that is not registered (the message lists the known ones); `E_TRANSITION_DURATION` when the length is outside the transition's bounds, or a `transitionDuration` is given to `cut`. Other timeline errors: `E_TRANSITION_FIRST_SCENE`, `E_TRANSITION_TOO_LONG`, `E_TRANSITION_OVERLAP` (ADR-0005).
 
 ## Adding a page
 Copy the shape of [title.md](title.md): Purpose, Usage, Slots and content, Timing and placement, Accessibility, Known limits. A released component or preset also needs its visual case in `tests/visual/cases/` (`tests/README.md`).
