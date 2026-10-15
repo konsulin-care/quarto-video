@@ -107,7 +107,9 @@ describe("reveal", () => {
     const frames = Array.from({ length: 30 }, (_, f) => f);
     const opacity = frames.map((f) => style("reveal", f, 90).opacity ?? NaN);
     const scale = frames.map((f) =>
-      Number(/^scale\(([\d.]+)\)$/.exec(style("reveal", f, 90).transform ?? "")?.[1]),
+      Number(
+        /^scale\(([\d.]+)\)$/.exec(style("reveal", f, 90).transform ?? "")?.[1],
+      ),
     );
     expect(opacity).toEqual([...opacity].sort((a, b) => a - b));
     expect(scale).toEqual([...scale].sort((a, b) => a - b));
