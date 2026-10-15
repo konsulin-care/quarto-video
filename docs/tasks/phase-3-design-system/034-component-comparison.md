@@ -1,6 +1,6 @@
 # 034 — Component `comparison`
 
-Phase 3 · Status: todo · Depends on: 024 · PRD: §5.4 (5), §5.5, §10.2 · ADR: —
+Phase 3 · Status: in-progress · Depends on: 024 · PRD: §5.4 (5), §5.5, §10.2 · ADR: —
 
 ## Goal
 Release the `comparison` component: two or more structured content areas side by side.
