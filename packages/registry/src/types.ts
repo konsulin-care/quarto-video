@@ -2,7 +2,8 @@
 // schema/contract.json; the loader checks every file against that schema.
 
 /** Block kinds a slot may accept (ADR-0004). */
-export type BlockKind = "paragraph" | "heading" | "list" | "code-block";
+export type BlockKind =
+  "paragraph" | "heading" | "list" | "code-block" | "image";
 
 export interface SlotContract {
   required: boolean;

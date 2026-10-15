@@ -15,8 +15,7 @@ form humans and AI agents can act on (PRD §9).
   slots, block kinds, duration; ADR-0004; `src/stages/animation.ts`: presets, ADR-0011). Stage 4 is the timeline
   (`src/stages/timeline.ts`: transition names, lengths, overlaps, and that the
   manifest's timeline is the resolved one; ADR-0005). Stage 3 (`src/assets/`,
-  `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
-  carries none yet, so `video validate` does not run it. Stage 6 (`src/stages/output.ts`,
+  `src/stages/assets.ts`) checks the image blocks' files (ADR-0013); a caller may pass its own references instead. Stage 6 (`src/stages/output.ts`,
   `checkOutput`) judges the rendered file from facts the CLI probes. Stage 1 is the Lua
   filter; stage 5 preflight is in the CLI. `checkTheme` (`src/stages/theme.ts`) resolves the theme name (stage 2).
 - Depends on `@quarto-video/ir` and `@quarto-video/registry` (contracts, themes); nothing depends on it except the CLI.
@@ -57,6 +56,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 (widened 015) |
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 (widened 015) |
 | `E_CONTENT_UNSUPPORTED` | 1 filter | Scene content has Markdown the content model does not support (a table, raw HTML or comment, footnote, math, link, image, ...), a block with a bad or missing slot class, a duplicate or empty slot; the line is the element's (ADR-0004) | 012 |
+| `E_IMAGE_BLOCK` | 1 filter | An image block (`.image`, ADR-0013) has no `src`, has no `alt`, a `fit` other than `cover` or `contain`, an unknown attribute, an id, extra classes or content, or a scene has a second image; the line is the block's | 033 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.1 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017, 1.1 in 021) |
 | `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3, 1.0 or 1.1, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |

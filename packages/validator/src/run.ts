@@ -20,14 +20,17 @@ import {
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
-import { checkAssets, type AssetRef } from "./stages/assets.js";
+import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { checkTimeline } from "./stages/timeline.js";
 
-/** Stage 3 input: the asset references to check, and the absolute project root they resolve in. */
+/**
+ * Stage 3 input: the absolute project root the references resolve in, and the
+ * references to check. Unset `refs` means the image blocks of the IR (ADR-0013).
+ */
 export interface AssetCheck {
   root: string;
-  refs: readonly AssetRef[];
+  refs?: readonly AssetRef[];
 }
 
 export interface ManifestCheck {
@@ -107,7 +110,14 @@ export function checkManifest(
         ...checkAnimations(ir, components, animations),
       ];
     },
-    () => (assets === undefined ? [] : checkAssets(assets.refs, assets.root)),
+    () => {
+      if (assets === undefined) return [];
+      if (assets.refs !== undefined) {
+        return checkAssets(assets.refs, assets.root);
+      }
+      const ir = state.ir;
+      return ir === undefined ? [] : checkAssets(assetRefsOf(ir), assets.root);
+    },
     () => {
       const ir = state.ir;
       return ir === undefined ? [] : checkTimeline(ir, transitions);

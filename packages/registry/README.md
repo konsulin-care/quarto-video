@@ -23,7 +23,7 @@ accepts. The validator enforces it; the renderer implements it.
 | `id` | Lowercase kebab-case (`^[a-z][a-z0-9-]*$`, max 64). Must equal the file name. |
 | `version` | `MAJOR.MINOR.PATCH`. |
 | `purpose` | One sentence, 1–200 characters. |
-| `slots` | At least one slot. Each slot is `{required, accepts}`; `accepts` lists block kinds from ADR-0004: `paragraph`, `heading`, `list`, `code-block`. |
+| `slots` | At least one slot. Each slot is `{required, accepts}`; `accepts` lists block kinds from ADR-0004: `paragraph`, `heading`, `list`, `code-block`, and `image` (ADR-0013). |
 | `props` | Object of camelCase names. Each prop is `{type, enum?, default?}`; `type` is `string`, `boolean` or `enum` (`enum` requires `enum`, a non-empty list). |
 | `placements` | Unique values from `background`, `framed`; may be empty (PRD §6). |
 | `compatibleAnimations`, `compatibleTransitions` | Preset ids. Each animation id must be a shipped preset whose `compatibleComponents` lists the component (both sides agree; test-checked). Transitions: not checked against scenes yet; empty for every component. |
