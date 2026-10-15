@@ -2,6 +2,7 @@
 // render.ts rejects any other component before the browser starts.
 import type { FC } from "react";
 import { Title } from "../components/title/Title.js";
+import { Comparison } from "../components/comparison/Comparison.js";
 
 export interface SceneProps {
   /** Plain text of each slot the scene has, by slot name (task 024). */
@@ -9,5 +10,6 @@ export interface SceneProps {
 }
 
 export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
+  comparison: Comparison,
   title: Title,
 };
