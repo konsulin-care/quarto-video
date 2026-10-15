@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/reduced-motion-title",
+  "theme": "modern",
+  "frames": [0, 20, 45, 65],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

@@ -1,0 +1,24 @@
+---
+title: "Reduced motion title"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  reducedMotion: true
+---
+
+::: {.scene component="title" duration="1.5s" animation="fade-in"}
+# Fade in
+
+::: {.subtitle}
+A subtitle that must not move.
+:::
+:::
+
+::: {.scene component="title" duration="1.5s" animation="reveal"}
+# Reveal
+
+::: {.subtitle}
+Drawn in its end state from the first frame.
+:::
+:::
