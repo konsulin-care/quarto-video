@@ -61,6 +61,7 @@ A theme is design tokens only: `colors` (five roles, `#RRGGBB`), `contrastPairs`
 - `npm run check` includes a parity test: every registry id has a renderer
   implementation and vice versa (`renderer/remotion/test/registry-parity.test.ts`).
 - Prop names are camelCase and semantic (`fit`, `frame`); never pixel values.
+- `text-media` (task 042) fits its `text` slot in the column its `side` prop leaves: `textMediaColumns`, `sideColumns` and `mediaSideOf` (`src/layout.ts`) are shared by the validator and the renderer.
 
 ## Testing
 - `test/contract.test.ts`: every shipped contract validates; each rule above rejects its bad input (missing `slots`, unknown field, `min` on a string prop, inverted prop bounds, enum without list, bad id, inverted duration bounds, non-JSON, stray file); a number prop with bounds is accepted.
