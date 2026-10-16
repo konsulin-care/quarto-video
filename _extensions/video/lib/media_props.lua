@@ -11,7 +11,8 @@ local M = {}
 
 local PLACEMENTS = { background = true, framed = true }
 local FITS = { cover = true, contain = true }
-local FRAMES = { browser = true, phone = true, tablet = true, generic = true }
+-- A frame name is an identifier; the validator checks it against the registry (task 040).
+local FRAME_NAME = "^[a-z][a-z0-9-]*$"
 local DEFAULT_PLACEMENT = "background"
 local DEFAULT_FIT = "contain"
 
@@ -64,15 +65,16 @@ function M.placement(report, attrs)
   return placement
 end
 
---- The frame style: required with `framed`, and not allowed otherwise. Returns
+--- The frame style: required with `framed` (a name; the validator checks it
+--- against the registry), and not allowed otherwise. Returns
 --- ok and the frame (nil when there is none); ok is false after a finding.
 function M.frame(report, attrs, placement)
   if placement == "framed" then
-    if attrs.frame == nil or not FRAMES[attrs.frame] then
+    if attrs.frame == nil or not attrs.frame:match(FRAME_NAME) then
       report(
         "E_VIDEO_BLOCK",
         'Scene "%s" has a framed video block without a valid frame attribute.',
-        'Add frame="browser", "phone", "tablet" or "generic".'
+        'Add frame="<name>" with the name of a device frame, for example frame="browser".'
       )
       return false, nil
     end

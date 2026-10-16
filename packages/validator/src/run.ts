@@ -1,5 +1,6 @@
-// The stage runner for a parsed manifest (PRD §9.1). Stage 2 is the IR schema,
-// then the component contracts; stage 3 is the asset references (ADR-0006);
+// The stage runner for a parsed manifest (PRD §9.1). Stage 2 checks the frame
+// names of `.video` blocks (task 040), then is the IR schema, then the component
+// contracts; stage 3 is the asset references (ADR-0006);
 // stage 4 is the timeline. A stage that reports an error stops the run: later
 // stages never see a manifest that is not valid yet. Stage 1 (the Lua filter)
 // and stage 5 (preflight) run in the CLI.
@@ -13,9 +14,11 @@ import {
 import {
   listAnimations,
   listComponents,
+  listFrames,
   listTransitionPresets,
   type AnimationPreset,
   type ComponentContract,
+  type FrameContract,
   type TransitionPreset,
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
@@ -28,6 +31,7 @@ import {
   type MediaOptions,
 } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
+import { checkMediaFrames } from "./stages/media-frame.js";
 import { checkMediaPlacement } from "./stages/media-placement.js";
 import { resolveSourceEnds } from "./stages/media-source.js";
 import { resolveData } from "./stages/data.js";
@@ -104,9 +108,11 @@ export function checkManifest(
   transitions: readonly TransitionPreset[] = listTransitionPresets(),
   assets?: AssetCheck,
   animations: readonly AnimationPreset[] = listAnimations(),
+  frames: readonly FrameContract[] = listFrames(),
 ): ManifestCheck {
   const state: { ir?: IrVideoV02 | IrVideoWithTimeline } = {};
   const diagnostics = runStages([
+    () => checkMediaFrames(json, file, frames),
     () => {
       const result = validateIr(json);
       if (!result.ok) {

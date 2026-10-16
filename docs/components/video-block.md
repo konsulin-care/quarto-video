@@ -1,6 +1,6 @@
 # Video block (`.video`)
 
-Status: source ranges and the short-source rule (task 038, IR 1.6, ADR-0007). The validator checks each block against its file (stage 3, `E_MEDIA_RANGE`, `E_MEDIA_SHORT_SOURCE`). `background` placement is rendered (task 039) under `title` and `statement`; framed placement is task 040.
+Status: source ranges and the short-source rule (task 038, IR 1.6, ADR-0007). The validator checks each block against its file (stage 3, `E_MEDIA_RANGE`, `E_MEDIA_SHORT_SOURCE`). `background` placement is rendered (task 039) under `title` and `statement`; `framed` placement (task 040) is rendered under `statement`, in a device frame.
 
 ## Purpose
 Footage in a scene: a video file placed behind or inside a frame, with a source in-point and out-point. It is a scene's media, not a slot: a `.video` block sits directly in the `.scene` Div.
@@ -28,7 +28,7 @@ A framed clip with a source range:
 | `audio` | yes | `mute` (keeping the source audio is task 044) | none |
 | `placement` | no | `background` or `framed` (slot placement is task 043) | `background` |
 | `fit` | no | `cover` or `contain` | `contain` |
-| `frame` | with `framed` only | `browser`, `phone`, `tablet` or `generic` | none |
+| `frame` | with `framed` only | a registered device frame: `browser`, `phone`, `tablet` or `generic` (see [README](README.md#frames-task-040)) | none |
 | `sourceStart` | no | a time, `0` allowed (the in-point) | `0s` |
 | `sourceEnd` | no | a time (the out-point); absent means the end of the file | the end of the file |
 | `loop` | no | `true` or `false`: repeat the footage to fill the scene | `false` |
@@ -50,7 +50,8 @@ timeline. The scene's `duration` is timeline time.
 - `sourceEnd` past the end of the file is `E_MEDIA_RANGE`: `sourceEnd exceeds the source duration of "assets/clip.mp4".`
 - Footage shorter than the scene (its source range, divided by `playbackRate`) is `E_MEDIA_SHORT_SOURCE` unless `loop` or `freeze` is set. The footage is never stretched or sped up to fill the scene.
 - `frame` applies only to `framed` placement; a framed block needs one.
-- The placement must be one its component takes (`placements` in its contract): `E_MEDIA_PLACEMENT` otherwise. `title` and `statement` take `background`; no component takes `framed` yet.
+- The `frame` must be a registered frame: `E_MEDIA_FRAME` otherwise, and the message lists the registered frames (`packages/registry/frames/`).
+- The placement must be one its component takes (`placements` in its contract): `E_MEDIA_PLACEMENT` otherwise. `title` and `statement` take `background`; `statement` also takes `framed`.
 - Background footage is muted (`audio="mute"`) and drawn with `fit` (`cover` or `contain`) as the image component draws its picture. Frame N of the scene shows source frame `sourceStart + N × playbackRate`; `loop` repeats the range at normal speed, `freeze` holds its last frame. Without `sourceEnd`, loop and freeze use the end of the file, which the validator reads from the probe.
 
 Fixtures: `tests/fixtures/projects/media-range-*` (overrun, short, loop, freeze). Background: `background-video`, `background-video-loop`, `background-video-freeze`, `background-video-fit`, and `background-video-unsupported` (E_MEDIA_PLACEMENT).

@@ -13,10 +13,10 @@ video:
 Chapter one
 :::
 
-::: {.scene component="statement" duration="2s"}
+::: {.scene component="title" duration="2s"}
 
 ::: {.video src="assets/clip.mp4" placement="framed" frame="browser" audio="mute"}
 :::
 
-A framed clip is not supported yet.
+A framed clip is not supported here.
 :::

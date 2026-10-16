@@ -158,6 +158,16 @@ return {
     one_code(scene(video(BASE .. ' placement="framed"')), "E_VIDEO_BLOCK")
   end,
 
+  ["a frame name that is not an identifier is E_VIDEO_BLOCK"] = function()
+    one_code(scene(video(BASE .. ' placement="framed" frame="Phone!"')), "E_VIDEO_BLOCK")
+  end,
+
+  ["an identifier frame name is kept for the validator to check against the registry"] = function()
+    local _, found, media = convert(scene(video(BASE .. ' placement="framed" frame="laptop"')))
+    h.eq(#found, 0, "finding count")
+    h.eq(media[1].frame, "laptop", "frame")
+  end,
+
   ["an unknown placement, including a slot name, is E_VIDEO_BLOCK"] = function()
     local diagnostic = one_code(scene(video(BASE .. ' placement="left"')), "E_VIDEO_BLOCK")
     h.contains(diagnostic.message, 'placement="left"', "message")

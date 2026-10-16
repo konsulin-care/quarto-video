@@ -1,6 +1,7 @@
 // `video validate` on the background-video projects (task 039; PRD §6.1, §9.2).
 // The four valid projects pass. A background block on a component that does not
-// take it, and a framed block (no component takes framed yet), are E_MEDIA_PLACEMENT
+// take it, and a framed block on a component that does not take framed (task 040:
+// statement does), are E_MEDIA_PLACEMENT
 // with the scene's line. Each run copies its project to scratch, so no fixture is written.
 import { execFileSync, spawnSync } from "node:child_process";
 import { cpSync, mkdtempSync, rmSync } from "node:fs";
@@ -63,8 +64,8 @@ describe("background footage validation", () => {
         'Components that take "background" footage: statement, title.',
         "",
         "ERROR index.qmd:16",
-        'Component "statement" does not take "framed" footage.',
-        'Components that take "framed" footage: none yet.',
+        'Component "title" does not take "framed" footage.',
+        'Components that take "framed" footage: statement.',
         "",
       ].join("\n"),
     );
