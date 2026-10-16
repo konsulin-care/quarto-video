@@ -201,6 +201,14 @@ export interface Rect {
 /** The side the footage takes in `text-media` (task 042). */
 export type MediaSide = "left" | "right";
 
+/** The `side` default of text-media.json: the footage on the right. */
+export const DEFAULT_MEDIA_SIDE: MediaSide = "right";
+
+/** The `side` a text-media scene's prop gives; the default when absent or unknown (the validator rejects those). */
+export function mediaSideOf(value: unknown): MediaSide {
+  return value === "left" ? "left" : DEFAULT_MEDIA_SIDE;
+}
+
 /**
  * The two columns of `text-media` (task 042) inside `area`: the footage column
  * on `side`, the text column on the other side, with `gap` between them. The
@@ -225,4 +233,22 @@ export function sideColumns(
   return side === "left"
     ? { media: first, text: second }
     : { text: first, media: second };
+}
+
+/**
+ * The text and footage columns of `text-media` on a `width` x `height` canvas
+ * (task 042): the two columns share the canvas safe area, with `space.md`
+ * between them. The validator fits the text in the same `text` box the renderer
+ * draws it in.
+ */
+export function textMediaColumns(
+  theme: ThemeTokens,
+  width: number,
+  height: number,
+  side: MediaSide,
+): { text: Rect; media: Rect } {
+  const margin = safeAreaPixels(theme, width, height);
+  const box = safeBox(theme, width, height);
+  const area = { left: margin.x, top: margin.y, ...box };
+  return sideColumns(area, side, theme.space.md);
 }

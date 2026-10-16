@@ -2,7 +2,14 @@
 // area, never overlap, and `side` swaps them.
 import { describe, expect, it } from "vitest";
 import { getTheme } from "../src/index.js";
-import { safeBox, sideColumns, type Rect } from "../src/layout.js";
+import {
+  DEFAULT_MEDIA_SIDE,
+  mediaSideOf,
+  safeBox,
+  sideColumns,
+  textMediaColumns,
+  type Rect,
+} from "../src/layout.js";
 
 const modern = getTheme("modern");
 
@@ -34,9 +41,14 @@ describe("sideColumns", () => {
     [640, 480],
     [641, 361],
   ])("keeps the columns apart and inside the safe box at %ix%i", (w, h) => {
-    const area = { ...safeBox(modern, w, h), left: 0, top: 0 };
     for (const side of ["left", "right"] as const) {
-      const { text, media } = sideColumns(area, side, modern.space.md);
+      const { text, media } = textMediaColumns(modern, w, h, side);
+      const margin = safeBox(modern, w, h);
+      const area = {
+        left: (w - margin.width) / 2,
+        top: (h - margin.height) / 2,
+        ...margin,
+      };
       expect(overlaps(text, media)).toBe(false);
       expect(inside(text, area)).toBe(true);
       expect(inside(media, area)).toBe(true);
@@ -58,5 +70,14 @@ describe("sideColumns", () => {
     const { text, media } = sideColumns(area, "right", 32);
     expect(text.width).toBe(media.width);
     expect(text.width).toBe(264);
+  });
+});
+
+describe("mediaSideOf", () => {
+  it("reads left and right, and falls back to the default", () => {
+    expect(mediaSideOf("left")).toBe("left");
+    expect(mediaSideOf("right")).toBe("right");
+    expect(mediaSideOf(undefined)).toBe(DEFAULT_MEDIA_SIDE);
+    expect(DEFAULT_MEDIA_SIDE).toBe("right");
   });
 });
