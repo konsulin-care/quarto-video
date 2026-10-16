@@ -14,9 +14,21 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | `comparison` | [comparison.md](comparison.md) | Released (task 034: left, right and optional middle slots) |
 | `bullets` | [bullets.md](bullets.md) | Released (task 027: one list of 2 to 6 items, optional heading) |
 | `image` | [image.md](image.md) | Released (task 033: image block, caption slot, fit; IR 1.3, ADR-0013) |
-| `.video` block | [video-block.md](video-block.md) | Source ranges and short-source rule (task 038, IR 1.6); background placement under `title` and `statement` (task 039); framed in task 040 |
+| `.video` block | [video-block.md](video-block.md) | Source ranges and short-source rule (task 038, IR 1.6); background under `title` and `statement` (task 039); framed under `statement` (task 040) |
 | `chart` | [chart.md](chart.md) | Released (task 035: bar or line from a CSV; IR 1.4, ADR-0014) |
 | `statistic` | [statistic.md](statistic.md) | Released (task 031: value, unit, prefix and decimals; label and context; IR 1.5, ADR-0015) |
+
+## Frames (task 040)
+A `.video` block with `placement="framed"` shows its footage on the screen of a device frame. `frame` names one of the registered frames (`packages/registry/frames/`); an unknown name is `E_MEDIA_FRAME`, which lists them.
+
+| Frame | Aspect | Screen (safe content box) | Use |
+| --- | --- | --- | --- |
+| `browser` | 16:10 | 96% × 86%, below a title bar | a web app or site |
+| `phone` | 9:19 | 90% × 94% | a mobile app, portrait |
+| `tablet` | 4:3 | 92% × 90% | a touch app, landscape |
+| `generic` | 16:9 | 94% × 94% | footage with no device |
+
+The frame is the largest box of its aspect in the canvas safe area. Footage is clipped to the screen and framed by `fit` (`cover` or `contain`), as background footage is. `statement` takes `framed`; layouts beside a frame belong to 041 and 043.
 
 ## Presets
 A preset is a named motion or transition that an author may use. Presets are data in `packages/registry` (`animations/<id>.json`, `transitions.json`) and a pure frame function in `renderer/remotion`. Authors pick a preset by name; they never write motion code.

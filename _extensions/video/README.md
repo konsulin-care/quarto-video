@@ -1,5 +1,5 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 1.6 manifest (task 038 for `.video` footage, IR 1.6, ADR-0007; task 035 for props, ADR-0014; 033 for the image block, ADR-0013; 003, 012, 015, 017, 021, 023; ADR-0007, ADR-0011, ADR-0012); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
+Status: `.scene` Divs → IR 1.6 manifest (task 038 for `.video` footage, IR 1.6, ADR-0007; a framed block's frame is an identifier here, and the validator checks it against the registry (task 040); task 035 for props, ADR-0014; 033 for the image block, ADR-0013; 003, 012, 015, 017, 021, 023; ADR-0007, ADR-0011, ADR-0012); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.

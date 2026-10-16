@@ -36,7 +36,7 @@ Warning (validator, stage 2): `W_TEXT_FIT` when the title does not fit at 40px, 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the title and subtitle together.
-- Placements: `background` (task 039): footage fills the canvas behind the title, under a theme scrim that keeps it legible. Framed footage is not taken (`E_MEDIA_PLACEMENT`; framed is task 040). Transitions: none listed in the contract, and not checked yet (ADR-0005).
+- Placements: `background` (task 039): footage fills the canvas behind the title, under a theme scrim that keeps it legible. Framed footage is not taken (`E_MEDIA_PLACEMENT`; only `statement` takes framed, task 040). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 
 ## Accessibility
 The title and subtitle are the only content. Colour and size come from the theme (task 019). The subtitle uses the muted text token, a theme pair that meets WCAG AA. Long text wraps inside the safe area (PRD §10.2): a title of 80 characters or more takes several lines and is not clipped at 1920x1080, and it scales down to fit a small frame (see Text size). Under reduced motion, each animation draws its end state from the first frame (task 023).
