@@ -14,7 +14,7 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | `comparison` | [comparison.md](comparison.md) | Released (task 034: left, right and optional middle slots) |
 | `bullets` | [bullets.md](bullets.md) | Released (task 027: one list of 2 to 6 items, optional heading) |
 | `image` | [image.md](image.md) | Released (task 033: image block, caption slot, fit; IR 1.3, ADR-0013) |
-| `.video` block | [video-block.md](video-block.md) | Source ranges and short-source rule (task 038, IR 1.6); placements in tasks 039 and 040 |
+| `.video` block | [video-block.md](video-block.md) | Source ranges and short-source rule (task 038, IR 1.6); background placement under `title` and `statement` (task 039); framed in task 040 |
 | `chart` | [chart.md](chart.md) | Released (task 035: bar or line from a CSV; IR 1.4, ADR-0014) |
 | `statistic` | [statistic.md](statistic.md) | Released (task 031: value, unit, prefix and decimals; label and context; IR 1.5, ADR-0015) |
 
