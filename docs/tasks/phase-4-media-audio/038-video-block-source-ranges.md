@@ -1,6 +1,6 @@
 # 038 — `.video` block and source ranges
 
-Phase 4 · Status: todo · Depends on: 037 · PRD: §6.1, §6.2, §8.3 · ADR: reads 0003
+Phase 4 · Status: in-progress · Depends on: 037 · PRD: §6.1, §6.2, §8.3 · ADR: reads 0003
 
 ## Goal
 Authors declare footage with a `.video` block; its source range, playback
