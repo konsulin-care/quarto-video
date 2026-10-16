@@ -1,0 +1,72 @@
+---
+title: "Component text-media invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="text-media" duration="2s"}
+::: {.text}
+Text and no footage.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="background" fit="cover" audio="mute" alt="A counter clip"}
+:::
+
+::: {.text}
+Background footage is not framed.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+::: {.text}
+- A list is not a text block
+- Two points
+:::
+:::
+
+::: {.scene component="text-media" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+::: {.text}
+Short text.
+:::
+
+::: {.caption}
+A caption is not a slot of text-media.
+:::
+:::
+
+::: {.scene component="text-media" duration="0.5s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+::: {.text}
+Too short a scene.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s" animation="kinetic"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+::: {.text}
+Kinetic is for statements.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s" side="top"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+::: {.text}
+The side is left or right.
+:::
+:::
