@@ -81,7 +81,7 @@ renderer mutes every footage clip (task 039), so no audio reaches the output.
 
 - `packages/ir/test/v18.test.ts`, `frozen.test.ts` (1.8 hash): `keep` needs `volume`, `mute`
   forbids it, `volume` range.
-- `_extensions/video/tests/test_media.lua`: `keep` with `volume`, `volume` range, `volume` on
+- `_extensions/video/tests/test_media_audio.lua`: `keep` with `volume`, `volume` range, `volume` on
   `mute`, `keep` with a rate other than 1.
 - `packages/validator/test/audio.test.ts`: E_AUDIO_NO_STREAM with a stub prober.
 - `renderer/remotion/test/source-audio.test.ts`: repetitions, trim, end, freeze and ramp (pure).
