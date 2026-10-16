@@ -22,6 +22,7 @@ import { COMPONENTS, PLACES_OWN_MEDIA } from "./registry-map.js";
 import type { Overlap } from "../transitions/index.js";
 import { BackgroundScene } from "../media/BackgroundScene.js";
 import { FramedScene } from "../media/FramedScene.js";
+import { SourceAudio } from "../media/SourceAudio.js";
 import { withOverlay } from "./overlay.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
@@ -103,6 +104,12 @@ function regionsOf(
   return regions;
 }
 
+/** The scene's kept `.video` blocks, whichever placement they have (task 044). */
+function keptOf(scene: IrManifest["scenes"][number]): IrMediaVideo[] {
+  if (!("media" in scene) || scene.media === undefined) return [];
+  return scene.media.filter((item) => item.audio === "keep");
+}
+
 /** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
 function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   if (PLACES_OWN_MEDIA.has(scene.component)) return component;
@@ -144,6 +151,17 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
               from={start}
               durationInFrames={scene.durationFrames}
             >
+              {keptOf(scene).map((item, pass) => (
+                <SourceAudio
+                  key={`audio-${pass}`}
+                  media={item}
+                  durationFrames={scene.durationFrames}
+                  incomingFrames={overlapOf(scene)?.overlapFrames ?? 0}
+                  outgoingFrames={
+                    overlapOf(ir.scenes[index + 1])?.overlapFrames ?? 0
+                  }
+                />
+              ))}
               <TransitionScene
                 durationFrames={scene.durationFrames}
                 incoming={overlapOf(scene)}

@@ -1,7 +1,7 @@
 // The background footage of a scene (task 039; PRD §6.1). Each scene frame draws
 // one source frame, the one `sourceFrameAt` names: an OffthreadVideo at that
 // frame inside a one-frame Sequence, so no frame depends on the one before it.
-// The clip is muted (source audio is task 044). Framing is the shared fit
+// The picture is muted: source audio plays through SourceAudio (task 044). Framing is the shared fit
 // (media/fit.ts), the same one the image component uses.
 import type { IrMediaVideo } from "@quarto-video/ir";
 import {
