@@ -11,7 +11,8 @@
     "bullets",
     "image",
     "chart",
-    "statistic"
+    "statistic",
+    "product-demo"
   ],
   "minFrames": 15,
   "shortScene": "static",

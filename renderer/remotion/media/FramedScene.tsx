@@ -6,25 +6,35 @@
 import type { IrMediaVideo } from "@quarto-video/ir";
 import type { ReactNode } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
-import { safeBox } from "@quarto-video/registry/layout";
+import { safeAreaPixels, safeBox } from "@quarto-video/registry/layout";
 import { useTheme } from "../themes/ThemeProvider.js";
 import { Footage } from "./Video.js";
 import { FrameShell } from "./frames/FrameShell.js";
 import { frameContract } from "./frames/tokens.js";
-import { frameBox, screenBox } from "./frames/layout.js";
+import { captionBand } from "./frames/caption.js";
+import { fitFrame, screenBox } from "./frames/layout.js";
 
 export interface FramedSceneProps {
   media: IrMediaVideo;
+  /** A caption draws under the frame: its band is reserved (task 041). */
+  caption?: boolean;
   children: ReactNode;
 }
 
-export function FramedScene({ media, children }: FramedSceneProps) {
+export function FramedScene({ media, caption, children }: FramedSceneProps) {
   const theme = useTheme();
   const { width, height } = useVideoConfig();
   const contract = frameContract(media.frame ?? "");
-  const box = frameBox(
-    { width, height },
-    safeBox(theme, width, height),
+  const margin = safeAreaPixels(theme, width, height);
+  const safe = safeBox(theme, width, height);
+  const reserve = caption === true ? captionBand(theme) : 0;
+  const box = fitFrame(
+    {
+      left: margin.x,
+      top: margin.y,
+      width: safe.width,
+      height: safe.height - reserve,
+    },
     contract.aspect,
   );
   const screen = screenBox(contract, box);

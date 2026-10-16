@@ -93,7 +93,13 @@ function reducedMotionOf(ir: IrManifest): boolean {
 function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   const framed = mediaOf(scene, "framed");
   if (framed !== undefined) {
-    return <FramedScene media={framed}>{component}</FramedScene>;
+    // A caption draws under the frame, in a band the frame leaves (task 041).
+    const caption = (contentOf(scene).texts["caption"] ?? "") !== "";
+    return (
+      <FramedScene media={framed} caption={caption}>
+        {component}
+      </FramedScene>
+    );
   }
   const background = mediaOf(scene, "background");
   return background === undefined ? (

@@ -24,19 +24,37 @@ export function aspectRatio(aspect: string): number {
  * canvas, in whole pixels. `safe` is the canvas's safe box (theme safeBox).
  */
 export function frameBox(canvas: Box, safe: Box, aspect: string): Rect {
-  const ratio = aspectRatio(aspect);
-  let width: number;
-  let height: number;
-  if (safe.width / safe.height > ratio) {
-    height = Math.floor(safe.height);
-    width = Math.floor(height * ratio);
-  } else {
-    width = Math.floor(safe.width);
-    height = Math.floor(width / ratio);
-  }
+  const { width, height } = frameSize(safe, aspect);
   return {
     left: Math.round((canvas.width - width) / 2),
     top: Math.round((canvas.height - height) / 2),
+    width,
+    height,
+  };
+}
+
+/** The largest whole-pixel box of `aspect` that fits `space`. */
+function frameSize(space: Box, aspect: string): Box {
+  const ratio = aspectRatio(aspect);
+  if (space.width / space.height > ratio) {
+    const height = Math.floor(space.height);
+    return { width: Math.floor(height * ratio), height };
+  }
+  const width = Math.floor(space.width);
+  return { width, height: Math.floor(width / ratio) };
+}
+
+/**
+ * The frame box centred in `region` (output pixels), the largest of `aspect` that
+ * fits it. With a caption band reserved below the frame, the region is the safe
+ * area less that band (task 041). For the whole safe area it gives the same box
+ * as frameBox.
+ */
+export function fitFrame(region: Rect, aspect: string): Rect {
+  const { width, height } = frameSize(region, aspect);
+  return {
+    left: region.left + Math.round((region.width - width) / 2),
+    top: region.top + Math.round((region.height - height) / 2),
     width,
     height,
   };

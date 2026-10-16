@@ -60,6 +60,10 @@
         "enum": ["background", "framed"]
       }
     },
+    "requiresMedia": {
+      "type": "boolean",
+      "description": "The scene must hold a .video block (E_SLOT_MISSING otherwise). Absent means false. Task 041."
+    },
     "compatibleAnimations": {
       "$ref": "#/$defs/idList"
     },

@@ -84,6 +84,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
 | `E_SLOT_CONSTRAINT` | 2 contract | A slot breaks its contract's item limit: its one list has fewer or more items than the `items` range, or the slot holds more than one list; the message gives the limit | 027 |
+| `E_SLOT_MISSING` | 2 contract | A component with `requiresMedia` (product-demo) has no `.video` block in its scene; the message names the placement it takes | 041 |
 | `E_PROP_REQUIRED` | 2 contract | A prop the contract marks `required` is missing from the scene | 035 (ADR-0014) |
 | `E_PROP_VALUE` | 2 contract | A prop's value is empty, not one of its `enum`, not `true`/`false` for a boolean, or not a `.csv` path for a `csv` prop; a `number` prop is outside its `min`/`max`, not a whole number where `integer` is set, or not finite | 035 (ADR-0014), 031 (ADR-0015) |
 | `E_PROP_TYPE` | 2 contract | A `number` prop's text is not a number (`abc`, `1,000`, `NaN`): a decimal literal such as `42`, `-0.5` or `1e9` is one; the suggestion says how to write it | 031 (ADR-0015) |
