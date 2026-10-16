@@ -1,0 +1,11 @@
+{
+  "durationFrames": 156,
+  "scenes": [
+    { "id": "one", "startFrame": 0 },
+    { "id": "two", "startFrame": 36 },
+    { "id": "three", "startFrame": 57 },
+    { "id": "four", "startFrame": 78 },
+    { "id": "five", "startFrame": 99 },
+    { "id": "six", "startFrame": 120 }
+  ]
+}

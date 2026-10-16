@@ -1,0 +1,15 @@
+---
+title: "Contract animation valid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" animation="fade-in"}
+Fades in
+:::
+
+::: {.scene component="title" duration="2s" animation="reveal"}
+Revealed
+:::

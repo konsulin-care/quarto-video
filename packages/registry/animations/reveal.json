@@ -1,0 +1,18 @@
+{
+  "id": "reveal",
+  "version": "1.0.0",
+  "purpose": "Content is revealed at the start of its scene: it fades in while it grows from 96% to full size.",
+  "compatibleComponents": [
+    "title",
+    "end-card",
+    "statement",
+    "comparison",
+    "bullets",
+    "image",
+    "chart",
+    "statistic"
+  ],
+  "minFrames": 15,
+  "shortScene": "static",
+  "reducedMotion": "static"
+}

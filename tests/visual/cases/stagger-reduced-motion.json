@@ -1,0 +1,9 @@
+{
+  "project": "tests/fixtures/projects/reduced-motion-stagger",
+  "theme": "modern",
+  "frames": [0, 20, 89, 90, 105, 179, 195],
+  "threshold": {
+    "channelTolerance": 2,
+    "maxDiffRatio": 0.0005
+  }
+}

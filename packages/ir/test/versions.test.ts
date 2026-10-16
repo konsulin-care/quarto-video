@@ -17,15 +17,25 @@ const UNSUPPORTED = {
       path: "/schemaVersion",
       code: "E_IR_UNSUPPORTED_VERSION",
       message:
-        '"2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0',
+        '"2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5',
     },
   ],
 };
 
 describe("IR version gate", () => {
-  it("supports 0.1, 0.2, 0.3 and 1.0, with 1.0 the latest", () => {
-    expect([...SUPPORTED_VERSIONS]).toEqual(["0.1", "0.2", "0.3", "1.0"]);
-    expect(LATEST_VERSION).toBe("1.0");
+  it("supports 0.1 to 1.5, with 1.5 the latest", () => {
+    expect([...SUPPORTED_VERSIONS]).toEqual([
+      "0.1",
+      "0.2",
+      "0.3",
+      "1.0",
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "1.5",
+    ]);
+    expect(LATEST_VERSION).toBe("1.5");
   });
 
   it("reads each supported version against its own schema", () => {
@@ -36,6 +46,11 @@ describe("IR version gate", () => {
     });
     expect(validateIr(load("timeline.json"))).toEqual({ ok: true, errors: [] });
     expect(validateIr(load("v1.json"))).toEqual({ ok: true, errors: [] });
+    expect(validateIr(load("v1.1.json"))).toEqual({ ok: true, errors: [] });
+    expect(validateIr(load("v1.2.json"))).toEqual({ ok: true, errors: [] });
+    expect(validateIr(load("v1.3.json"))).toEqual({ ok: true, errors: [] });
+    expect(validateIr(load("v1.4.json"))).toEqual({ ok: true, errors: [] });
+    expect(validateIr(load("v1.5.json"))).toEqual({ ok: true, errors: [] });
   });
 
   it("rejects schemaVersion 2.0 with E_IR_UNSUPPORTED_VERSION, naming the supported versions", () => {

@@ -1,5 +1,5 @@
 # docs/tasks/ — sequential development tasks
-Status: Tasks 000 through 018 done; all others `todo`. Numbers are the execution order.
+Status: Tasks 000 through 036 done (including 007a and 019a); 037 through 051 `todo`. Numbers are the execution order.
 
 ## Picking work
 1. Take the lowest-numbered task whose `Status` is not `done` and whose
@@ -55,6 +55,7 @@ Sections: Goal, Scope (In/Out), Deliverables, Definition of done
 | 018 | Preflight and output check             | 017      |
 | **Phase 3 — Design system** |  |  |
 | 019 | Theme tokens (`modern`)                | 018      |
+| 019a | Theme as render option; theme canvas background | 019 |
 | 020 | Visual regression harness              | 019      |
 | 021 | Animation presets: fade-in, slide-up, reveal | 020 |
 | 022 | Transition presets                     | 021      |

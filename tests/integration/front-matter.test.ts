@@ -91,6 +91,32 @@ describe("front matter settings and defaults", () => {
     );
   });
 
+  it("writes video.reducedMotion to the IR settings (IR 1.2)", () => {
+    const run = video([
+      "validate",
+      "--print-ir",
+      copyProject("front-matter-reduced-motion"),
+    ]);
+    assert.equal(run.status, 0, run.stderr);
+    assert.deepEqual(
+      JSON.parse(run.stdout),
+      expected("front-matter-reduced-motion"),
+    );
+  });
+
+  it("rejects a quoted video.reducedMotion as E_SETTING_INVALID, exit 1", () => {
+    const run = video([
+      "validate",
+      "--json",
+      copyProject("front-matter-reduced-motion-invalid"),
+    ]);
+    assert.equal(run.status, 1);
+    assert.deepEqual(
+      JSON.parse(run.stdout),
+      expected("front-matter-reduced-motion-invalid"),
+    );
+  });
+
   it("names the misspelt key and suggests width as E_CONFIG_UNKNOWN_KEY, exit 1", () => {
     const project = copyProject("diagnostics-unknown-key");
     const human = video(["validate", project]);

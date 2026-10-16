@@ -59,10 +59,22 @@ return {
     h.code_is(collect_fn(body), "E_SCENE_NESTED", "nested")
   end,
 
-  ["rejects an unknown scene attribute"] = function()
-    local body = '::: {.scene component="title" duration="4s" animation="reveal"}\nX\n:::\n'
+  ["passes an attribute that is not a scene attribute on as a prop"] = function()
+    local body = '::: {.scene component="title" duration="4s" colour="red"}\nX\n:::\n'
+    local list = scenes.collect(h.doc(body), 30)
+    h.eq(list[1].props.colour, "red", "prop")
+    h.eq(list[1].durationFrames, 120, "frames")
+  end,
+
+  ["a scene with no props has no props key"] = function()
+    local list = scenes.collect(h.doc(scene("title", "4s", "X")), 30)
+    h.eq(list[1].props, nil, "props")
+  end,
+
+  ["rejects an unknown class on a scene"] = function()
+    local body = '::: {.scene .note component="title" duration="4s"}\nX\n:::\n'
     local err = h.error_of(collect_fn(body))
-    h.contains(err, 'unknown attribute "animation"', "error")
+    h.contains(err, 'unknown class "note"', "error")
     h.code_is(collect_fn(body), "E_SCENE_SHAPE", "shape")
   end,
 
@@ -93,7 +105,7 @@ return {
   ["reports every bad scene in one pass"] = function()
     local body = '::: {.scene component="title"}\nA\n:::\n\n'
       .. '::: {.scene component="title" duration="2 seconds"}\nB\n:::\n\n'
-      .. '::: {.scene component="title" duration="4s" animation="x"}\nC\n:::\n'
+      .. '::: {.scene .note component="title" duration="4s"}\nC\n:::\n'
     local list = h.diagnostics_of(collect_fn(body))
     h.eq(#list, 3, "diagnostic count")
     h.eq(list[1].code, "E_SCENE_NO_DURATION", "first code")

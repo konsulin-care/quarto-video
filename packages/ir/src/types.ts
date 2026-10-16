@@ -1,11 +1,12 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3 and 1.0 (ir-1.0.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4 and 1.5 (ir-1.5.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
 
-export type SchemaVersion = "0.1" | "0.2" | "0.3" | "1.0";
+export type SchemaVersion =
+  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5";
 
 export interface IrSettings {
   width: number;
@@ -54,6 +55,17 @@ export interface IrSceneV03 extends IrSceneV02 {
   transition?: IrTransition;
 }
 
+/** Animation preset of a scene (ADR-0011). Absent when the scene has none. */
+export interface IrAnimation {
+  /** A preset id from the registry, e.g. "fade-in". */
+  name: string;
+}
+
+/** IR 1.1 scene: IR 0.3 plus an optional animation (ADR-0011). */
+export interface IrSceneV11 extends IrSceneV03 {
+  animation?: IrAnimation;
+}
+
 /** Resolved timeline (ADR-0005): where each scene starts and the total length. */
 export interface IrTimeline {
   durationFrames: number;
@@ -97,11 +109,90 @@ export interface IrVideoV10 extends Omit<IrVideoV03, "schemaVersion"> {
   generator: IrGenerator;
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3 and 1.0). */
-export type IrVideoWithTimeline = IrVideoV03 | IrVideoV10;
+/** IR 1.1 (ADR-0011): IR 1.0 whose scenes may carry an animation. */
+export interface IrVideoV11 extends Omit<
+  IrVideoV10,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.1";
+  scenes: IrSceneV11[];
+}
+
+/** IR 1.2 (ADR-0012): IR 1.1 with an optional `reducedMotion` setting. */
+export interface IrSettingsV12 extends IrSettings {
+  /** Draw each preset's reduced-motion rule (task 023). Absent means false. */
+  reducedMotion?: boolean;
+}
+
+export interface IrVideoV12 extends Omit<
+  IrVideoV11,
+  "schemaVersion" | "settings"
+> {
+  schemaVersion: "1.2";
+  settings: IrSettingsV12;
+}
+
+/** IR 1.3 (ADR-0013): IR 1.2 whose scene content may hold image blocks. */
+export interface IrVideoV13 extends Omit<IrVideoV12, "schemaVersion"> {
+  schemaVersion: "1.3";
+}
+
+/** A CSV data table (task 035, ADR-0014): header names and the rows' cell text. */
+export interface IrTable {
+  columns: string[];
+  rows: string[][];
+}
+
+/** IR 1.4 (ADR-0014): IR 1.3 plus scene `props` (authored attributes) and `tables` (CSV data). */
+export interface IrSceneV14 extends IrSceneV11 {
+  props?: Record<string, string>;
+  tables?: Record<string, IrTable>;
+}
+
+/** IR 1.4 (ADR-0014): IR 1.3 plus scene props and tables. */
+export interface IrVideoV14 extends Omit<
+  IrVideoV12,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.4";
+  scenes: IrSceneV14[];
+}
+
+/** IR 1.5 (ADR-0015): a scene prop may be a number (written by the validator). */
+export interface IrSceneV15 extends Omit<IrSceneV14, "props"> {
+  props?: Record<string, string | number>;
+}
+
+/** IR 1.5 (ADR-0015): IR 1.4 with number prop values. */
+export interface IrVideoV15 extends Omit<
+  IrVideoV14,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.5";
+  scenes: IrSceneV15[];
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.5). */
+export type IrVideoWithTimeline =
+  | IrVideoV03
+  | IrVideoV10
+  | IrVideoV11
+  | IrVideoV12
+  | IrVideoV13
+  | IrVideoV14
+  | IrVideoV15;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
-export type IrVideo = IrVideoV01 | IrVideoV02 | IrVideoV03 | IrVideoV10;
+export type IrVideo =
+  | IrVideoV01
+  | IrVideoV02
+  | IrVideoV03
+  | IrVideoV10
+  | IrVideoV11
+  | IrVideoV12
+  | IrVideoV13
+  | IrVideoV14
+  | IrVideoV15;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

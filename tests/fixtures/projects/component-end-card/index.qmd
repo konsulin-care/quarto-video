@@ -1,0 +1,36 @@
+---
+title: "Component end-card"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="end-card" duration="3s" animation="fade-in"}
+# Thanks for watching
+:::
+
+::: {.scene component="end-card" duration="4s" animation="slide-up"}
+# Keep learning with us
+
+::: {.cta}
+Subscribe for the next lesson.
+:::
+
+::: {.credits}
+- Script: Jane Author
+- Narration: Sam Voice
+- Music: Open Tune Library
+- Diagrams: Alex Drawer
+- Review: Priya Editor
+- Translation: Lee Linguist
+- Captions: Kim Subtitle
+- Sound: Robin Mixer
+- Animation: Dana Motion
+- Produced by the course team
+:::
+:::
+
+::: {.scene component="end-card" duration="3s" animation="reveal"}
+# See you in the next video
+:::

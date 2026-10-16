@@ -7,7 +7,8 @@ import { describe, expect, it } from "vitest";
 import { DIAGNOSTIC_CODES } from "../src/index.js";
 
 const ROOT = fileURLToPath(new URL("../../..", import.meta.url));
-const CODE = /\bE_[A-Z][A-Z0-9_]*\b/g;
+// E_ errors and W_ warnings (task 025). `W_OK` is fs.constants (preflight.ts), not a code.
+const CODE = /\b[EW]_[A-Z][A-Z0-9_]*\b/g;
 
 /** Every file under `dir` whose name ends with one of `exts`. */
 function sourceFiles(dir: string, exts: string[]): string[] {
@@ -33,7 +34,7 @@ function emittedCodes(): Set<string> {
   const found = new Set<string>();
   for (const file of files) {
     for (const match of readFileSync(file, "utf8").matchAll(CODE)) {
-      found.add(match[0]);
+      if (match[0] !== "W_OK") found.add(match[0]);
     }
   }
   return found;
@@ -45,7 +46,7 @@ function documentedCodes(): Set<string> {
     join(ROOT, "packages", "validator", "README.md"),
     "utf8",
   );
-  const rows = readme.split("\n").filter((line) => line.startsWith("| `E_"));
+  const rows = readme.split("\n").filter((line) => /^\| `[EW]_/.test(line));
   return new Set(rows.map((row) => row.split("`")[1] ?? ""));
 }
 

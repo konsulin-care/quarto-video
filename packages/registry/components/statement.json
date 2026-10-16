@@ -1,0 +1,25 @@
+{
+  "id": "statement",
+  "version": "1.0.0",
+  "purpose": "One prominent message or key sentence, with emphasis in the accent colour.",
+  "slots": {
+    "default": {
+      "required": true,
+      "accepts": ["paragraph", "heading"],
+      "maxBlocks": 1
+    }
+  },
+  "props": {},
+  "placements": [],
+  "compatibleAnimations": ["fade-in", "kinetic", "reveal", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "accessibility": "The statement is the only content. Its text is drawn in the theme's text colour and strong text in the accent colour, a theme pair that meets WCAG AA on the background. The text scales down within the theme's type scale (title to body) to stay inside the safe area; below body size it is a validation warning.",
+  "textFit": {
+    "max": "title",
+    "min": "body"
+  }
+}

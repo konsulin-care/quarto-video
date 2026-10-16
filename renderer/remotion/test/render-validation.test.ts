@@ -62,7 +62,7 @@ describe("render validation", () => {
     });
     const out = join(dir, "unsupported-version.mp4");
     await expect(render(ir, out, NO_BROWSER)).rejects.toThrow(
-      'E_IR_UNSUPPORTED_VERSION "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0',
+      'E_IR_UNSUPPORTED_VERSION "2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5',
     );
   });
 
@@ -72,6 +72,20 @@ describe("render validation", () => {
     const out = join(dir, "broken.mp4");
     await expect(render(path, out, NO_BROWSER)).rejects.toThrow(
       "Cannot read IR",
+    );
+  });
+});
+
+describe("render theme", () => {
+  it("rejects an unknown theme with its name and the known themes before launching a browser", async () => {
+    const ir = await writeVariant("unknown-theme", () => undefined);
+    const failure = render(ir, join(dir, "unknown-theme.mp4"), {
+      ...NO_BROWSER,
+      theme: "retro",
+    });
+    await expect(failure).rejects.toBeInstanceOf(IrRenderError);
+    await expect(failure).rejects.toThrow(
+      'Unknown theme "retro" (known: modern)',
     );
   });
 });

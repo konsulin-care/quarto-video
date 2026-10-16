@@ -1,0 +1,7 @@
+{
+  "id": "wipe",
+  "version": "1.0.0",
+  "purpose": "A wipe from left to right uncovers the incoming scene over the outgoing scene.",
+  "duration": { "defaultMs": 500, "minMs": 100, "maxMs": 3000 },
+  "reducedMotion": "fade"
+}

@@ -1,0 +1,42 @@
+---
+title: "Component title invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="1s"}
+::: {.subtitle}
+Only a subtitle, no title.
+:::
+:::
+
+::: {.scene component="title" duration="1s"}
+Title text.
+
+::: {.caption}
+A slot the title does not have.
+:::
+:::
+
+::: {.scene component="title" duration="1s"}
+1. A list is not a title.
+2. Second item.
+:::
+
+::: {.scene component="title" duration="1s"}
+Title text.
+
+::: {.subtitle}
+- A list is not a subtitle.
+:::
+:::
+
+::: {.scene component="title" duration="0.5s"}
+Too short to read.
+:::
+
+::: {.scene component="title" duration="1s" animation="bounce"}
+Unknown animation.
+:::

@@ -1,0 +1,36 @@
+---
+title: "Component image animations"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+Each compatible animation of the image component, one per scene.
+
+::: {.scene component="image" duration="2s" animation="fade-in"}
+::: {.image src="assets/landscape.jpg" fit="contain" alt="A teal to rose gradient, landscape"}
+:::
+
+::: {.caption}
+Fade in: the whole scene fades from transparent.
+:::
+:::
+
+::: {.scene component="image" duration="2s" animation="slide-up"}
+::: {.image src="assets/portrait.png" fit="cover" alt="A blue to amber gradient, portrait"}
+:::
+
+::: {.caption}
+Slide up: the scene rises into place.
+:::
+:::
+
+::: {.scene component="image" duration="2s" animation="reveal"}
+::: {.image src="assets/portrait.png" fit="contain" alt="A blue to amber gradient, portrait"}
+:::
+
+::: {.caption}
+Reveal: the picture fades in and grows into place.
+:::
+:::

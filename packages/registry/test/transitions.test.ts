@@ -10,8 +10,8 @@ import {
 const text = (value: unknown): string => JSON.stringify(value);
 
 describe("transition registry", () => {
-  it("lists cut and fade, sorted", () => {
-    expect(listTransitions()).toEqual(["cut", "fade"]);
+  it("lists cut, fade, slide, wipe and zoom, sorted", () => {
+    expect(listTransitions()).toEqual(["cut", "fade", "slide", "wipe", "zoom"]);
   });
 
   it("accepts a sorted or unsorted list and returns it sorted", () => {

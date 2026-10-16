@@ -9,7 +9,7 @@ import type { Diagnostic, DiagnosticCode } from "../diagnostic.js";
 type Where = Pick<Diagnostic, "file" | "line" | "sceneId" | "component">;
 
 /** Where a scene is: its file, opening line, id and component (PRD §9.2). */
-function where(scene: IrSceneV02): Where {
+export function where(scene: IrSceneV02): Where {
   const { file, line } = scene.source;
   return {
     file,
@@ -20,7 +20,7 @@ function where(scene: IrSceneV02): Where {
 }
 
 /** One error about a scene. */
-function problem(
+export function problem(
   scene: IrSceneV02,
   code: DiagnosticCode,
   message: string,
@@ -53,6 +53,43 @@ function blocksIn(
 /** Block kinds of one slot, in order of first appearance. */
 function kindsOf(blocks: IrBlock[]): IrBlock["type"][] {
   return [...new Set(blocks.map((block) => block.type))];
+}
+
+/**
+ * The item limit of a slot that takes one list (E_SLOT_CONSTRAINT, task 027).
+ * A slot with no list is left to E_SLOT_BLOCK_KIND or E_SLOT_REQUIRED.
+ */
+function listConstraint(
+  scene: IrSceneV02,
+  contract: ComponentContract,
+  name: string,
+  limit: { minItems: number; maxItems: number },
+  slots: IrSceneV02["content"]["slots"],
+): Diagnostic | undefined {
+  const lists = blocksIn(slots, name).filter((block) => block.type === "list");
+  const property = `slots.${name}`;
+  if (lists.length === 0) return undefined;
+  if (lists.length > 1) {
+    return problem(
+      scene,
+      "E_SLOT_CONSTRAINT",
+      `Slot "${name}" of component "${contract.id}" holds ${lists.length} lists; it takes exactly one.`,
+      property,
+      "Put all the points in one list.",
+    );
+  }
+  const only = lists[0];
+  const count = only?.type === "list" ? only.items.length : 0;
+  if (count >= limit.minItems && count <= limit.maxItems) return undefined;
+  const range = `${limit.minItems} to ${limit.maxItems} items`;
+  const noun = count === 1 ? "item" : "items";
+  return problem(
+    scene,
+    "E_SLOT_CONSTRAINT",
+    `Slot "${name}" of component "${contract.id}" has ${count} ${noun}; the limit is ${range}.`,
+    property,
+    `Use ${range}; split a longer list across scenes.`,
+  );
 }
 
 function checkSlots(
@@ -88,6 +125,11 @@ function checkSlots(
         ),
       );
     }
+    const limit = contract.slots[name]?.items;
+    if (limit !== undefined) {
+      const constraint = listConstraint(scene, contract, name, limit, slots);
+      if (constraint !== undefined) found.push(constraint);
+    }
   }
   for (const name of Object.keys(contract.slots).sort()) {
     const slot = contract.slots[name];
@@ -101,6 +143,21 @@ function checkSlots(
         `Slot "${name}" accepts ${slot.accepts.join(", ")}.`,
       ),
     );
+  }
+  for (const name of Object.keys(contract.slots).sort()) {
+    const max = contract.slots[name]?.maxBlocks;
+    const count = blocksIn(slots, name).length;
+    if (max === undefined || count <= max) continue;
+    found.push({
+      ...problem(
+        scene,
+        "W_SLOT_TOO_MANY_BLOCKS",
+        `Slot "${name}" of component "${contract.id}" holds ${count} blocks; the component shows ${max}.`,
+        `slots.${name}`,
+        `Keep at most ${max} block${max === 1 ? "" : "s"} in "${name}"; move the rest to a scene of their own.`,
+      ),
+      severity: "warning",
+    });
   }
   return found;
 }

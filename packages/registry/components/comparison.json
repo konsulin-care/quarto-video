@@ -1,0 +1,28 @@
+{
+  "id": "comparison",
+  "version": "1.0.0",
+  "purpose": "Two or more structured content areas side by side.",
+  "slots": {
+    "left": {
+      "required": true,
+      "accepts": ["heading", "paragraph", "list"]
+    },
+    "middle": {
+      "required": false,
+      "accepts": ["heading", "paragraph", "list"]
+    },
+    "right": {
+      "required": true,
+      "accepts": ["heading", "paragraph", "list"]
+    }
+  },
+  "props": {},
+  "placements": [],
+  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "accessibility": "The areas are the only content. They sit side by side as two columns, or three with the optional middle slot, and start at the same top edge, so unequal lengths stay aligned. Colour and size come from the theme (task 019): the text uses the text token on the surface token, a theme pair that meets WCAG AA. Long text wraps inside the safe area."
+}

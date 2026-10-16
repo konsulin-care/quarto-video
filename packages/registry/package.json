@@ -4,7 +4,12 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./themes/*.json": "./themes/*.json",
+    "./animations/*.json": "./animations/*.json",
+    "./transitions/*.json": "./transitions/*.json",
+    "./layout": "./src/layout.ts",
+    "./kinetic": "./src/kinetic.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json"

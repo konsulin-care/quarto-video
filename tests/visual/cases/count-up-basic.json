@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/preset-count-up",
+  "theme": "modern",
+  "frames": [0, 20, 63, 89, 110, 179, 195],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

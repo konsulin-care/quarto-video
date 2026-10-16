@@ -1,0 +1,53 @@
+{
+  "generator": {
+    "cli": "0.0.0",
+    "extension": "0.1.0"
+  },
+  "scenes": [
+    {
+      "animation": {
+        "name": "fade-in"
+      },
+      "component": "title",
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "inlines": [
+                {
+                  "text": "Reduced",
+                  "type": "text"
+                }
+              ],
+              "type": "paragraph"
+            }
+          ]
+        }
+      },
+      "durationFrames": 30,
+      "id": "scene-001",
+      "source": {
+        "file": "index.qmd",
+        "line": 10
+      }
+    }
+  ],
+  "schemaVersion": "1.5",
+  "settings": {
+    "background": "#000000",
+    "fps": 30,
+    "height": 360,
+    "reducedMotion": true,
+    "width": 640
+  },
+  "timeline": {
+    "durationFrames": 30,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      }
+    ]
+  },
+  "type": "video"
+}

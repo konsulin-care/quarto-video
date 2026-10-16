@@ -5,7 +5,7 @@ Status: Gates in place (task 000). Decision: ADR-0010. Policy: `docs/testing.md`
 | Script | Used by | Does |
 | --- | --- | --- |
 | `check.sh [--staged\|--push\|--all]` | pre-commit, pre-push, `mise run check` | line limit → format → lint → typecheck |
-| `test.sh [scope] [--suite NAME]...` | pre-push, `mise run test` | suites `scripts unit lua integration visual` |
+| `test.sh [scope] [--suite NAME]...` | pre-push, `mise run test` | suites `scripts unit lua integration visual`; `integration` and `visual` need a Chromium headless shell, resolved once by `lib/browser.sh` (fails fast if none) |
 | `check-line-limit.sh FILE...` | `check.sh` | fails on code files over 300 lines |
 | `tests/run.sh` | `test.sh --suite scripts` | self-tests of these scripts |
 | `spike-quarto-native.sh` | nobody (not a gate) | task 007: runs Quarto forms on a temp copy; output = ADR-0002 evidence |

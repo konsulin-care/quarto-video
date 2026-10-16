@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/transitions",
+  "theme": "modern",
+  "frames": [35, 36, 57, 64, 71, 78, 85, 92, 99, 106, 113, 120, 127, 134],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

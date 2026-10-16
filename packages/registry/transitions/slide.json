@@ -1,0 +1,7 @@
+{
+  "id": "slide",
+  "version": "1.0.0",
+  "purpose": "The outgoing scene slides out to the left while the incoming scene slides in from the right.",
+  "duration": { "defaultMs": 500, "minMs": 100, "maxMs": 3000 },
+  "reducedMotion": "fade"
+}

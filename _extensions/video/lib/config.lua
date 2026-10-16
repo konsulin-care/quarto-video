@@ -16,6 +16,7 @@ M.DEFAULTS = {
   fps = 30,
   background = "#000000",
   output = "output.mp4",
+  reducedMotion = false,
 }
 
 local function invalid(property, message, suggestion)
@@ -51,6 +52,23 @@ local function block(parent, key, path)
       path,
       string.format("%s must be a block of settings with nested keys", path),
       string.format('Write "%s:" on its own line, with the settings indented below it.', key)
+    )
+  end
+  return value
+end
+
+-- video.reducedMotion (task 023): a YAML true or false. Pandoc reads unquoted
+-- booleans as Lua booleans, so text such as "true" is an error.
+local function flag(video, key)
+  local value = video and video[key]
+  if value == nil then
+    return M.DEFAULTS[key]
+  end
+  if type(value) ~= "boolean" then
+    invalid(
+      "video." .. key,
+      string.format("video.%s must be true or false, not text", key),
+      "Write true or false without quotes, for example reducedMotion: true."
     )
   end
   return value
@@ -102,8 +120,8 @@ local function background(video)
   return text
 end
 
---- Returns { width, height, fps, background } with defaults applied. These
---- are the only settings the IR carries (schema/ir-0.1.json). Every invalid
+--- Returns { width, height, fps, background, reducedMotion } with defaults applied.
+--- These are the only settings the IR carries (schema/ir-1.5.json). Every invalid
 --- key is reported, not only the first.
 function M.read(meta)
   local video = block(meta, "video", "video")
@@ -120,6 +138,9 @@ function M.read(meta)
     end, found),
     background = diagnostics.try(function()
       return background(video)
+    end, found),
+    reducedMotion = diagnostics.try(function()
+      return flag(video, "reducedMotion")
     end, found),
   }
   diagnostics.raise(found)
@@ -210,12 +231,30 @@ function M.scene_defaults(meta, fps)
   return { frames = frames, transition = transition }
 end
 
---- Returns the stored-only settings { title, theme } (nil when absent). They
---- are validated here and resolved by task 019; they stay out of the IR.
+-- The author's video.background as written, or nil when it is not set. The
+-- value was checked by M.read; a block or list here is ignored, not reported
+-- twice. Only an explicit value is kept: the theme supplies the default canvas.
+local function explicit_background(meta)
+  local video = meta.video
+  if not shapes.is_map(video) then
+    return nil
+  end
+  local value = video.background
+  if value == nil or shapes.is_map(value) or shapes.is_list(value) then
+    return nil
+  end
+  return shapes.text(value)
+end
+
+--- Returns the stored-only settings { title, theme, background } (nil when
+--- absent). They are validated here and resolved by the CLI and validator
+--- (task 019, 019a); they stay out of the IR. `background` is set only when
+--- video.background is written, so the renderer can tell it from the default.
 function M.stored(meta)
   return {
     title = stored_text(meta.title, "title"),
     theme = stored_text(meta.theme, "theme"),
+    background = explicit_background(meta),
   }
 end
 

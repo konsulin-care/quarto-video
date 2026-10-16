@@ -194,6 +194,17 @@ return {
     h.eq(config.scene_defaults(h.doc("", "").meta, 30).transition, nil, "transition")
   end,
 
+  ["an explicit video.background is stored for the renderer"] = function()
+    local stored = config.stored(h.doc("", front('  background: "#10131C"\n')).meta)
+    h.eq(stored.background, "#10131C", "background")
+  end,
+
+  ["an absent video.background is not stored, so the theme supplies the canvas"] = function()
+    local stored = config.stored(h.doc("", front("  fps: 30\n")).meta)
+    h.eq(stored.background, nil, "background")
+    h.eq(config.read(h.doc("", front("  fps: 30\n")).meta).background, "#000000", "IR default")
+  end,
+
   ["a list theme is E_SETTING_INVALID"] = function()
     local meta = h.doc("", "---\ntheme:\n  - modern\n---\n\n").meta
     h.code_is(function()
@@ -214,5 +225,21 @@ return {
       config.output(h.doc("", "---\nvideo:\n  output:\n    - a.mp4\n---\n\n").meta)
     end, "E_SETTING_INVALID", "list output")
     h.eq(diagnostic.property, "video.output", "property")
+  end,
+  ["reducedMotion defaults to false"] = function()
+    h.eq(read_fields(FULL).reducedMotion, false, "default")
+    h.eq(read_fields("").reducedMotion, false, "no video block")
+  end,
+
+  ["reducedMotion true and false are read as booleans"] = function()
+    h.eq(read_fields(FULL .. "  reducedMotion: true\n").reducedMotion, true, "true")
+    h.eq(read_fields(FULL .. "  reducedMotion: false\n").reducedMotion, false, "false")
+  end,
+
+  ["reducedMotion as text is E_SETTING_INVALID"] = function()
+    local diagnostic = h.code_is(function()
+      config.read(h.doc("", front(FULL .. '  reducedMotion: "true"\n')).meta)
+    end, "E_SETTING_INVALID", "video.reducedMotion")
+    h.eq(diagnostic.suggestion:find("true or false", 1, true) ~= nil, true, "suggestion")
   end,
 }

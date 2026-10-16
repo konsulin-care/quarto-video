@@ -11,25 +11,48 @@ import {
   type IrVideoWithTimeline,
 } from "@quarto-video/ir";
 import {
+  listAnimations,
   listComponents,
-  listTransitions,
+  listTransitionPresets,
+  type AnimationPreset,
   type ComponentContract,
+  type TransitionPreset,
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
-import { checkAssets, type AssetRef } from "./stages/assets.js";
+import { checkAnimations } from "./stages/animation.js";
+import { checkKinetic } from "./stages/kinetic.js";
+import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
+import { resolveData } from "./stages/data.js";
+import { withNumbers } from "./stages/number.js";
+import { checkProps } from "./stages/props.js";
 import { checkTimeline } from "./stages/timeline.js";
 
-/** Stage 3 input: the asset references to check, and the absolute project root they resolve in. */
+/**
+ * Stage 3 input: the absolute project root the references resolve in, and the
+ * references to check. Unset `refs` means the image blocks of the IR (ADR-0013).
+ */
 export interface AssetCheck {
   root: string;
-  refs: readonly AssetRef[];
+  refs?: readonly AssetRef[];
 }
 
 export interface ManifestCheck {
   /** The manifest when it passed every stage; null when any stage failed. */
   ir: IrVideo | null;
   diagnostics: Diagnostic[];
+}
+
+/**
+ * Stable sort by line: the scenes' errors in document order, and the errors of
+ * one scene in the order its checks ran. Errors without a line come last.
+ */
+export function inDocumentOrder(list: readonly Diagnostic[]): Diagnostic[] {
+  const at = (d: Diagnostic) => d.line ?? Number.MAX_SAFE_INTEGER;
+  return list
+    .map((diagnostic, index) => ({ diagnostic, index }))
+    .sort((a, b) => at(a.diagnostic) - at(b.diagnostic) || a.index - b.index)
+    .map((entry) => entry.diagnostic);
 }
 
 /** Runs each stage in order and stops after the first one that reports an error. */
@@ -60,16 +83,18 @@ export function schemaDiagnostic(error: IrError, file: string): Diagnostic {
 /**
  * Stages 2 to 4 for the manifest the filter wrote (`file`, project-relative).
  * An unsupported version is E_IR_UNSUPPORTED_VERSION (ADR-0007). Contracts read
- * the slots of IR 0.2 or later (ADR-0004); a 0.1 manifest is an error. Stage 3
- * checks `assets` when given (ADR-0006). Stage 4 checks transitions and the
- * timeline (ADR-0005; 0.3 and 1.0).
+ * the slots of IR 0.2 or later (ADR-0004); a 0.1 manifest is an error. Stage 2
+ * also checks scene animations against `animations` (ADR-0011). Stage 3 checks
+ * `assets` when given (ADR-0006). Stage 4 checks transitions and the timeline
+ * (ADR-0005; 0.3 and later).
  */
 export function checkManifest(
   json: unknown,
   file: string,
   components: readonly ComponentContract[] = listComponents(),
-  transitions: readonly string[] = listTransitions(),
+  transitions: readonly TransitionPreset[] = listTransitionPresets(),
   assets?: AssetCheck,
+  animations: readonly AnimationPreset[] = listAnimations(),
 ): ManifestCheck {
   const state: { ir?: IrVideoV02 | IrVideoWithTimeline } = {};
   const diagnostics = runStages([
@@ -95,9 +120,28 @@ export function checkManifest(
     },
     () => {
       const ir = state.ir;
-      return ir === undefined ? [] : checkContracts(ir, components);
+      if (ir === undefined) return [];
+      const found = inDocumentOrder([
+        ...checkContracts(ir, components),
+        ...checkProps(ir, components),
+        ...checkAnimations(ir, components, animations),
+        ...checkKinetic(ir),
+      ]);
+      // Number props become JSON numbers (ADR-0015); with errors the run stops here.
+      state.ir = withNumbers(ir, components);
+      return found;
     },
-    () => (assets === undefined ? [] : checkAssets(assets.refs, assets.root)),
+    () => {
+      if (assets === undefined) return [];
+      const ir = state.ir;
+      // Unset refs: the image blocks of the IR (ADR-0006, ADR-0013).
+      const refs = assets.refs ?? (ir === undefined ? [] : assetRefsOf(ir));
+      const assetErrors = checkAssets(refs, assets.root);
+      if (ir === undefined) return assetErrors;
+      const data = resolveData(ir, components, assets.root);
+      state.ir = data.ir;
+      return [...assetErrors, ...data.diagnostics];
+    },
     () => {
       const ir = state.ir;
       return ir === undefined ? [] : checkTimeline(ir, transitions);

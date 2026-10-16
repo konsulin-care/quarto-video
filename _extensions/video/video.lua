@@ -52,7 +52,7 @@ function Pandoc(doc)
   local output = diagnostics.try(function()
     return config.output(doc.meta)
   end, found)
-  diagnostics.try(function()
+  local stored = diagnostics.try(function()
     return config.stored(doc.meta)
   end, found)
   -- With settings in error the frames are discarded, so fps 1 is a placeholder.
@@ -82,5 +82,11 @@ function Pandoc(doc)
   end
   diagnostics.write(diagnostics_path, {})
   manifest.write(path, manifest.build(video, list, file_name))
-  manifest.write(render_path, { output = output })
+  -- The theme name is resolved by the validator (E_THEME_UNKNOWN), not here.
+  -- The explicit background is kept too; the renderer's canvas default is the theme's.
+  manifest.write(render_path, {
+    output = output,
+    theme = stored and stored.theme,
+    background = stored and stored.background,
+  })
 end

@@ -1,0 +1,56 @@
+---
+title: "Component bullets"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="bullets" duration="3s" animation="fade-in"}
+::: {.heading}
+## Three things to remember
+:::
+
+- Frames come from the timeline.
+- Each scene keeps its own length.
+- Presets are data, not code.
+:::
+
+::: {.scene component="bullets" duration="3s" animation="slide-up"}
+::: {.heading}
+## Next steps
+:::
+
+- Write the outline.
+- Pick the theme.
+- Check the fonts.
+- Render a draft.
+:::
+
+::: {.scene component="bullets" duration="3s" animation="reveal"}
+::: {.heading}
+## Why it matters
+:::
+
+- Points appear in the order written.
+- A compact list keeps the slide readable.
+- Long points wrap inside the safe area.
+:::
+
+::: {.scene component="bullets" duration="3s"}
+- A long point that runs over more than one line so that the wrap inside the safe area is checked at the full frame width.
+- A second long point, also written as one sentence, to check the line length against the bullet column.
+- A third point that is shorter.
+- A fourth point with a little more text than the others, so the rows differ in height.
+- A fifth point, which should still sit inside the frame.
+- The sixth and last point, shown on the final frame of the video.
+:::
+
+::: {.scene component="bullets" duration="3s"}
+::: {.heading}
+## Two points
+:::
+
+- One.
+- Two.
+:::

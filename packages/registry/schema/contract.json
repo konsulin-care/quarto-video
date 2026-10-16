@@ -79,6 +79,9 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 400
+    },
+    "textFit": {
+      "$ref": "#/$defs/textFit"
     }
   },
   "$defs": {
@@ -93,7 +96,17 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "enum": ["paragraph", "heading", "list", "code-block"]
+            "enum": ["paragraph", "heading", "list", "code-block", "image"]
+          }
+        },
+        "maxBlocks": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minItems", "maxItems"],
+          "properties": {
+            "minItems": { "type": "integer", "minimum": 1 },
+            "maxItems": { "type": "integer", "minimum": 1 }
           }
         }
       }
@@ -103,16 +116,52 @@
       "additionalProperties": false,
       "required": ["type"],
       "properties": {
-        "type": { "enum": ["string", "boolean", "enum"] },
+        "type": {
+          "enum": ["string", "boolean", "enum", "number", "csv", "column"]
+        },
+        "min": {
+          "type": "number",
+          "description": "For number: the smallest allowed value (inclusive). ADR-0015."
+        },
+        "max": {
+          "type": "number",
+          "description": "For number: the largest allowed value (inclusive). ADR-0015."
+        },
+        "integer": {
+          "type": "boolean",
+          "description": "For number: the value must be a whole number. ADR-0015."
+        },
         "enum": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
           "items": { "type": "string", "minLength": 1 }
         },
+        "required": { "type": "boolean" },
+        "of": {
+          "type": "string",
+          "pattern": "^[a-z][a-zA-Z0-9]*$",
+          "maxLength": 64
+        },
+        "numeric": { "type": "boolean" },
         "default": {}
       },
       "allOf": [
+        {
+          "if": {
+            "required": ["type"],
+            "properties": { "type": { "const": "number" } }
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                { "required": ["min"], "properties": { "min": {} } },
+                { "required": ["max"], "properties": { "max": {} } },
+                { "required": ["integer"], "properties": { "integer": {} } }
+              ]
+            }
+          }
+        },
         {
           "if": { "properties": { "type": { "const": "enum" } } },
           "then": {
@@ -120,8 +169,52 @@
             "properties": { "enum": { "type": "array" } }
           },
           "else": { "not": { "required": ["enum"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "column" } } },
+          "then": {
+            "required": ["of"],
+            "properties": { "of": { "type": "string" } }
+          },
+          "else": {
+            "not": {
+              "required": ["of"],
+              "properties": { "of": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "column" } } },
+          "else": {
+            "not": {
+              "required": ["numeric"],
+              "properties": { "numeric": { "type": "boolean" } }
+            }
+          }
         }
       ]
+    },
+    "textFit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max", "min"],
+      "properties": {
+        "max": { "$ref": "#/$defs/scaleName" },
+        "min": { "$ref": "#/$defs/scaleName" },
+        "subtitle": { "$ref": "#/$defs/textRange" }
+      }
+    },
+    "textRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max", "min"],
+      "properties": {
+        "max": { "$ref": "#/$defs/scaleName" },
+        "min": { "$ref": "#/$defs/scaleName" }
+      }
+    },
+    "scaleName": {
+      "enum": ["caption", "body", "subtitle", "title"]
     },
     "idList": {
       "type": "array",

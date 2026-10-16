@@ -40,10 +40,36 @@ export function parseContract(text: string, file: string): ComponentContract {
       `${file}: id "${contract.id}" must match the file name (${expectedFile})`,
     );
   }
+  for (const [name, slot] of Object.entries(contract.slots)) {
+    const limit = slot.items;
+    if (limit !== undefined && limit.maxItems < limit.minItems) {
+      throw new RegistryError(
+        `${file}: /slots/${name}/items: maxItems (${limit.maxItems}) is below minItems (${limit.minItems})`,
+      );
+    }
+  }
   if (contract.duration.maxMs < contract.duration.minMs) {
     throw new RegistryError(
       `${file}: /duration: maxMs (${contract.duration.maxMs}) is below minMs (${contract.duration.minMs})`,
     );
+  }
+  for (const [name, prop] of Object.entries(contract.props)) {
+    if (
+      prop.min !== undefined &&
+      prop.max !== undefined &&
+      prop.min > prop.max
+    ) {
+      throw new RegistryError(
+        `${file}: /props/${name}: min (${prop.min}) is above max (${prop.max})`,
+      );
+    }
+    if (prop.type !== "column") continue;
+    const target = prop.of === undefined ? undefined : contract.props[prop.of];
+    if (target?.type !== "csv") {
+      throw new RegistryError(
+        `${file}: /props/${name}/of: "${prop.of ?? ""}" must name a csv prop of this component`,
+      );
+    }
   }
   return contract;
 }

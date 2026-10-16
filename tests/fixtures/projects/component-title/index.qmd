@@ -1,0 +1,43 @@
+---
+title: "Component title"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="title" duration="3s" animation="fade-in"}
+# Welcome to the course
+
+::: {.subtitle}
+A short subtitle under the title.
+:::
+:::
+
+::: {.scene component="title" duration="3s" animation="slide-up"}
+# Why GPUs matter
+
+::: {.subtitle}
+Parallel hardware in one minute.
+:::
+:::
+
+::: {.scene component="title" duration="3s" animation="reveal"}
+# Next: memory
+
+::: {.subtitle}
+Where the data lives.
+:::
+:::
+
+::: {.scene component="title" duration="4s"}
+# The opening title of a video can run to a full sentence, so long text must wrap inside the safe area
+
+::: {.subtitle}
+Long titles wrap and stay inside the safe area.
+:::
+:::
+
+::: {.scene component="title" duration="2s"}
+# The end
+:::

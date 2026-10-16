@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/preset-kinetic",
+  "theme": "modern",
+  "frames": [0, 36, 89],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

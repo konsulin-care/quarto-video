@@ -1,0 +1,11 @@
+---
+title: "Theme render option"
+theme: retro
+video:
+  width: 640
+  height: 360
+---
+
+::: {.scene component="title" duration="1s"}
+Front matter names a theme that is not registered.
+:::

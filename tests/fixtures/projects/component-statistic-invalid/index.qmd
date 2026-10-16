@@ -1,0 +1,78 @@
+---
+title: "Component statistic invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statistic" duration="2s" value="42"}
+::: {.context}
+A statistic with no label.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="abc"}
+::: {.label}
+The value is not a number.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s"}
+::: {.label}
+The value prop is missing.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="42" decimals="9"}
+::: {.label}
+Decimals above the maximum of 6.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="42" colour="red"}
+::: {.label}
+An attribute the component does not have.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="42"}
+::: {.label}
+- A list is not a label.
+- Second item.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="42"}
+::: {.label}
+The label is fine.
+:::
+
+::: {.footnote}
+A slot the statistic does not have.
+:::
+:::
+
+::: {.scene component="statistic" duration="0.5s" value="42"}
+::: {.label}
+Too short to read.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="42" animation="bounce"}
+::: {.label}
+Unknown animation.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value="1e16"}
+::: {.label}
+Above the largest value, 1e15.
+:::
+:::
+
+::: {.scene component="statistic" duration="2s" value=""}
+::: {.label}
+An empty value.
+:::
+:::

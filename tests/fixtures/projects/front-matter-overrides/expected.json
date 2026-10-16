@@ -57,11 +57,12 @@
       }
     }
   ],
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.5",
   "settings": {
     "background": "#10131C",
     "fps": 24,
     "height": 720,
+    "reducedMotion": false,
     "width": 1280
   },
   "timeline": {

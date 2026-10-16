@@ -1,7 +1,7 @@
 // IR 0.2 content nodes and version handling (ADR-0004; PRD §8.2).
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { plainText } from "../src/text.js";
+import { plainText, slotTexts } from "../src/text.js";
 import { validateIr } from "../src/validate.js";
 
 const load = (name: string): Record<string, unknown> =>
@@ -107,7 +107,7 @@ describe("IR 0.2 content", () => {
           path: "/schemaVersion",
           code: "E_IR_UNSUPPORTED_VERSION",
           message:
-            '"0.4" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0',
+            '"0.4" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5',
         },
       ],
     });
@@ -156,5 +156,39 @@ describe("plainText", () => {
 
   it("is empty when there is no default slot", () => {
     expect(plainText({ slots: { left: [] as never } })).toBe("");
+  });
+});
+
+describe("slotTexts", () => {
+  it("gives IR 0.1 content its text under default", () => {
+    const scene = (load("minimal.json")["scenes"] as { content: never }[])[0]!;
+    expect(slotTexts(scene.content)).toEqual({ default: "Why GPUs Matter" });
+  });
+
+  it("gives each slot its own lines and leaves out a slot the scene lacks", () => {
+    const content = {
+      slots: {
+        default: [
+          {
+            type: "heading" as const,
+            level: 1,
+            inlines: [{ type: "text" as const, text: "Title" }],
+          },
+        ],
+        subtitle: [
+          {
+            type: "paragraph" as const,
+            inlines: [{ type: "text" as const, text: "Subtitle" }],
+          },
+        ],
+      },
+    };
+    expect(slotTexts(content)).toEqual({
+      default: "Title",
+      subtitle: "Subtitle",
+    });
+    expect(slotTexts({ slots: { default: [] as never } })).toEqual({
+      default: "",
+    });
   });
 });

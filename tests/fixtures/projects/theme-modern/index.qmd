@@ -1,0 +1,8 @@
+---
+title: "Named theme"
+theme: modern
+---
+
+::: {.scene component="title" duration="2s"}
+This document names a registered theme.
+:::

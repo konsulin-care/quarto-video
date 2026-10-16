@@ -1,0 +1,9 @@
+---
+title: "Front matter reduced motion invalid"
+video:
+  reducedMotion: "true"
+---
+
+::: {.scene component="title" duration="1s"}
+Quoted
+:::

@@ -1,0 +1,15 @@
+---
+title: "Kinetic fallback warning"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="3s" animation="kinetic"}
+Every one of these forty words is shown in a statement that is far too long for word by word kinetic motion, so the validator warns and the renderer draws the whole sentence with fade in instead of today now.
+:::
+
+::: {.scene component="statement" duration="2s" animation="kinetic"}
+Twelve words sit exactly at the limit, so kinetic still applies here.
+:::

@@ -5,18 +5,19 @@ import { runComponents } from "./commands/components.js";
 import { runDoctor } from "./commands/doctor.js";
 import { runRender } from "./commands/render.js";
 import { runValidate } from "./commands/validate.js";
+import { parseRenderArgs } from "./render-args.js";
+import { runPreflight } from "./preflight.js";
 import { selectRenderer } from "./renderer-port.js";
 
 const USAGE =
   "usage: video validate <path> [--print-ir | --json]\n" +
-  "       video render <path> [--json]\n" +
+  "       video render <path> [--json] [--theme <name>]\n" +
   "       video components [--json]\n" +
   "       video doctor [--json]\n";
 
 async function renderCommand(args: string[]): Promise<number> {
-  const flags = args.filter((arg) => arg.startsWith("-"));
-  const paths = args.filter((arg) => !arg.startsWith("-"));
-  if (flags.some((flag) => flag !== "--json") || paths.length !== 1) {
+  const parsed = parseRenderArgs(args);
+  if (parsed === null) {
     process.stderr.write(USAGE);
     return EXIT_USAGE;
   }
@@ -31,9 +32,14 @@ async function renderCommand(args: string[]): Promise<number> {
   }
   return runRender(
     {
-      path: paths[0] ?? "",
+      path: parsed.path,
       browserExecutable: process.env["QV_BROWSER_EXECUTABLE"] ?? null,
-      json: flags.includes("--json"),
+      json: parsed.json,
+      theme: parsed.theme,
+      // Stage 5 (tools, browser, writable output, disk) runs here, at the CLI
+      // boundary, once stages 1–4 have passed inside runRender.
+      preflight: (output, buildDir) =>
+        runPreflight(output, buildDir, process.cwd()),
     },
     process.cwd(),
     renderer,

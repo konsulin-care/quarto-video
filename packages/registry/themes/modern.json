@@ -1,0 +1,32 @@
+{
+  "id": "modern",
+  "version": "1.0.0",
+  "purpose": "Dark, high-contrast default: one open-licensed sans-serif family, bundled with the renderer.",
+  "colors": {
+    "background": "#10131C",
+    "surface": "#1B2030",
+    "text": "#F5F7FA",
+    "mutedText": "#B8C0D0",
+    "accent": "#7AA2FF"
+  },
+  "contrastPairs": [
+    { "text": "text", "background": "background" },
+    { "text": "text", "background": "surface" },
+    { "text": "mutedText", "background": "background" },
+    { "text": "mutedText", "background": "surface" }
+  ],
+  "typography": {
+    "fontFamily": "Inter",
+    "weights": { "regular": 400, "semibold": 600, "bold": 700 },
+    "scale": { "caption": 28, "body": 40, "subtitle": 56, "title": 96 },
+    "lineHeight": { "tight": 1.1, "body": 1.4 }
+  },
+  "space": { "xs": 8, "sm": 16, "md": 32, "lg": 64 },
+  "radius": { "sm": 8, "md": 16 },
+  "safeArea": {
+    "16:9": { "xPercent": 6, "yPercent": 8 },
+    "9:16": { "xPercent": 8, "yPercent": 6 },
+    "1:1": { "xPercent": 7, "yPercent": 7 }
+  },
+  "motion": { "fastMs": 200, "baseMs": 400, "slowMs": 800 }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "stagger",
+  "version": "1.0.0",
+  "purpose": "The items of a list appear one after another, each fading in while it rises into place, and all are in place by 70% of the scene.",
+  "compatibleComponents": ["bullets", "end-card"],
+  "minFrames": 45,
+  "shortScene": "static",
+  "reducedMotion": "static"
+}

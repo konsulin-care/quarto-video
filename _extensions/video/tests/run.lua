@@ -18,8 +18,10 @@ local SUITES = {
   "tests.test_json",
   "tests.test_diagnostics",
   "tests.test_transitions",
+  "tests.test_animations",
   "tests.test_timeline",
   "tests.test_generator",
+  "tests.test_image",
 }
 
 local passed, failed = 0, 0

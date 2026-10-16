@@ -40,3 +40,36 @@ test_unknown_suite_fails() {
   assert_fails
   assert_contains "unknown suite: bogus"
 }
+
+test_render_suites_fail_fast_without_browser() {
+  make_repo
+  mkdir -p browsers
+  printf '{"scripts":{"test":"node -e 0","test:integration":"node -e 0"}}\n' >package.json
+  capture env -u QV_BROWSER_EXECUTABLE PLAYWRIGHT_BROWSERS_PATH="$REPO/browsers" \
+    "$SCRIPTS_DIR/test.sh" --all --suite unit --suite integration
+  assert_fails
+  assert_contains "QV_BROWSER_EXECUTABLE"
+  assert_contains "renderer/remotion/README.md"
+  assert_not_contains "==> test: unit"
+}
+
+test_render_suite_gets_the_resolved_browser() {
+  make_repo
+  mkdir -p browsers/chromium_headless_shell-1194/chrome-linux
+  : >browsers/chromium_headless_shell-1194/chrome-linux/headless_shell
+  printf '{"scripts":{"test:integration":"node -e \\"process.stdout.write(process.env.QV_BROWSER_EXECUTABLE)\\""}}\n' >package.json
+  capture env -u QV_BROWSER_EXECUTABLE PLAYWRIGHT_BROWSERS_PATH="$REPO/browsers" \
+    "$SCRIPTS_DIR/test.sh" --suite integration
+  assert_status 0
+  assert_contains "$REPO/browsers/chromium_headless_shell-1194/chrome-linux/headless_shell"
+}
+
+test_non_render_suites_run_without_browser() {
+  make_repo
+  mkdir -p browsers
+  printf '{"scripts":{"test":"node -e 0","test:lua":"node -e 0"}}\n' >package.json
+  capture env -u QV_BROWSER_EXECUTABLE PLAYWRIGHT_BROWSERS_PATH="$REPO/browsers" \
+    "$SCRIPTS_DIR/test.sh" --all --suite unit --suite lua
+  assert_status 0
+  assert_contains "test: passed (unit lua)"
+}

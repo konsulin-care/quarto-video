@@ -38,8 +38,10 @@ conservative option applies (AGENT.md). IR 0.2 has no transitions and no timelin
   `.scene`. `transitionDuration` uses the ADR-0003 form and rounding; zero and
   negative values are `E_DURATION_RANGE`, a bad form is `E_DURATION_SYNTAX`.
 - **Names.** Registry data `packages/registry/transitions.json`: `cut` and `fade`.
-  Names outside it are `E_TRANSITION_UNKNOWN` (stage 4). `fade` is accepted now and
-  drawn as a hard cut until task 022.
+  Names outside it are `E_TRANSITION_UNKNOWN` (stage 4). `fade` is a crossfade over
+  the overlap: the incoming scene fades in while the outgoing scene stays opaque
+  beneath it, with no background dip (task 022). Corrected 2026-10-15: the earlier
+  wording, "drawn as a hard cut until task 022", was out of date; the decision is unchanged.
 - **Cut.** `cut` takes 0 frames. `transitionDuration` with `cut`, or without a
   transition, is `E_TRANSITION_DURATION`.
 - **First and last scene.** The first takes no transition: an explicit non-cut one is
@@ -60,8 +62,12 @@ conservative option applies (AGENT.md). IR 0.2 has no transitions and no timelin
   The validator recomputes it with `resolveTimeline` (`packages/ir/src/timeline.ts`)
   and rejects a difference (`E_TIMELINE_MISMATCH`). Both pass
   `packages/ir/test-vectors/timeline.json`.
-- **Renderer.** Each scene is shown from its `startFrame` until the next starts (or the
-  total). Negative values are rejected earlier (ADR-0003; IR schema `minimum: 0`).
+- **Renderer.** Each scene plays its own `durationFrames` from its `startFrame`, so a
+  transition's overlap is shown by both scenes (the incoming scene's
+  `transition.durationFrames`; `cut` has none). Negative values are rejected earlier
+  (ADR-0003; IR schema `minimum: 0`). Corrected 2026-10-15: the earlier wording,
+  "until the next starts", contradicted the overlap; the decision is unchanged. See
+  task 022.
 - **Placement.** Stage 4 is `packages/validator/src/stages/timeline.ts`; the DSL rules
   above are stage 1.
 
@@ -78,7 +84,8 @@ conservative option applies (AGENT.md). IR 0.2 has no transitions and no timelin
   uses `transition: cut` in its defaults.
 - A default name that no scene uses is not checked by stage 4 (the IR does not carry
   it). A single-scene document with a bad default name passes. Follow-up for a human.
-- `fade` renders as a hard cut until task 022. Authors see no warning for this yet.
+- `fade` is a true crossfade (task 022), not a hard cut. The outgoing scene stays opaque
+  beneath the incoming one for the whole overlap. Corrected 2026-10-15.
 
 ## Verification
 - `npm run check`: `packages/ir/test/timeline.test.ts` (every vector; 0.3 schema rules;

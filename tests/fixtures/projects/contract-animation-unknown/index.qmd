@@ -1,0 +1,15 @@
+---
+title: "Contract animation unknown"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" animation="fade-in"}
+Known preset
+:::
+
+::: {#intro .scene component="title" duration="2s" animation="spin"}
+Preset not registered yet
+:::

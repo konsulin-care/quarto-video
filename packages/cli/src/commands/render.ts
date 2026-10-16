@@ -1,19 +1,17 @@
-// `video render <path>`: stages 1–4 (check.ts), stage 5 preflight (preflight.ts),
-// then the renderer writes to a temp file in .video-build/. Stage 6 (the output
-// check) runs on that file, and it is renamed to video.output only when it
-// matches the IR (PRD §4.2, §9.1, §11.2). stdout: `NN%` progress lines, then
-// `Wrote <path>`. stderr: errors. Exit codes: 0 OK, 1 validation or render
-// failure, 2 usage or environment (preflight).
-import { mkdir, rename, rm } from "node:fs/promises";
+// `video render <path>`: stages 1–4 (check.ts), then the stage 5 gate the CLI
+// supplies (cli.ts runs preflight.ts), then the renderer writes to a temp file in
+// .video-build/. Stage 6 (the output check) runs on that file, and it is renamed
+// to video.output only when it matches the IR (PRD §4.2, §9.1, §11.2). stdout:
+// `NN%` progress lines, then `Wrote <path>`. stderr: errors. Exit codes: 0 OK,
+// 1 validation or render failure, 2 usage or environment (preflight).
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import type { RenderFn, RenderProgress } from "@quarto-video/remotion";
 import { checkOutput, hasErrors } from "@quarto-video/validator";
 import { checkProject } from "../check.js";
 import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { exitCodeFor } from "../exit-status.js";
-import { manifestPath } from "../filter.js";
-import { runPreflight } from "../preflight.js";
-import { outputPath } from "../render-config.js";
+import { explicitBackground, outputPath } from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
 import { report } from "../report.js";
 import { readOutputFacts } from "../output-probe.js";
@@ -21,6 +19,8 @@ import { readOutputFacts } from "../output-probe.js";
 /** Partial output, inside the build dir; never left behind (see the CLI README). */
 const TEMP_RELATIVE = join(".video-build", "render.partial.mp4");
 const BUILD_RELATIVE = ".video-build";
+// The validated IR the renderer reads: CSV tables are resolved here (ADR-0014).
+const RESOLVED_RELATIVE = join(".video-build", "resolved.json");
 
 export interface RenderOptions {
   /** The path as the user typed it (directory or `.qmd` file). */
@@ -29,6 +29,15 @@ export interface RenderOptions {
   browserExecutable: string | null;
   /** Diagnostics as a JSON array on stdout (report.ts). */
   json: boolean;
+  /** Theme name from `--theme`; null or unset falls back to front matter, then `modern`. */
+  theme?: string | null;
+  /**
+   * Stage 5 gate, supplied by the CLI boundary (cli.ts) and run after stages 1–4
+   * pass. Given the output path and the build dir, it returns problem lines; an
+   * empty list lets the render start. Unset skips it, so the render alone runs
+   * with no browser or tools (tests inject a renderer this way).
+   */
+  preflight?: ((output: string, buildDir: string) => string[]) | null;
 }
 
 /** Prints each whole-percent change once: `42%`. */
@@ -65,7 +74,7 @@ export async function runRender(
     return EXIT_USAGE;
   }
 
-  const check = checkProject(project);
+  const check = checkProject(project, options.theme ?? null);
   if (check.kind === "environment") {
     process.stderr.write(`video: ${check.message}\n`);
     return EXIT_USAGE;
@@ -80,11 +89,8 @@ export async function runRender(
   const temp = join(project.root, TEMP_RELATIVE);
   try {
     const output = outputPath(project);
-    const problems = runPreflight(
-      output,
-      join(project.root, BUILD_RELATIVE),
-      cwd,
-    );
+    const problems =
+      options.preflight?.(output, join(project.root, BUILD_RELATIVE)) ?? [];
     if (problems.length > 0) {
       for (const problem of problems) {
         process.stderr.write(`video: ${problem}\n`);
@@ -92,10 +98,21 @@ export async function runRender(
       return EXIT_USAGE;
     }
     await rm(temp, { force: true });
-    await renderer(manifestPath(project), temp, {
-      browserExecutable: options.browserExecutable,
-      onProgress: percentPrinter(),
-    });
+    const resolved = join(project.root, RESOLVED_RELATIVE);
+    await mkdir(dirname(resolved), { recursive: true });
+    await writeFile(resolved, `${JSON.stringify(check.ir, null, 2)}\n`);
+    try {
+      await renderer(resolved, temp, {
+        browserExecutable: options.browserExecutable,
+        onProgress: percentPrinter(),
+        theme: check.theme,
+        background: explicitBackground(project),
+        assetRoot: project.root,
+        workDir: join(project.root, BUILD_RELATIVE),
+      });
+    } finally {
+      await rm(resolved, { force: true });
+    }
     const found = checkOutput(
       check.ir,
       readOutputFacts(temp, relative(project.root, output)),

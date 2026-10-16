@@ -1,0 +1,9 @@
+{
+  "id": "count-up",
+  "version": "1.0.0",
+  "purpose": "The value of a statistic counts up from zero to its exact value, which is shown from 70% of the scene.",
+  "compatibleComponents": ["statistic"],
+  "minFrames": 45,
+  "shortScene": "static",
+  "reducedMotion": "static"
+}

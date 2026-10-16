@@ -1,0 +1,33 @@
+---
+title: "Preset stagger"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="bullets" duration="3s" animation="stagger"}
+::: {.heading}
+## Remember
+:::
+
+- Frames set the pace.
+- Each scene keeps its length.
+- Items keep their order.
+:::
+
+::: {.scene component="end-card" duration="3s" animation="stagger"}
+# Thanks!
+
+::: {.credits}
+- Script: Jane Author
+- Narration: Sam Voice
+- Music: Open Tune Library
+- Captions: Kim Subtitle
+:::
+:::
+
+::: {.scene component="bullets" duration="1s" animation="stagger"}
+- A one second scene shows every item at once.
+- Two.
+:::

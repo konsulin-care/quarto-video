@@ -1,5 +1,5 @@
 # videos/ — sample and acceptance video projects
-Status: `hello` (task 006) renders with `video render`, and with `quarto render` through its post-render hook (task 007a, ADR-0002). `gpu` (task 036) and `demo` (task 047) come later.
+Status: `hello` (task 006) renders with `video render`, and with `quarto render` through its post-render hook (task 007a, ADR-0002). `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) comes later.
 
 ## Purpose
 Real, renderable projects that show the DSL and prove the pipeline end to end
@@ -55,4 +55,4 @@ its status, so a failed render (for example a validation error) makes
   and licensed for redistribution (record source in `assets/SOURCES.md`).
 
 ## Related
-Tasks 006, 036, 047. `tests/README.md` for fixture projects.
+Tasks 006, 036, 047. `tests/README.md` for fixture projects. `videos/gpu` is authored only in the DSL: no renderer code (task 036).

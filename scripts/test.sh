@@ -4,10 +4,14 @@
 #   Suites: scripts unit lua integration visual.
 #   Default: all suites for --all; all but visual (CI only) otherwise.
 # A suite skips when its runner does not exist yet (see docs/testing.md).
+# integration and visual render through a Chromium headless shell: the runner
+# resolves it once (scripts/lib/browser.sh) and fails fast when it is missing.
 set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=scripts/lib/common.sh
 source "$here/lib/common.sh"
+# shellcheck source=scripts/lib/browser.sh
+source "$here/lib/browser.sh"
 
 ALL_SUITES=(scripts unit lua integration visual)
 
@@ -37,6 +41,16 @@ cd "$(git rev-parse --show-toplevel)"
 if [ "$SCOPE" != all ] && [ -z "$(collect_code_files "$SCOPE")" ]; then
   skip "no code files in scope '$SCOPE'"
   exit 0
+fi
+
+# Render suites need a headless shell; resolve it before any suite starts.
+for suite in "${suites[@]}"; do
+  case "$suite" in
+    integration | visual) needs_browser=1 ;;
+  esac
+done
+if [ -n "${needs_browser:-}" ] && ! resolve_browser; then
+  fail "no Chromium headless shell for the integration and visual suites: set QV_BROWSER_EXECUTABLE to its binary, or install one under PLAYWRIGHT_BROWSERS_PATH (see renderer/remotion/README.md, Browser). Nothing was run."
 fi
 
 # Run an npm script, skipping while the workspace or script does not exist.

@@ -1,0 +1,34 @@
+---
+title: "Component statement invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+::: {.caption}
+Only a caption, so the default slot is empty.
+:::
+:::
+
+::: {.scene component="statement" duration="1s"}
+Statement text.
+
+::: {.subtitle}
+A slot the statement does not have.
+:::
+:::
+
+::: {.scene component="statement" duration="1s"}
+1. A list is not a statement.
+2. Second item.
+:::
+
+::: {.scene component="statement" duration="0.5s"}
+Too short to read.
+:::
+
+::: {.scene component="statement" duration="1s" animation="bounce"}
+Unknown animation.
+:::

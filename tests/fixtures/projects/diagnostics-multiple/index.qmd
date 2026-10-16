@@ -15,6 +15,6 @@ No duration.
 Bad duration.
 :::
 
-::: {.scene component="title" duration="4s" animation="reveal"}
+::: {.scene .note component="title" duration="4s"}
 Unknown attribute.
 :::

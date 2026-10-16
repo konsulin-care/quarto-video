@@ -1,7 +1,8 @@
--- Builds the Video IR 1.0 manifest and writes it to
+-- Builds the Video IR 1.5 manifest and writes it to
 -- <project>/.video-build/manifest.json, plus the render settings that stay
--- outside the IR (<project>/.video-build/render.json). These are the only
--- files the filter writes (see _extensions/video/README.md).
+-- outside the IR (<project>/.video-build/render.json: output, theme name and an
+-- explicit background).
+-- These are the only files the filter writes (see _extensions/video/README.md).
 local json = require("lib.json")
 local timeline = require("lib.timeline")
 local generator = require("lib.generator")
@@ -17,12 +18,12 @@ function M.path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, FILE_NAME })
 end
 
---- Path of the render settings file (container settings, not IR; PRD §5.2).
+--- Path of the render settings file (container and theme settings, not IR; PRD §5.2).
 function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
---- Assembles the IR table. Field names follow schema/ir-1.0.json. The
+--- Assembles the IR table. Field names follow schema/ir-1.5.json. The
 --- timeline (ADR-0005) is resolved here from the scenes' durations and
 --- transitions.
 function M.build(settings, scenes, source_file)
@@ -35,13 +36,15 @@ function M.build(settings, scenes, source_file)
       component = scene.component,
       durationFrames = scene.durationFrames,
       transition = scene.transition,
+      animation = scene.animation,
+      props = scene.props,
       content = { slots = scene.slots },
       source = { file = source_file, line = scene.line },
     }
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
   return {
-    schemaVersion = "1.0",
+    schemaVersion = "1.5",
     type = "video",
     settings = settings,
     scenes = list,

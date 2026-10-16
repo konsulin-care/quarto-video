@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); stage 6 output check (018). Media metadata: tasks 037–038.
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media metadata: tasks 037–038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -12,15 +12,20 @@ form humans and AI agents can act on (PRD §9).
 - `parseDiagnostics` (`src/schema.ts`): checks JSON text against the schema.
 - Stage runner (`src/run.ts`, `checkManifest`) for PRD §9.1. Stage 2 is the IR
   schema, then the component contracts (`src/stages/contract.ts`: component,
-  slots, block kinds, duration; ADR-0004). Stage 4 is the timeline
+  slots, block kinds, duration; ADR-0004; `src/stages/animation.ts`: presets, ADR-0011;
+  `src/stages/props.ts`: props against the contract, ADR-0014; `src/stages/number.ts`: number props, ADR-0015, whose text becomes a JSON number in the resolved IR after stage 2 passes). Stage 3 has two parts:
+  asset references (`src/assets/`, `src/stages/assets.ts`), which run only when the
+  caller passes them, and data (`src/stages/data.ts`, `src/csv/parse.ts`, task 035):
+  each csv prop is read through the asset resolver and parsed (no code runs), column
+  props are checked against its header, and the parsed tables are added to the IR as
+  `tables` (ADR-0014). `video validate` and `video render` pass the project root, so
+  data runs for them. Stage 4 is the timeline
   (`src/stages/timeline.ts`: transition names, lengths, overlaps, and that the
   manifest's timeline is the resolved one; ADR-0005). Stage 3 (`src/assets/`,
-  `src/stages/assets.ts`) runs only when the caller passes asset references: the IR
-  carries none yet, so `video validate` does not run it. Stage 6 (`src/stages/output.ts`,
+  `src/stages/assets.ts`) checks the image blocks' files (ADR-0013) and reads the CSV props into `tables` (ADR-0014); a caller may pass its own references instead. Stage 6 (`src/stages/output.ts`,
   `checkOutput`) judges the rendered file from facts the CLI probes. Stage 1 is the Lua
-  filter; stage 5 preflight is in the CLI.
-- Depends on `@quarto-video/ir` (IR types, schema, `resolveTimeline`) and `@quarto-video/registry`
-  (contracts). Nothing depends on it except the CLI.
+  filter; stage 5 preflight is in the CLI. `checkTheme` (`src/stages/theme.ts`) resolves the theme name (stage 2).
+- Depends on `@quarto-video/ir` and `@quarto-video/registry` (contracts, themes); nothing depends on it except the CLI.
 - Asset resolution and the security boundary (ADR-0006): `src/assets/syntax.ts` (the text of a path), `src/assets/resolve.ts` (the file system: exact names, realpath inside the root).
 - Media metadata via `ffprobe`, cached in `.video-build/media.json` (task 037).
 
@@ -52,19 +57,27 @@ form humans and AI agents can act on (PRD §9).
 | `E_SCENE_NO_COMPONENT` | 1 filter | A `.scene` has no `component` attribute | 008 |
 | `E_SCENE_NO_DURATION` | 1 filter | A `.scene` has no `duration` attribute | 008 |
 | `E_SCENE_NESTED` | 1 filter | A `.scene` is nested inside another block | 008 |
-| `E_SCENE_SHAPE` | 1 filter | A `.scene` has an unknown class or attribute, its `{...}` cannot be read, or Pandoc does not read its fence as a block | 008 (widened 011, 015) |
+| `E_SCENE_SHAPE` | 1 filter, 2 contract | A `.scene` has an unknown class, its `{...}` cannot be read, or Pandoc does not read its fence as a block (filter); stage 2: an attribute that is not a scene attribute is not a prop of its component (ADR-0014) | 008 (widened 011, 015, 035) |
 | `E_SCENE_ID_INVALID` | 1 filter | A scene id (`#id`) is not a letter then lowercase letters, digits and hyphens (max 64); the suggestion is a valid id | 011 |
 | `E_SCENE_DUPLICATE_ID` | 1 filter | Two scenes have the same id (author ids or generated `scene-NNN`); the message names both lines | 011 |
 | `E_DURATION_SYNTAX` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is not a number of `s` or `ms` with up to 3 decimals, e.g. `"4"`, `"1e3s"` | 008 (widened 015) |
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 (widened 015) |
 | `E_CONTENT_UNSUPPORTED` | 1 filter | Scene content has Markdown the content model does not support (a table, raw HTML or comment, footnote, math, link, image, ...), a block with a bad or missing slot class, a duplicate or empty slot; the line is the element's (ADR-0004) | 012 |
-| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.0 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017) |
-| `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3 or 1.0, including numbers); the message lists the supported versions (ADR-0007) | 017 |
+| `E_IMAGE_BLOCK` | 1 filter | An image block (`.image`, ADR-0013) has no `src`, has no `alt`, a `fit` other than `cover` or `contain`, an unknown attribute, an id, extra classes or content, or a scene has a second image; the line is the block's | 033 |
+| `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.1 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017, 1.1 in 021) |
+| `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3, 1.0 or 1.1, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |
 | `E_SLOT_UNKNOWN` | 2 contract | A scene has content in a slot its component does not declare; the suggestion lists the slots | 014 |
 | `E_SLOT_REQUIRED` | 2 contract | A required slot of the scene's component has no content | 014 |
 | `E_SLOT_BLOCK_KIND` | 2 contract | A slot holds a block kind its contract does not accept (`paragraph`, `heading`, `list`, `code-block`); reported once per kind | 014 |
+| `E_SLOT_CONSTRAINT` | 2 contract | A slot breaks its contract's item limit: its one list has fewer or more items than the `items` range, or the slot holds more than one list; the message gives the limit | 027 |
+| `E_PROP_REQUIRED` | 2 contract | A prop the contract marks `required` is missing from the scene | 035 (ADR-0014) |
+| `E_PROP_VALUE` | 2 contract | A prop's value is empty, not one of its `enum`, not `true`/`false` for a boolean, or not a `.csv` path for a `csv` prop; a `number` prop is outside its `min`/`max`, not a whole number where `integer` is set, or not finite | 035 (ADR-0014), 031 (ADR-0015) |
+| `E_PROP_TYPE` | 2 contract | A `number` prop's text is not a number (`abc`, `1,000`, `NaN`): a decimal literal such as `42`, `-0.5` or `1e9` is one; the suggestion says how to write it | 031 (ADR-0015) |
 | `E_DURATION_BOUNDS` | 2 contract | A scene's duration is outside the component's `duration` bounds (inclusive, in ms as in the contract) | 014 |
+| `E_ANIMATION_UNKNOWN` | 1 filter, 2 contract | A scene's `animation` is not an animation name (filter: the syntax); stage 2: not a registered preset (`packages/registry/animations/`); the suggestion lists the known presets (ADR-0011) | 021 |
+| `E_ANIMATION_INCOMPATIBLE` | 2 contract | A registered preset does not apply to the scene's component (the component or the preset lacks the other); the suggestion lists the component's animations | 021 |
+| `E_THEME_UNKNOWN` | 2 contract | The document's `theme` is not a registered theme (`packages/registry/themes/`); the suggestion lists the available themes. A missing `theme` means `modern` | 019 |
 | `E_TRANSITION_UNKNOWN` | 1 filter, 4 timeline | A scene's `transition` is not a transition name (filter: the syntax); stage 4: not in the registry (`transitions.json`); the suggestion lists the known names | 015 |
 | `E_TRANSITION_DURATION` | 1 filter | A transition is missing its `transitionDuration`, a `cut` has one, or a `transitionDuration` has no transition (ADR-0005) | 015 |
 | `E_TRANSITION_FIRST_SCENE` | 1 filter, 4 timeline | The first scene has a transition with time in it; it has no earlier scene to overlap (ADR-0005) | 015 |
@@ -77,10 +90,16 @@ form humans and AI agents can act on (PRD §9).
 | `E_ASSET_SYMLINK` | 3 assets | An asset resolves, through a symlink, to a file outside the project root. The target is not printed | 016 |
 | `E_ASSET_URL` | 3 assets | An asset path has a URL scheme (`https:`, `file:`, `data:`, ...). Remote assets are not supported | 016 |
 | `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
+| `E_CSV_SYNTAX` | 3 data | A CSV prop's file is malformed: an unclosed or misplaced quote, a blank line, a row with the wrong number of fields, a missing or repeated header name, or no data rows. `line` is the CSV line | 035 (ADR-0014) |
+| `E_COLUMN_UNKNOWN` | 3 data | A column prop (for example `x` or `y` of `chart`) names no column of its CSV; the message lists the available columns | 035 (ADR-0014) |
+| `E_CSV_VALUE` | 3 data | A numeric column (`numeric` in the contract) has a cell that is not a number. `line` is the CSV line | 035 (ADR-0014) |
 | `E_OUTPUT_MISSING` | 6 output | No file at `video.output` after the render, or an empty one; the render fails and nothing is renamed into place | 018 |
 | `E_OUTPUT_UNREADABLE` | 6 output | The rendered file has no readable video stream | 018 |
 | `E_OUTPUT_MISMATCH` | 6 output | The rendered width, height, fps or frame count differs from the IR; `property` names it | 018 |
 | `E_FILTER_FAILED` | 1 filter | The filter failed without writing usable diagnostics | 008 |
+| `W_SLOT_TOO_MANY_BLOCKS` | 2 contract | Warning. A slot holds more blocks than its contract's `maxBlocks` (the statement's `default` shows one); the suggestion says how many to keep | 025 |
+| `W_TEXT_FIT` | 2 text fit | Warning. A component's text (contract `textFit`: the `default` slot, or the `subtitle` slot beside it) does not fit the frame even at the smallest size of its range; the suggestion says to shorten it or use a larger frame | 025, 026 |
+| `W_ANIMATION_FALLBACK` | 2 animation | Warning. A `kinetic` statement has more than 12 words (`KINETIC_MAX_WORDS`, `registry/kinetic`); its scene is drawn with `fade-in`. The suggestion says to shorten it or choose another preset | 026 |
 
 `E_SETTING_MISSING` (task 008) was retired in task 010 (every setting has a default).
 It is not emitted and must not be reused.
@@ -88,13 +107,11 @@ It is not emitted and must not be reused.
 ## Testing
 - Unit tests per stage in `test/`: formats, schema, exit predicate, the code table
   (`codes.test.ts`). Lua: `_extensions/video/tests/test_diagnostics.lua`.
-- Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`).
-- Stage 6: `test/output.test.ts` (each rule); `tests/integration/preflight-output.test.ts` (wrong frame count).
+- Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`). Stage 6: `test/output.test.ts`; `tests/integration/preflight-output.test.ts`.
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`
-  (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure).
-- Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects, symlinks created per test), `test/assets-stage.test.ts` (diagnostic shape, runner), `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`).
-- Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`).
+  (every `contract-*` fixture yields its `expected.json`; no render on stage 2 failure). Animations: `test/animation.test.ts` (unknown, incompatible, valid).
+- Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects), `test/assets-stage.test.ts`, `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`). Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`), Theme: `test/theme.test.ts`, `tests/integration/theme.test.ts`.
 
 ## Related
-Tasks 008, 011, 012, 014–018, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.
+Tasks 008, 011, 012, 014–018, 021, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.

@@ -1,0 +1,43 @@
+---
+title: "Component image invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="image" duration="2s"}
+::: {.caption}
+A caption and no image.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/photo.png" alt="A photo"}
+:::
+
+::: {.subtitle}
+A slot the image does not have.
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/photo.png" alt="A photo"}
+:::
+
+::: {.caption}
+# A heading is not a caption
+:::
+:::
+
+::: {.scene component="image" duration="2s"}
+Text is not an image.
+
+::: {.image src="assets/photo.png" alt="A photo"}
+:::
+:::
+
+::: {.scene component="image" duration="0.5s"}
+::: {.image src="assets/photo.png" alt="A photo"}
+:::
+:::

@@ -1,0 +1,42 @@
+---
+title: "Component end-card invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="end-card" duration="2s"}
+::: {.cta}
+Only a call to action, no message.
+:::
+:::
+
+::: {.scene component="end-card" duration="2s"}
+Message text.
+
+::: {.caption}
+A slot the end card does not have.
+:::
+:::
+
+::: {.scene component="end-card" duration="2s"}
+Message text.
+
+::: {.credits}
+A paragraph is not a credits list.
+:::
+:::
+
+::: {.scene component="end-card" duration="2s"}
+1. A list is not a message.
+2. Second item.
+:::
+
+::: {.scene component="end-card" duration="0.5s"}
+Too short to read.
+:::
+
+::: {.scene component="end-card" duration="2s" animation="bounce"}
+Unknown animation.
+:::

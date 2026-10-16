@@ -52,6 +52,9 @@ local function line_matches(finding, lines, n)
     -- An opener of a Div that names the class `text`.
     local name = (finding.text or ""):gsub("%-", "%%-")
     return name ~= "" and line:match("^[%s>]*:::+%s*{.*%." .. name .. "[%s}]") ~= nil
+  elseif kind == "image-block" then
+    -- An opener of a Div with the class `image` (the `nth` one of the scene).
+    return line:match("^[%s>]*:::+%s*{.*%.image[%s}]") ~= nil
   elseif kind == "list" then
     -- The first item of an ordered list that starts at `text`.
     return finding.text ~= nil and line:match("^%s*" .. finding.text .. "[.)]%s") ~= nil

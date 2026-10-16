@@ -1,0 +1,104 @@
+---
+title: "Why GPUs Matter"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+theme: modern
+---
+
+::: {.scene component="title" duration="5s" animation="reveal"}
+# Why GPUs Matter
+
+::: {.subtitle}
+A short explainer on the chip behind modern AI.
+:::
+:::
+
+::: {.scene component="statement" duration="5s" animation="kinetic" transition="fade" transitionDuration="500ms"}
+Modern AI is computationally expensive.
+:::
+
+::: {.scene component="section-divider" duration="3s" animation="slide-up" transition="wipe" transitionDuration="500ms"}
+::: {.kicker}
+Part 1
+:::
+
+# Two kinds of chip
+:::
+
+::: {.scene component="comparison" duration="8s" animation="fade-in" transition="zoom" transitionDuration="600ms"}
+::: {.left}
+## CPU
+
+Few powerful cores, built for general-purpose work.
+:::
+
+::: {.right}
+## GPU
+
+Thousands of simpler cores, built for parallel work.
+:::
+:::
+
+::: {.scene component="bullets" duration="7s" animation="stagger" transition="slide" transitionDuration="500ms"}
+::: {.heading}
+## Where GPUs excel
+:::
+
+- Matrix maths for neural networks
+- Image and video processing
+- Physics and simulation
+- Many small jobs at once
+:::
+
+::: {.scene component="section-divider" duration="3s" animation="fade-in" transition="fade" transitionDuration="500ms"}
+::: {.kicker}
+Part 2
+:::
+
+# The numbers
+:::
+
+::: {.scene component="statistic" duration="4s" value="50" unit="x" animation="count-up"}
+::: {.label}
+Speed-up on matrix maths
+:::
+
+::: {.context}
+Illustrative sample figure
+:::
+:::
+
+::: {.scene component="statistic" duration="4s" value="1000" animation="count-up" transition="slide" transitionDuration="500ms"}
+::: {.label}
+Threads running side by side
+:::
+
+::: {.context}
+Illustrative sample figure
+:::
+:::
+
+::: {.scene component="chart" duration="7s" animation="reveal" type="bar" data="data/throughput.csv" x="workload" y="speedup" unit="x" title="Speed-up over a CPU, by workload" transition="wipe" transitionDuration="500ms"}
+::: {.caption}
+Illustrative sample data for this explainer, not a benchmark.
+:::
+:::
+
+::: {.scene component="statement" duration="3s" animation="reveal" transition="zoom" transitionDuration="500ms"}
+Use the right chip for the job.
+:::
+
+::: {.scene component="end-card" duration="5s" animation="stagger" transition="fade" transitionDuration="800ms"}
+# Thanks for watching
+
+::: {.cta}
+Build your own explainer from one index.qmd file.
+:::
+
+::: {.credits}
+- Made with quarto-video
+- Sample data: illustrative only
+:::
+:::

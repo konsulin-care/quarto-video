@@ -1,0 +1,75 @@
+---
+title: "Component comparison"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+---
+
+::: {.scene component="comparison" duration="4s" animation="fade-in"}
+::: {.left}
+## CPUs
+
+Optimised for general-purpose tasks.
+:::
+
+::: {.right}
+## GPUs
+
+Optimised for massively parallel workloads.
+:::
+:::
+
+::: {.scene component="comparison" duration="4s" animation="slide-up"}
+::: {.left}
+## Memory
+
+Fast, close to the cores.
+:::
+
+::: {.middle}
+## Storage
+
+Large and persistent.
+:::
+
+::: {.right}
+## Cache
+
+Small and very fast.
+:::
+:::
+
+::: {.scene component="comparison" duration="4s"}
+::: {.left}
+## Short
+
+One line.
+:::
+
+::: {.right}
+## Long
+
+A longer paragraph that wraps across several lines inside its own column, so the columns start at the same top edge while their lengths differ.
+
+- First point.
+- Second point.
+- Third point.
+:::
+:::
+
+::: {.scene component="comparison" duration="4s" animation="reveal"}
+::: {.left}
+## Before
+
+- Manual steps.
+- Slow review.
+:::
+
+::: {.right}
+## After
+
+- Automated steps.
+- Fast review.
+:::
+:::

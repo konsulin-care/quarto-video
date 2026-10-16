@@ -1,5 +1,5 @@
 # _extensions/video/ — Quarto extension and Lua filter
-Status: `.scene` Divs → IR 1.0 manifest (tasks 003, 012, 015, 017; ADR-0007); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
+Status: `.scene` Divs → IR 1.4 manifest (task 035 for props, ADR-0014; 033 for the image block, ADR-0013; 003, 012, 015, 017, 021, 023; ADR-0007, ADR-0011, ADR-0012); `video.output` (006); diagnostics (008); durations → frames (009); front matter defaults (010); scene ids and source lines (011); typed content in slots (012, ADR-0004); transitions and the timeline (015, ADR-0005).
 
 ## Purpose
 Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, §8.1). This is the only layer that sees Markdown or the Pandoc AST.
@@ -24,7 +24,7 @@ quarto pandoc tests/fixtures/projects/minimal-filter/index.qmd \
 
 It writes `.video-build/manifest.json`; the `--to native` output is discarded. `quarto pandoc` runs the pinned Pandoc (ADR-0010) without project resolution (PRD §4.3). `video validate` runs this same invocation (`packages/cli/src/filter.ts`).
 
-Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>"}`, container settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three.
+Writes: only `<project>/.video-build/manifest.json` (the IR), `<project>/.video-build/render.json` (`{"output": "<video.output>", "theme": "<name>", "background": "#RRGGBB"}`; `theme` and `background` only when set; settings kept out of the IR, PRD §5.2) and `<project>/.video-build/diagnostics.json` (an array; `[]` on success). A run first deletes all three.
 
 ## Front matter settings (task 010)
 Every value that is present must be valid. Omitted values take the default. An empty `video:` block means all defaults.
@@ -34,16 +34,17 @@ Every value that is present must be valid. Omitted values take the default. An e
 | `video.width`, `video.height` | integer ≥ 1, even (H.264) | 1920, 1080 | no | Only the IR carries them. |
 | `video.fps` | integer ≥ 1 | 30 | no | Scene durations convert at this fps (ADR-0003). |
 | `video.output` | relative path ending `.mp4`, no `..` | `output.mp4` | no | `render.json`, not the IR. |
-| `video.background` | `"#RRGGBB"` | `"#000000"` | no | Black until a theme supplies a background (task 019). |
+| `video.background` | `"#RRGGBB"` | `"#000000"` in the IR only | no | Unset: the canvas is the selected theme's `background` token (task 019a). Set: the canvas is this colour, and it is written to `render.json`. |
+| `video.reducedMotion` | `true` or `false` (YAML boolean, unquoted) | `false` | no | In the IR (`settings.reducedMotion`, IR 1.2). `true`: each animation and transition draws its preset's reduced-motion rule (task 023). Text such as `"true"` is `E_SETTING_INVALID`. Per-scene overrides are not supported. |
 | `title` | text | none | no | Stored; not in the IR yet. |
-| `theme` | text | none | no | Stored; resolved by task 019. Absent means no theme yet. |
+| `theme` | text | none | no | Written to `render.json`; the validator resolves it (`E_THEME_UNKNOWN`, task 019). Absent means `modern`. |
 | `defaults.scene.duration` | `<n>s` or `<n>ms` (ADR-0003) | none | no | Applies to every `.scene` without `duration`. An explicit scene `duration` wins. |
 | `defaults.scene.transition` | transition name (`[a-z][a-z0-9-]*`) | none | no | Applies to every scene after the first that has no `transition`; a non-cut default needs `transitionDuration` on each scene it reaches. Registry check: validator stage 4. |
 
 Rules:
 - Unknown keys under `video` and `defaults` are `E_CONFIG_UNKNOWN_KEY`, with a "did you mean" suggestion when a known key is close. Top-level keys are shared with Quarto and are not checked here.
 - `codec` and `container` are rejected as not supported yet (PRD §5.2).
-- Settings the IR does not carry (`title`, `theme`) are validated here and stored until their tasks use them.
+- Settings the IR does not carry are validated here: `theme` goes to `render.json` for the validator, `title` is stored until task 024 uses it.
 - A scene without a duration and without a default is `E_SCENE_NO_DURATION`.
 
 ## Scenes and durations
@@ -53,11 +54,11 @@ Rules:
 | `duration` | `.scene` | `"<n>s"` or `"<n>ms"`, up to 3 decimals, > 0, ≤ 3600 s, ≥ 1 frame; rounds half up to frames | `defaults.scene.duration`, else required | 003 (form 009, default 010) |
 | `transition` | `.scene` | a transition name; `cut` takes no time | `defaults.scene.transition` for scenes after the first, else none | 015 (ADR-0005) |
 | `transitionDuration` | `.scene` | as `duration` (> 0, rounds to frames); required for a non-cut transition, forbidden for `cut` or without a transition | none | 015 |
+| `animation` | `.scene` | a preset name (`[a-z][a-z0-9-]*`); the registry check (preset and component) is the validator's, stage 2 | none | 021 (ADR-0011) |
 
 Rules:
-- Scene ids: the author's `#id`, else `scene-NNN` where NNN is the scene's position among all scene Divs (1-based, document order). An author id does not renumber the others. A document with no scenes gives `"scenes": []`.
+- Scene ids: the author's `#id`, else `scene-NNN` (its 1-based position among all scene Divs, in document order); an author id does not renumber the others. No scenes gives `"scenes": []`. Each scene's `source.line` is the 1-based line of its opening fence.
 - Id rule: a letter, then lowercase letters, digits and hyphens, at most 64 characters (`#1` and `#Intro` are `E_SCENE_ID_INVALID` with a suggestion). Two scenes with one id, including a generated id, are `E_SCENE_DUPLICATE_ID`; the message names both lines.
-- Each scene's `source.line` in the IR is the 1-based line of its opening fence in `index.qmd`.
 - Content is typed blocks in slots (ADR-0004; table below). Each Markdown element outside the node set is `E_CONTENT_UNSUPPORTED` at its line.
 - Any other attribute or class on a `.scene` Div is an error, never ignored. A `.scene` nested in another block is an error (with its line).
 - Transitions (ADR-0005): a transition belongs to the scene it enters and overlaps the previous scene by its length. The first scene takes none (`E_TRANSITION_FIRST_SCENE` for `fade`). Errors: `E_TRANSITION_DURATION` (missing, or on a cut), `E_TRANSITION_UNKNOWN` (bad syntax here; unknown names in stage 4). Lengths and overlaps are checked by the validator (stage 4).
@@ -88,11 +89,12 @@ line of each unsupported element. No recognised text means no line, never a wron
 - `test_content.lua`, `test_content_lines.lua`: nodes, slots, each unsupported kind, lines.
 - `tests/integration/scene-lines.test.ts` checks ids and lines through the CLI (fixtures `tests/fixtures/projects/scene-lines-*`).
 - `tests/integration/content-nodes.test.ts`: the golden `content-nodes` IR, read with the filter alone (its components are not registered yet), and `E_CONTENT_UNSUPPORTED` at the line (fixtures `content-unsupported-*`).
-- `test_transitions.lua` (each transition rule and error), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
-- `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values; fixtures `tests/fixtures/projects/front-matter-*`).
+- `test_transitions.lua` (each transition rule and error), `test_animations.lua` (the animation attribute), `test_timeline.lua` (shared vectors, the ADR-0005 worked example in the manifest).
+- `npm run test:integration` runs the golden test (`minimal-filter.test.ts`), the `video` CLI tests and `front-matter.test.ts` (defaults, overrides, unknown key, invalid values, `reducedMotion` on and invalid; fixtures `tests/fixtures/projects/front-matter-*`).
+- `test_config.lua`: `reducedMotion` defaults to false, reads true and false, and rejects text.
 
 ## Rules
-- Lua code is pure: no `os.execute`, `io.popen`, network, or reading files other than the document. Attribute names are case-sensitive; unknown attributes are errors, never dropped.
+- Lua code is pure: no `os.execute`, `io.popen`, network, or reading files other than the document. Attribute names are case-sensitive. An attribute that is not a scene attribute (`component`, `duration`, `transition`, `transitionDuration`, `animation`) is passed on as a component prop (`props` in the IR, ADR-0014); the validator rejects those the contract does not declare. Nothing is dropped.
 - Keep Pandoc inside this directory: IR nodes must not use Pandoc names (`Para`, `Str`, …).
 - Duration conversion must pass `packages/ir/test-vectors/durations.json` (ADR-0003).
 

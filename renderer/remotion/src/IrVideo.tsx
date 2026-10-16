@@ -1,38 +1,115 @@
 // Plays the IR scenes on the resolved timeline (ADR-0005): each scene starts at
-// its startFrame. Overlapping transitions are drawn as hard cuts until task 022,
-// so a scene shows until the next one starts. Frames come from the IR, never
-// from the wall clock (PRD §8.4).
-import type { IrVideo as IrManifest } from "@quarto-video/ir";
+// its startFrame and runs its own durationFrames, so a transition's overlap
+// shows both scenes. Frames come from the IR, never from the wall clock
+// (PRD §8.4). The theme's tokens are passed in as props.
+import type { IrBlock, IrVideo as IrManifest } from "@quarto-video/ir";
+import type { ThemeTokens } from "@quarto-video/registry";
 // Subpaths, not the package index: the index pulls in the validator (node:fs)
 // and ajv, which the renderer bundle must not contain.
 import { timelineOf } from "@quarto-video/ir/timeline";
-import { plainText } from "@quarto-video/ir/text";
+import { slotTexts } from "@quarto-video/ir/text";
 import { AbsoluteFill, Sequence } from "remotion";
+import { ThemeProvider } from "../themes/ThemeProvider.js";
+import { AnimatedScene } from "./AnimatedScene.js";
+import { TransitionScene } from "./TransitionScene.js";
+import { effectiveAnimation } from "../animations/index.js";
 import { COMPONENTS } from "./registry-map.js";
+import type { Overlap } from "../transitions/index.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
-export type IrVideoProps = { ir: IrManifest } & Record<string, unknown>;
+export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
+  string,
+  unknown
+>;
 
-export function IrVideo({ ir }: IrVideoProps) {
+/**
+ * The scene's animation as drawn: its preset id, or fade-in for a kinetic
+ * statement over its word limit (task 026). IR 0.1 to 1.0 scenes have none.
+ */
+function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
+  const name = "animation" in scene ? scene.animation?.name : undefined;
+  return effectiveAnimation(name, slotTexts(scene.content)["default"] ?? "");
+}
+
+/** The overlap a scene's transition makes; none for cut or no transition. */
+function overlapOf(
+  scene: IrManifest["scenes"][number] | undefined,
+): Overlap | undefined {
+  const transition =
+    scene !== undefined && "transition" in scene ? scene.transition : undefined;
+  if (transition === undefined || transition.durationFrames <= 0) {
+    return undefined;
+  }
+  return { name: transition.name, overlapFrames: transition.durationFrames };
+}
+
+/** The scene's slots as blocks, for components that draw emphasis (task 025); IR 0.1 has none. */
+function blocksOf(
+  content: Parameters<typeof slotTexts>[0],
+): Record<string, IrBlock[]> {
+  return "text" in content ? {} : content.slots;
+}
+
+/** The scene's props; none before IR 1.4 (ADR-0014); numbers from IR 1.5 (ADR-0015). */
+function propsOf(
+  scene: IrManifest["scenes"][number],
+): Record<string, string | number> {
+  return "props" in scene ? (scene.props ?? {}) : {};
+}
+
+/** The scene's CSV tables; none before IR 1.4 (ADR-0014). */
+function tablesOf(scene: IrManifest["scenes"][number]) {
+  return "tables" in scene ? (scene.tables ?? {}) : {};
+}
+
+/** The IR's reduced-motion setting; IR 0.1 to 1.1 have none, so false (task 023). */
+function reducedMotionOf(ir: IrManifest): boolean {
+  return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
+}
+
+export function IrVideo({ ir, theme }: IrVideoProps) {
   const timeline = timelineOf(ir);
+  const reducedMotion = reducedMotionOf(ir);
   return (
-    <AbsoluteFill style={{ backgroundColor: ir.settings.background }}>
-      {ir.scenes.map((scene, index) => {
-        const Component = COMPONENTS[scene.component];
-        if (!Component) {
-          throw new Error(`Unknown component "${scene.component}"`);
-        }
-        const start = timeline.scenes[index]?.startFrame ?? 0;
-        const next =
-          timeline.scenes[index + 1]?.startFrame ?? timeline.durationFrames;
-        // A scene wholly covered by the next one's transition is never shown.
-        if (next <= start) return null;
-        return (
-          <Sequence key={scene.id} from={start} durationInFrames={next - start}>
-            <Component text={plainText(scene.content)} />
-          </Sequence>
-        );
-      })}
-    </AbsoluteFill>
+    <ThemeProvider theme={theme}>
+      <AbsoluteFill
+        style={{ backgroundColor: ir.settings.background, overflow: "hidden" }}
+      >
+        {ir.scenes.map((scene, index) => {
+          const Component = COMPONENTS[scene.component];
+          if (!Component) {
+            throw new Error(`Unknown component "${scene.component}"`);
+          }
+          const start = timeline.scenes[index]?.startFrame ?? 0;
+          return (
+            <Sequence
+              key={scene.id}
+              from={start}
+              durationInFrames={scene.durationFrames}
+            >
+              <TransitionScene
+                durationFrames={scene.durationFrames}
+                incoming={overlapOf(scene)}
+                outgoing={overlapOf(ir.scenes[index + 1])}
+                reducedMotion={reducedMotion}
+              >
+                <AnimatedScene
+                  animation={animationOf(scene)}
+                  durationFrames={scene.durationFrames}
+                  reducedMotion={reducedMotion}
+                >
+                  <Component
+                    slots={slotTexts(scene.content)}
+                    blocks={blocksOf(scene.content)}
+                    props={propsOf(scene)}
+                    tables={tablesOf(scene)}
+                  />
+                </AnimatedScene>
+              </TransitionScene>
+            </Sequence>
+          );
+        })}
+      </AbsoluteFill>
+    </ThemeProvider>
   );
 }

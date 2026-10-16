@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/component-title",
+  "theme": "modern",
+  "frames": [420],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}
