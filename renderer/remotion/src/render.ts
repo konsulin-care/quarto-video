@@ -9,6 +9,7 @@ import { renderMedia, selectComposition } from "@remotion/renderer";
 import type { ThemeTokens } from "@quarto-video/registry";
 import { validateIr, type IrVideo } from "@quarto-video/ir";
 import { COMPOSITION_ID } from "./composition-id.js";
+import { cutToFrames } from "./exact-length.js";
 import { COMPONENTS } from "./registry-map.js";
 import { IrRenderError } from "./errors.js";
 import { canvasBackground } from "../themes/canvas.js";
@@ -186,6 +187,10 @@ export async function render(
         inputProps,
         browserExecutable,
         logLevel: "error",
+        ffmpegOverride: ({ type, args }) =>
+          type === "stitcher"
+            ? cutToFrames(args, composition.durationInFrames, composition.fps)
+            : args,
         onProgress: ({ encodedFrames }) =>
           onProgress?.({
             encodedFrames,
