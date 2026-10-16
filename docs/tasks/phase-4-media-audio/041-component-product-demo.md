@@ -1,6 +1,6 @@
 # 041 — Component `product-demo`
 
-Phase 4 · Status: todo · Depends on: 040 · PRD: §5.4 (9), §6.1 (2), §5.5 · ADR: —
+Phase 4 · Status: in-progress · Depends on: 040 · PRD: §5.4 (9), §6.1 (2), §5.5 · ADR: —
 
 ## Goal
 Release the `product-demo` component: media presented inside a device or browser frame.
