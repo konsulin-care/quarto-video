@@ -33,7 +33,7 @@ export function resolveTimeline(scenes: readonly TimedScene[]): IrTimeline {
   return { durationFrames: start + last, scenes: starts };
 }
 
-/** True for the versions that carry a `timeline` section (0.3, 1.0 to 1.7). */
+/** True for the versions that carry a `timeline` section (0.3, 1.0 to 1.8). */
 export function hasTimeline(ir: IrVideo): ir is IrVideoWithTimeline {
   return (
     ir.schemaVersion === "0.3" ||
@@ -44,7 +44,8 @@ export function hasTimeline(ir: IrVideo): ir is IrVideoWithTimeline {
     ir.schemaVersion === "1.4" ||
     ir.schemaVersion === "1.5" ||
     ir.schemaVersion === "1.6" ||
-    ir.schemaVersion === "1.7"
+    ir.schemaVersion === "1.7" ||
+    ir.schemaVersion === "1.8"
   );
 }
 

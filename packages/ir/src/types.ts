@@ -1,4 +1,4 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 to 1.7 (ir-1.7.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 to 1.8 (ir-1.8.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
@@ -16,7 +16,8 @@ export type SchemaVersion =
   | "1.4"
   | "1.5"
   | "1.6"
-  | "1.7";
+  | "1.7"
+  | "1.8";
 
 export interface IrSettings {
   width: number;
@@ -197,7 +198,10 @@ export interface IrMediaVideo {
   sourceStartFrames: number;
   /** Source out-point, in source frames. Absent means the end of the source. */
   sourceEndFrames?: number;
-  audio: "mute";
+  /** `keep` (IR 1.8, ADR-0009): the source audio plays, scaled by `volume`. */
+  audio: "mute" | "keep";
+  /** Linear gain of the kept audio, above 0 and at most 1; present only with `keep` (IR 1.8). */
+  volume?: number;
   loop: boolean;
   freeze: boolean;
   /** Positive playback speed; 1 is normal speed. */
@@ -226,7 +230,12 @@ export interface IrVideoV17 extends Omit<IrVideoV16, "schemaVersion"> {
   schemaVersion: "1.7";
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.7). */
+/** IR 1.8 (ADR-0009): IR 1.7 whose media may keep its source audio. */
+export interface IrVideoV18 extends Omit<IrVideoV17, "schemaVersion"> {
+  schemaVersion: "1.8";
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.8). */
 export type IrVideoWithTimeline =
   | IrVideoV03
   | IrVideoV10
@@ -236,7 +245,8 @@ export type IrVideoWithTimeline =
   | IrVideoV14
   | IrVideoV15
   | IrVideoV16
-  | IrVideoV17;
+  | IrVideoV17
+  | IrVideoV18;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -250,7 +260,8 @@ export type IrVideo =
   | IrVideoV14
   | IrVideoV15
   | IrVideoV16
-  | IrVideoV17;
+  | IrVideoV17
+  | IrVideoV18;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {
