@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges: 038.
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges (038, IR 1.6).
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -31,6 +31,7 @@ form humans and AI agents can act on (PRD §9).
   `src/media/probe.ts` (the `ffprobe` wrapper: argument array, timeout, `-protocol_whitelist file`),
   `src/media/cache.ts` (`.video-build/media.json`, keyed by path, valid while size and mtime match),
   `src/stages/media.ts` (one video or audio reference). Stage 3 probes only references with `use` video or audio.
+- Media source ranges (038): `src/stages/media-range.ts` (pure: a `.video` block's source range against the probed duration; E_MEDIA_RANGE, E_MEDIA_SHORT_SOURCE). `assetRefsOf` gives each `.video` block its range; the stage never stretches footage.
 
 ## Does not own
 - Parsing Markdown and writing `.video-build/diagnostics.json` → `_extensions/video`; orchestration → `cli`.
@@ -100,6 +101,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
 | `E_MEDIA_FORMAT` | 3 assets | An asset's file has an extension not guaranteed for its use (image: png, jpg, jpeg, webp, svg), or a video or audio file's codecs are outside the guaranteed set (ADR-0008). The message names the file, and the suggestion lists the formats | 037 |
 | `E_MEDIA_UNREADABLE` | 3 assets | A video or audio file cannot be probed: ffprobe cannot read it, has no stream, an unknown duration, or does not finish in 10 s. The path is printed, never the ffprobe output | 037 |
+| `E_MEDIA_RANGE` | 3 assets | A `.video` block's source range is outside its file: `sourceEnd` is past the probed duration, or `sourceStart` is at or after it (ADR-0008, task 038). The message names the file; the line is the block's | 038 |
+| `E_MEDIA_SHORT_SOURCE` | 3 assets | A `.video` block's source range (`sourceEnd` or the file's end, minus `sourceStart`, divided by `playbackRate`) is shorter than its scene and the block has neither `loop="true"` nor `freeze="true"`. Footage is never stretched (PRD §6.2) | 038 |
 | `E_CSV_SYNTAX` | 3 data | A CSV prop's file is malformed: an unclosed or misplaced quote, a blank line, a row with the wrong number of fields, a missing or repeated header name, or no data rows. `line` is the CSV line | 035 (ADR-0014) |
 | `E_COLUMN_UNKNOWN` | 3 data | A column prop (for example `x` or `y` of `chart`) names no column of its CSV; the message lists the available columns | 035 (ADR-0014) |
 | `E_CSV_VALUE` | 3 data | A numeric column (`numeric` in the contract) has a cell that is not a number. `line` is the CSV line | 035 (ADR-0014) |
@@ -117,7 +120,7 @@ It is not emitted and must not be reused.
 ## Testing
 - Unit tests per stage in `test/`: formats, schema, exit predicate, the code table
   (`codes.test.ts`). Lua: `_extensions/video/tests/test_diagnostics.lua`.
-- Media (037): `test/media-formats.test.ts` (extension and codec rules), `test/media-probe.test.ts` (ffprobe on `tests/fixtures/media/generate.sh` output), `test/media-stage.test.ts` (probe once and cache, corrupt files); CLI: `tests/integration/media-probe.test.ts`.
+- Media source ranges (038): `test/media-range.test.ts` (the range rules, the reference list, the stage with a spy probe); CLI: `tests/integration/media-range.test.ts` (the media-range-* projects). Media (037): `test/media-formats.test.ts` (extension and codec rules), `test/media-probe.test.ts` (ffprobe on `tests/fixtures/media/generate.sh` output), `test/media-stage.test.ts` (probe once and cache, corrupt files); CLI: `tests/integration/media-probe.test.ts`.
 - Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`). Stage 6: `test/output.test.ts`; `tests/integration/preflight-output.test.ts`.
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`

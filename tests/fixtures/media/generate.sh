@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Generates the media test fixtures (task 037; ADR-0008) with ffmpeg test
 # patterns. Run from anywhere: paths resolve from this script's directory.
-# Outputs are gitignored: tests/fixtures/media/out/ (probe fixtures) and the
-# unsupported clip in the media-unsupported project. Re-running overwrites them.
+# Outputs are gitignored: tests/fixtures/media/out/ (probe fixtures), the
+# unsupported clip in the media-unsupported project, and the clip copied into
+# the media-range-* projects (task 038). Re-running overwrites them.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,6 +28,13 @@ ff -f lavfi -i "testsrc2=size=640x360:rate=24" -f lavfi -i "sine=frequency=330" 
   -t 2 -map 0:v -map 1:a -c:v libvpx-vp9 -b:v 300k -deadline realtime -cpu-used 8 \
   -c:a libopus -b:a 64k "$out/clip-2s.webm"
 
+# The range fixtures (task 038) use the 2 s clip with audio as assets/clip.mp4.
+ranges="$repo/tests/fixtures/projects"
+for name in overrun short loop freeze; do
+  mkdir -p "$ranges/media-range-$name/assets"
+  cp "$out/clip-2s-audio.mp4" "$ranges/media-range-$name/assets/clip.mp4"
+done
+
 # 16-bit PCM WAV, 2 s, mono, 44.1 kHz.
 ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
   -t 2 -ac 1 -c:a pcm_s16le "$out/tone-2s.wav"
@@ -35,4 +43,4 @@ ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
 ff -f lavfi -i "testsrc=size=320x240:rate=25" \
   -t 1 -c:v mpeg4 "$unsupported/clip.avi"
 
-echo "media fixtures written to $out and $unsupported"
+echo "media fixtures written to $out, $unsupported and the media-range-* projects"
