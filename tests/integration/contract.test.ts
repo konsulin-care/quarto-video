@@ -122,7 +122,7 @@ describe("contract diagnostics for authors", () => {
     assert.equal(run.stdout, "");
     assert.ok(
       run.stderr.includes(
-        'ERROR index.qmd:15\nUnknown component "hero-title".\nAvailable components: bullets, chart, comparison, end-card, image, product-demo, section-divider, statement, statistic, text-media, title.\n',
+        'ERROR index.qmd:15\nUnknown component "hero-title".\nAvailable components: bullets, chart, comparison, end-card, image, product-demo, section-divider, split-screen, statement, statistic, text-media, title.\n',
       ),
       run.stderr,
     );
@@ -149,7 +149,7 @@ describe("contract diagnostics for authors", () => {
     assert.equal(run.status, 1);
     assert.ok(
       run.stderr.includes(
-        `ERROR index.qmd:${line}\nUnknown component "hero-title".\nAvailable components: bullets, chart, comparison, end-card, image, product-demo, section-divider, statement, statistic, text-media, title.\n`,
+        `ERROR index.qmd:${line}\nUnknown component "hero-title".\nAvailable components: bullets, chart, comparison, end-card, image, product-demo, section-divider, split-screen, statement, statistic, text-media, title.\n`,
       ),
       run.stderr,
     );
