@@ -143,14 +143,14 @@ return {
     )
   end,
 
-  ["an audio value other than mute is E_VIDEO_BLOCK naming the value"] = function()
-    local diagnostic = one_code(scene(video('src="assets/clip.mp4" audio="keep"')), "E_VIDEO_BLOCK")
-    h.contains(diagnostic.message, 'audio="keep"', "message")
+  ["an audio value other than mute or keep is E_VIDEO_BLOCK naming the value"] = function()
+    local diagnostic = one_code(scene(video('src="assets/clip.mp4" audio="loud"')), "E_VIDEO_BLOCK")
+    h.contains(diagnostic.message, 'audio="loud"', "message")
   end,
 
   ["an unknown attribute is E_VIDEO_BLOCK naming it, with the allowed list"] = function()
-    local diagnostic = one_code(scene(video(BASE .. ' volume="0.5"')), "E_VIDEO_BLOCK")
-    h.contains(diagnostic.message, 'unknown attribute "volume"', "message")
+    local diagnostic = one_code(scene(video(BASE .. ' gain="0.5"')), "E_VIDEO_BLOCK")
+    h.contains(diagnostic.message, 'unknown attribute "gain"', "message")
     h.contains(diagnostic.suggestion, "playbackRate", "allowed list")
   end,
 

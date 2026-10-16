@@ -23,17 +23,22 @@ function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
---- The IR version a manifest is written as: 1.7 when a scene has region
---- footage (ADR-0016), 1.6 otherwise, so other manifests stay as they were.
+--- The IR version a manifest is written as: 1.8 when a scene keeps source audio
+--- (ADR-0009), 1.7 when a scene has region footage (ADR-0016), 1.6 otherwise, so
+--- other manifests stay as they were.
 local function version_of(scenes)
+  local region = false
   for _, scene in ipairs(scenes) do
     for _, item in ipairs(scene.media or {}) do
+      if item.audio == "keep" then
+        return "1.8"
+      end
       if item.placement == "region" then
-        return "1.7"
+        region = true
       end
     end
   end
-  return "1.6"
+  return region and "1.7" or "1.6"
 end
 
 --- Assembles the IR table. Field names follow schema/ir-1.6.json. The

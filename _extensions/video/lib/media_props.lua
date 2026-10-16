@@ -15,6 +15,8 @@ local FITS = { cover = true, contain = true }
 local FRAME_NAME = "^[a-z][a-z0-9-]*$"
 local DEFAULT_PLACEMENT = "background"
 local DEFAULT_FIT = "contain"
+local AUDIO = { mute = true, keep = true }
+local DEFAULT_VOLUME = "1"
 
 --- Doubles every % so the text can sit inside a format string.
 function M.quoted(text)
@@ -33,23 +35,51 @@ function M.src(report, attrs)
   return attrs.src
 end
 
---- The audio policy, which is required (PRD §6.2). Only "mute" until task 044.
+--- The audio policy, which is required (PRD §6.2; ADR-0009): "mute" or "keep".
 function M.audio(report, attrs)
   if attrs.audio == nil then
     return report(
       "E_VIDEO_AUDIO_REQUIRED",
       'Scene "%s" has a video block with no audio attribute.',
-      'Add audio="mute". Keeping the source audio is not supported yet (task 044).'
+      'Add audio="mute" for no source sound, or audio="keep" to play it.'
     )
   end
-  if attrs.audio ~= "mute" then
+  if not AUDIO[attrs.audio] then
     return report(
       "E_VIDEO_BLOCK",
       string.format('Scene "%%s" has a video block with audio="%s".', M.quoted(attrs.audio)),
-      'Use audio="mute". Keeping the source audio is not supported yet (task 044).'
+      'Use audio="mute" (no source sound) or audio="keep" (the source sound, ADR-0009).'
     )
   end
-  return "mute"
+  return attrs.audio
+end
+
+--- The volume of a kept clip (ADR-0009): a decimal above 0 and at most 1, default
+--- "1". Only `keep` takes one. Returns ok and the canonical text (nil for mute);
+--- ok is false after a finding.
+function M.volume(report, attrs, audio)
+  if audio == "mute" then
+    if attrs.volume ~= nil then
+      report(
+        "E_VIDEO_BLOCK",
+        'Scene "%s" has a volume on a video block with audio="mute".',
+        'Remove volume, or use audio="keep" to play the source sound at that volume.'
+      )
+      return false, nil
+    end
+    return true, nil
+  end
+  local text = attrs.volume or DEFAULT_VOLUME
+  local canonical = M.canonical_decimal(text)
+  if canonical == nil or tonumber(canonical) <= 0 or tonumber(canonical) > 1 then
+    report(
+      "E_VIDEO_VOLUME",
+      string.format('Scene "%%s" has a video block with volume="%s".', M.quoted(text)),
+      'Write a volume above 0 and at most 1, for example volume="0.5" (about -6 dB). Volume never boosts a source.'
+    )
+    return false, nil
+  end
+  return true, canonical
 end
 
 --- The region of a region block (ADR-0016, task 043): a lowercase name the
@@ -161,13 +191,22 @@ function M.source_frames(report, attribute, text, fps)
   return frames
 end
 
+--- A plain decimal (`0.5`, `.5`, `2`, `1.0`) as a canonical numeral for
+--- json.decimal, or nil when the text is not one.
+function M.canonical_decimal(text)
+  local canonical = text:match("^%.%d+$") and ("0" .. text) or text
+  canonical = (canonical:gsub("^0+(%d)", "%1"))
+  if canonical:match("^%d+$") or canonical:match("^%d+%.%d+$") then
+    return canonical
+  end
+  return nil
+end
+
 --- The playback rate as a canonical decimal numeral (for json.decimal): a
 --- positive number, written exactly.
 function M.playback_rate(report, text)
-  local canonical = text:match("^%.%d+$") and ("0" .. text) or text
-  canonical = (canonical:gsub("^0+(%d)", "%1"))
-  local valid = canonical:match("^%d+$") or canonical:match("^%d+%.%d+$")
-  if not valid or tonumber(canonical) == 0 then
+  local canonical = M.canonical_decimal(text)
+  if canonical == nil or tonumber(canonical) == 0 then
     return report(
       "E_VIDEO_PLAYBACK_RATE",
       string.format(

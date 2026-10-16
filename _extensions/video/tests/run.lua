@@ -23,6 +23,7 @@ local SUITES = {
   "tests.test_generator",
   "tests.test_image",
   "tests.test_media",
+  "tests.test_media_audio",
 }
 
 local passed, failed = 0, 0

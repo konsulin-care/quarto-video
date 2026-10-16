@@ -1,5 +1,5 @@
 -- Video footage blocks (IR 1.6, task 038; IR 1.7 region footage, task 043 and
--- ADR-0016; PRD §6.1, §6.2): a Div with the class `video`, directly in a scene.
+-- ADR-0016; IR 1.8 source audio, task 044 and ADR-0009; PRD §6.1, §6.2): a Div with the class `video`, directly in a scene.
 -- Its properties (lib/media_props.lua) become one `media` item of the scene, with
 -- source times as source frames at the project fps (lib/duration.lua), never
 -- timeline frames. A scene holds one background or framed block, or one region
@@ -22,13 +22,14 @@ local PROPERTIES = {
   sourceStart = true,
   sourceEnd = true,
   audio = true,
+  volume = true,
   loop = true,
   freeze = true,
   playbackRate = true,
   alt = true,
 }
 local PROPERTY_LIST =
-  "src, placement, region, fit, frame, sourceStart, sourceEnd, audio, loop, freeze, playbackRate, alt"
+  "src, placement, region, fit, frame, sourceStart, sourceEnd, audio, volume, loop, freeze, playbackRate, alt"
 local count = 0
 -- Regions read in this scene, and whether a background or framed block was.
 local seen = {}
@@ -173,6 +174,20 @@ function M.node(el, found, fps)
   if rate == nil then
     return nil
   end
+  if audio == "keep" and tonumber(rate) ~= 1 then
+    return report(
+      "E_AUDIO_RATE",
+      string.format(
+        'Scene "%%s" has a video block with audio="keep" and playbackRate="%s".',
+        props.quoted(attrs.playbackRate)
+      ),
+      'Keep the source sound only at playbackRate="1" (ADR-0009), or use audio="mute" for footage at another speed.'
+    )
+  end
+  local volume_ok, volume = props.volume(report, attrs, audio)
+  if not volume_ok then
+    return nil
+  end
   local start = 0
   if attrs.sourceStart ~= nil then
     start = props.source_frames(report, "sourceStart", attrs.sourceStart, fps)
@@ -205,6 +220,7 @@ function M.node(el, found, fps)
     sourceStartFrames = start,
     sourceEndFrames = stop,
     audio = audio,
+    volume = volume and json.decimal(volume) or nil,
     loop = loop,
     freeze = freeze,
     playbackRate = json.decimal(rate),
