@@ -1,6 +1,6 @@
 # 043 — Component `split-screen`
 
-Phase 4 · Status: todo · Depends on: 039 · PRD: §5.4 (10), §6.1 (3), §5.5 · ADR: —
+Phase 4 · Status: in-progress · Depends on: 039 · PRD: §5.4 (10), §6.1 (3), §5.5 · ADR: —
 
 ## Goal
 Release the `split-screen` component: simultaneous media or content regions.
