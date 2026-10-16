@@ -111,4 +111,17 @@ cp "$out/clip-2s-1khz-stereo.mp4" "$audio/audio-keep/assets/tone.mp4"
 cp "$out/clip-2s-1khz-stereo.mp4" "$audio/audio-keep-fade/assets/tone.mp4"
 cp "$out/clip-5s-silent.mp4" "$audio/audio-keep-silent-source/assets/silent.mp4"
 
+# The music fixtures (task 045; ADR-0017): a 1.5 s stereo 450 Hz tone (15 cycles per 30 fps frame, so each
+# frame measures exactly) of amplitude 1/8, as 16-bit
+# PCM WAV, is the track of music-loop, music-short-error and music-with-keep. music-with-keep also
+# keeps the 1 kHz clip, so both tones can be told apart.
+ff -f lavfi -i "aevalsrc=0.125*sin(2*PI*450*t)|0.125*sin(2*PI*450*t):s=44100" \
+  -t 1.5 -c:a pcm_s16le "$out/music-1_5s-450-stereo.wav"
+music="$repo/tests/fixtures/projects"
+for name in music-loop music-short-error music-with-keep; do
+  mkdir -p "$music/$name/assets"
+  cp "$out/music-1_5s-450-stereo.wav" "$music/$name/assets/music.wav"
+done
+cp "$out/clip-2s-1khz-stereo.mp4" "$music/music-with-keep/assets/clip.mp4"
+
 echo "media fixtures written to $out, $unsupported and the media-range-*, background-video*, device-frames* and component-* projects"

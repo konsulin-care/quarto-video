@@ -1,0 +1,26 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+audio:
+  music:
+    src: assets/music.wav
+    volume: 0.25
+    loop: true
+---
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="background" fit="contain" audio="keep"}
+:::
+
+::: {.text-overlay}
+The clip's 1 kHz tone plays with the music.
+:::
+
+:::
+
+::: {.scene component="statement" duration="2s"}
+Only the 450 Hz music plays here.
+:::
