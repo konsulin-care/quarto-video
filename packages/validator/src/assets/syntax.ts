@@ -13,6 +13,8 @@ export type AssetCode = Extract<
   | "E_ASSET_SYMLINK"
   | "E_ASSET_URL"
   | "E_ASSET_INVALID"
+  | "E_MEDIA_FORMAT"
+  | "E_MEDIA_UNREADABLE"
 >;
 
 /** A rejected path: the code, a message and a suggestion (no path is printed when `assetPath` is absent). */

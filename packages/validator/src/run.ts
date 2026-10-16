@@ -21,7 +21,12 @@ import {
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
 import { checkKinetic } from "./stages/kinetic.js";
-import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
+import {
+  assetRefsOf,
+  checkAssets,
+  type AssetRef,
+  type MediaOptions,
+} from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { resolveData } from "./stages/data.js";
 import { withNumbers } from "./stages/number.js";
@@ -35,6 +40,8 @@ import { checkTimeline } from "./stages/timeline.js";
 export interface AssetCheck {
   root: string;
   refs?: readonly AssetRef[];
+  /** Probe and cache for video and audio references (ADR-0008). */
+  media?: MediaOptions;
 }
 
 export interface ManifestCheck {
@@ -136,7 +143,7 @@ export function checkManifest(
       const ir = state.ir;
       // Unset refs: the image blocks of the IR (ADR-0006, ADR-0013).
       const refs = assets.refs ?? (ir === undefined ? [] : assetRefsOf(ir));
-      const assetErrors = checkAssets(refs, assets.root);
+      const assetErrors = checkAssets(refs, assets.root, assets.media);
       if (ir === undefined) return assetErrors;
       const data = resolveData(ir, components, assets.root);
       state.ir = data.ir;

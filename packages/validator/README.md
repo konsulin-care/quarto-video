@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media metadata: tasks 037–038.
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges: 038.
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -27,7 +27,10 @@ form humans and AI agents can act on (PRD §9).
   filter; stage 5 preflight is in the CLI. `checkTheme` (`src/stages/theme.ts`) resolves the theme name (stage 2).
 - Depends on `@quarto-video/ir` and `@quarto-video/registry` (contracts, themes); nothing depends on it except the CLI.
 - Asset resolution and the security boundary (ADR-0006): `src/assets/syntax.ts` (the text of a path), `src/assets/resolve.ts` (the file system: exact names, realpath inside the root).
-- Media metadata via `ffprobe`, cached in `.video-build/media.json` (task 037).
+- Media (ADR-0008): `src/media/formats.ts` (the guaranteed formats and their codec rules),
+  `src/media/probe.ts` (the `ffprobe` wrapper: argument array, timeout, `-protocol_whitelist file`),
+  `src/media/cache.ts` (`.video-build/media.json`, keyed by path, valid while size and mtime match),
+  `src/stages/media.ts` (one video or audio reference). Stage 3 probes only references with `use` video or audio.
 
 ## Does not own
 - Parsing Markdown and writing `.video-build/diagnostics.json` → `_extensions/video`; orchestration → `cli`.
@@ -90,6 +93,8 @@ form humans and AI agents can act on (PRD §9).
 | `E_ASSET_SYMLINK` | 3 assets | An asset resolves, through a symlink, to a file outside the project root. The target is not printed | 016 |
 | `E_ASSET_URL` | 3 assets | An asset path has a URL scheme (`https:`, `file:`, `data:`, ...). Remote assets are not supported | 016 |
 | `E_ASSET_INVALID` | 3 assets | An asset path is empty, has a control character, a backslash, a percent-encoded sequence, or a trailing slash | 016 |
+| `E_MEDIA_FORMAT` | 3 assets | An asset's file has an extension not guaranteed for its use (image: png, jpg, jpeg, webp, svg), or a video or audio file's codecs are outside the guaranteed set (ADR-0008). The message names the file, and the suggestion lists the formats | 037 |
+| `E_MEDIA_UNREADABLE` | 3 assets | A video or audio file cannot be probed: ffprobe cannot read it, has no stream, an unknown duration, or does not finish in 10 s. The path is printed, never the ffprobe output | 037 |
 | `E_CSV_SYNTAX` | 3 data | A CSV prop's file is malformed: an unclosed or misplaced quote, a blank line, a row with the wrong number of fields, a missing or repeated header name, or no data rows. `line` is the CSV line | 035 (ADR-0014) |
 | `E_COLUMN_UNKNOWN` | 3 data | A column prop (for example `x` or `y` of `chart`) names no column of its CSV; the message lists the available columns | 035 (ADR-0014) |
 | `E_CSV_VALUE` | 3 data | A numeric column (`numeric` in the contract) has a cell that is not a number. `line` is the CSV line | 035 (ADR-0014) |
@@ -107,6 +112,7 @@ It is not emitted and must not be reused.
 ## Testing
 - Unit tests per stage in `test/`: formats, schema, exit predicate, the code table
   (`codes.test.ts`). Lua: `_extensions/video/tests/test_diagnostics.lua`.
+- Media (037): `test/media-formats.test.ts` (extension and codec rules), `test/media-probe.test.ts` (ffprobe on `tests/fixtures/media/generate.sh` output), `test/media-stage.test.ts` (probe once and cache, corrupt files); CLI: `tests/integration/media-probe.test.ts`.
 - Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`). Stage 6: `test/output.test.ts`; `tests/integration/preflight-output.test.ts`.
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
   (stage runner, IR 0.1 guard). Fixture-driven: `tests/integration/contract.test.ts`
@@ -114,4 +120,4 @@ It is not emitted and must not be reused.
 - Stage 3: `test/assets-syntax.test.ts` (each form and code), `test/assets-resolve.test.ts` (temp-dir projects), `test/assets-stage.test.ts`, `test/assets-fixtures.test.ts` (`tests/fixtures/projects/assets-names/expected.json`). Fixtures: `tests/integration/validate.test.ts` (`tests/fixtures/projects/diagnostics-*`), Theme: `test/theme.test.ts`, `tests/integration/theme.test.ts`.
 
 ## Related
-Tasks 008, 011, 012, 014–018, 021, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §9.
+Tasks 008, 011, 012, 014–018, 021, 037–038, 044. ADR-0004, 0005, 0006, 0008. PRD §6.3, §9.

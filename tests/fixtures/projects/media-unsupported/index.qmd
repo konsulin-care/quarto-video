@@ -1,0 +1,14 @@
+---
+title: "Media unsupported"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+A picture slot that names an AVI clip, which is not a guaranteed format (ADR-0008).
+
+::: {.scene component="image" duration="2s"}
+::: {.image src="assets/clip.avi" alt="An AVI clip, which is not a supported image format"}
+:::
+:::
