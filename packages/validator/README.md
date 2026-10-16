@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges (038, IR 1.6); placement and the probed source end (039).
+Status: region footage (043, ADR-0016): stage 2 `regions.ts`, E_REGION_COUNT; diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges (038, IR 1.6); placement and the probed source end (039).
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -32,7 +32,7 @@ form humans and AI agents can act on (PRD §9).
   `src/media/cache.ts` (`.video-build/media.json`, keyed by path, valid while size and mtime match),
   `src/stages/media.ts` (one video or audio reference). Stage 3 probes only references with `use` video or audio.
 - Media source ranges (038): `src/stages/media-range.ts` (pure: a `.video` block's source range against the probed duration; E_MEDIA_RANGE, E_MEDIA_SHORT_SOURCE). `assetRefsOf` gives each `.video` block its range; the stage never stretches footage.
-- Device frames (040): `src/stages/media-frame.ts` (stage 2, before the IR schema: a framed `.video` block's `frame` against the registry's `frames/`; E_MEDIA_FRAME lists the registered frames). The IR 1.6 frame enum is frozen and mirrors the registry (a parity test).
+- Region footage (043): `src/stages/regions.ts` (stage 2, pure: the region count of `regions` components, footage in an unknown region (E_SLOT_UNKNOWN), text and footage in one region (E_SLOT_CONSTRAINT)). Test: `test/regions.test.ts`. Device frames (040): `src/stages/media-frame.ts` (stage 2, before the IR schema: a framed `.video` block's `frame` against the registry's `frames/`; E_MEDIA_FRAME lists the registered frames). The IR 1.6 frame enum is frozen and mirrors the registry (a parity test).
 - Required footage (041): `src/stages/media-required.ts` (stage 2, pure: a component with `requiresMedia` and no `.video` block in its scene; E_SLOT_MISSING). Its test is `test/media-required.test.ts`.
 - Placement and source end (039): `src/stages/media-placement.ts` (stage 2, pure: a `.video` block's placement against its component's `placements`; E_MEDIA_PLACEMENT). `src/stages/media-source.ts` (stage 3, after the range check: a block without `sourceEnd` gets `sourceEndFrames` from the probed duration in the resolved IR, so the renderer can loop, freeze or trim without probing). Slot `alternative` (`src/stages/contract.ts`): `default` or `text-overlay` fills a required slot, both is E_SLOT_CONSTRAINT.
 
@@ -78,6 +78,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_VIDEO_LOOP_FREEZE` | 1 filter | A `.video` block has both `loop="true"` and `freeze="true"`; they are mutually exclusive (task 038) | 038 |
 | `E_MEDIA_PLACEMENT` | 2 contract | A `.video` block's placement is not in its component's `placements` (task 039) | 039 |
 | `E_MEDIA_FRAME` | 2 frame | A framed `.video` block names a frame that is not in the registry; the message lists the registered frames (task 040) | 040 |
+| `E_REGION_COUNT` | 2 regions | A scene of a component with `regions` (split-screen, ADR-0016) uses fewer or more regions than its limit: a region is a filled slot or a region footage; the message gives the limit and the regions used | 043 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.1 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017, 1.1 in 021) |
 | `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3, 1.0 or 1.1, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |
