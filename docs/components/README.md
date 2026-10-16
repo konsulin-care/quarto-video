@@ -1,5 +1,5 @@
 # docs/components/ — component and preset pages
-Status: `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image` (task 033, IR 1.3, ADR-0013) `chart` (task 035, props and CSV tables, IR 1.4, ADR-0014) and `statistic` (task 031, number props, IR 1.5, ADR-0015) are the released components; `product-demo` (task 041) takes framed footage with a caption. `title` in task 024 replaces its placeholder; `section-divider` in task 029; `end-card` in task 030; `statement` in task 025; `comparison` in task 034; `bullets` in task 027. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021; `product-demo` takes all three), `kinetic` (task 026), `stagger` (task 028), `count-up` (task 032). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
+Status: `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image` (task 033, IR 1.3, ADR-0013) `chart` (task 035, props and CSV tables, IR 1.4, ADR-0014) and `statistic` (task 031, number props, IR 1.5, ADR-0015) are the released components; `product-demo` (task 041) takes framed footage with a caption; `text-media` (task 042) takes framed footage beside its text. `title` in task 024 replaces its placeholder; `section-divider` in task 029; `end-card` in task 030; `statement` in task 025; `comparison` in task 034; `bullets` in task 027. Animation presets: `fade-in`, `slide-up`, `reveal` (task 021; `product-demo` takes all three), `kinetic` (task 026), `stagger` (task 028), `count-up` (task 032). Transition presets: `cut`, `fade`, `slide`, `wipe`, `zoom` (task 022).
 
 ## Purpose
 One page per released component (`<id>.md`), plus this index. A page says what an author writes, what the component accepts and how it behaves. The registry (`packages/registry`) is the source of truth for slots, props and bounds; these pages explain it.
@@ -18,6 +18,7 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | `chart` | [chart.md](chart.md) | Released (task 035: bar or line from a CSV; IR 1.4, ADR-0014) |
 | `statistic` | [statistic.md](statistic.md) | Released (task 031: value, unit, prefix and decimals; label and context; IR 1.5, ADR-0015) |
 | `product-demo` | [product-demo.md](product-demo.md) | Released (task 041: one framed `.video` block, optional caption; no framed images yet) |
+| `text-media` | [text-media.md](text-media.md) | Released (task 042: text in one column, one framed `.video` block in the other, `side`; no image footage yet) |
 
 ## Frames (task 040)
 A `.video` block with `placement="framed"` shows its footage on the screen of a device frame. `frame` names one of the registered frames (`packages/registry/frames/`); an unknown name is `E_MEDIA_FRAME`, which lists them.
@@ -29,7 +30,7 @@ A `.video` block with `placement="framed"` shows its footage on the screen of a 
 | `tablet` | 4:3 | 92% × 90% | a touch app, landscape |
 | `generic` | 16:9 | 94% × 94% | footage with no device |
 
-The frame is the largest box of its aspect in the canvas safe area. Footage is clipped to the screen and framed by `fit` (`cover` or `contain`), as background footage is. `statement` and `product-demo` take `framed`; layouts beside a frame belong to 043.
+The frame is the largest box of its aspect in the canvas safe area. Footage is clipped to the screen and framed by `fit` (`cover` or `contain`), as background footage is. `statement`, `product-demo` and `text-media` take `framed`; `text-media` puts the frame in its own column beside the text. Other layouts beside a frame belong to 043.
 
 ## Presets
 A preset is a named motion or transition that an author may use. Presets are data in `packages/registry` (`animations/<id>.json`, `transitions.json`) and a pure frame function in `renderer/remotion`. Authors pick a preset by name; they never write motion code.
@@ -39,9 +40,9 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 
 | Id | Purpose | Compatible components | Min frames | Short scene | Reduced motion |
 | --- | --- | --- | --- | --- | --- |
-| `fade-in` | Content fades from transparent to opaque. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
-| `slide-up` | Content fades in while it rises into place. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
-| `reveal` | The content fades in while it grows from 96% to full size. | `title`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic` | 15 | static | static |
+| `fade-in` | Content fades from transparent to opaque. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media` | 15 | static | static |
+| `slide-up` | Content fades in while it rises into place. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media` | 15 | static | static |
+| `reveal` | The content fades in while it grows from 96% to full size. | `title`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media` | 15 | static | static |
 | `kinetic` | The words of a statement appear one after another, each rising into place, all in place by 80% of the scene. | `statement` | 30 | static | static |
 | `stagger` | The items of a list appear one after another, each fading in while it rises into place, all in place by 70% of the scene. | `bullets`, `end-card` | 45 | static | static |
 | `count-up` | The value of a statistic counts up from zero to its exact value, shown from 70% of the scene. | `statistic` | 45 | static | static |

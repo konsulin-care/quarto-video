@@ -44,7 +44,7 @@ The footage is the picture. It is muted (source audio is task 044), and its `alt
 - Framed images are not supported. IR 1.6 media is video only (ADR-0007), so a framed image needs an IR version and an ADR first; a framed image is a follow-up task.
 - Source audio is not played: `audio="mute"` only (task 044).
 - The caption band grows with the caption, so a long caption leaves the frame smaller. There is no warning for it yet.
-- The layout is one column. Footage beside text is `split-screen` (task 043) or `text-media` (task 042).
+- The layout is one column. Footage beside text is `text-media` (task 042, released) or `split-screen` (task 043).
 
 ## Errors
 - `E_SLOT_MISSING`: the scene has no `.video` block (the message names the placement).
