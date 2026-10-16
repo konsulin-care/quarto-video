@@ -77,6 +77,7 @@ describe("animation presets", () => {
       "chart",
       "statistic",
       "product-demo",
+      "text-media",
     ]);
   });
 

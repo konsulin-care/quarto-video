@@ -11,7 +11,8 @@
     "image",
     "chart",
     "statistic",
-    "product-demo"
+    "product-demo",
+    "text-media"
   ],
   "minFrames": 15,
   "shortScene": "static",

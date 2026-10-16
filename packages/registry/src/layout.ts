@@ -189,3 +189,40 @@ export function fitStack(
     subtitle: fitText(slots.subtitle, rest, theme, subRange, body),
   };
 }
+
+/** A rectangle in output pixels: left and top from the canvas origin. */
+export interface Rect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/** The side the footage takes in `text-media` (task 042). */
+export type MediaSide = "left" | "right";
+
+/**
+ * The two columns of `text-media` (task 042) inside `area`: the footage column
+ * on `side`, the text column on the other side, with `gap` between them. The
+ * columns never overlap and lie inside `area`; the width left over by an odd
+ * `area` goes to the text column. Pure, so the validator fits the text in the
+ * same column the renderer draws it in.
+ */
+export function sideColumns(
+  area: Rect,
+  side: MediaSide,
+  gap: number,
+): { text: Rect; media: Rect } {
+  const half = Math.floor((area.width - gap) / 2);
+  const rest = area.width - gap - half;
+  const first: Rect = { ...area, width: half };
+  const second: Rect = {
+    left: area.left + half + gap,
+    top: area.top,
+    width: rest,
+    height: area.height,
+  };
+  return side === "left"
+    ? { media: first, text: second }
+    : { text: first, media: second };
+}
