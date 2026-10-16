@@ -29,6 +29,7 @@ import {
 } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { checkMediaPlacement } from "./stages/media-placement.js";
+import { resolveSourceEnds } from "./stages/media-source.js";
 import { resolveData } from "./stages/data.js";
 import { withNumbers } from "./stages/number.js";
 import { checkProps } from "./stages/props.js";
@@ -148,7 +149,7 @@ export function checkManifest(
       const assetErrors = checkAssets(refs, assets.root, assets.media);
       if (ir === undefined) return assetErrors;
       const data = resolveData(ir, components, assets.root);
-      state.ir = data.ir;
+      state.ir = resolveSourceEnds(data.ir, assets.root, assets.media ?? {});
       return [...assetErrors, ...data.diagnostics];
     },
     () => {

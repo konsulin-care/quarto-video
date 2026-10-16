@@ -191,7 +191,7 @@ describe("video validate", () => {
     assert.equal(run.stdout, "");
     assert.equal(
       run.stderr,
-      'ERROR index.qmd:10\nComponent "title" needs content in slot "default".\n' +
+      'ERROR index.qmd:10\nComponent "title" needs content in slot "default" or in slot "text-overlay".\n' +
         'Slot "default" accepts paragraph, heading.\n',
     );
   });

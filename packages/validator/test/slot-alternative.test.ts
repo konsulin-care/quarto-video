@@ -56,8 +56,6 @@ describe("slot alternatives", () => {
   it("requires one of the two, and says so", () => {
     const found = checkContracts(
       {
-        schemaVersion: "0.2",
-        type: "video",
         settings: { width: 640, height: 360, fps: 30, background: "#000000" },
         scenes: [
           {

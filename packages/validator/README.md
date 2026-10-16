@@ -1,5 +1,5 @@
 # packages/validator/ — staged validation and diagnostics
-Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges (038, IR 1.6).
+Status: diagnostics (008); stages 2–4 (014–017; ADR-0004 to ADR-0007); number props (031, ADR-0015); stage 6 output check (018); theme name, stage 2 (019). Media formats and probe (037, ADR-0008); media source ranges (038, IR 1.6); placement and the probed source end (039).
 Run: `npm run typecheck -w @quarto-video/validator`; tests: root `npm run test`.
 
 ## Purpose
@@ -32,6 +32,7 @@ form humans and AI agents can act on (PRD §9).
   `src/media/cache.ts` (`.video-build/media.json`, keyed by path, valid while size and mtime match),
   `src/stages/media.ts` (one video or audio reference). Stage 3 probes only references with `use` video or audio.
 - Media source ranges (038): `src/stages/media-range.ts` (pure: a `.video` block's source range against the probed duration; E_MEDIA_RANGE, E_MEDIA_SHORT_SOURCE). `assetRefsOf` gives each `.video` block its range; the stage never stretches footage.
+- Placement and source end (039): `src/stages/media-placement.ts` (stage 2, pure: a `.video` block's placement against its component's `placements`; E_MEDIA_PLACEMENT). `src/stages/media-source.ts` (stage 3, after the range check: a block without `sourceEnd` gets `sourceEndFrames` from the probed duration in the resolved IR, so the renderer can loop, freeze or trim without probing). Slot `alternative` (`src/stages/contract.ts`): `default` or `text-overlay` fills a required slot, both is E_SLOT_CONSTRAINT.
 
 ## Does not own
 - Parsing Markdown and writing `.video-build/diagnostics.json` → `_extensions/video`; orchestration → `cli`.
@@ -121,6 +122,7 @@ It is not emitted and must not be reused.
 ## Testing
 - Unit tests per stage in `test/`: formats, schema, exit predicate, the code table
   (`codes.test.ts`). Lua: `_extensions/video/tests/test_diagnostics.lua`.
+- Placement and source end (039): `test/media-placement.test.ts`, `test/slot-alternative.test.ts`, `test/media-source.test.ts` (stub prober). CLI: `tests/integration/validate.test.ts` (the title required-slot message).
 - Media source ranges (038): `test/media-range.test.ts` (the range rules, the reference list, the stage with a spy probe); CLI: `tests/integration/media-range.test.ts` (the media-range-* projects). Media (037): `test/media-formats.test.ts` (extension and codec rules), `test/media-probe.test.ts` (ffprobe on `tests/fixtures/media/generate.sh` output), `test/media-stage.test.ts` (probe once and cache, corrupt files); CLI: `tests/integration/media-probe.test.ts`.
 - Stage 4: `test/timeline.test.ts`; fixtures `timeline-*` (`tests/integration/timeline.test.ts`). Stage 6: `test/output.test.ts`; `tests/integration/preflight-output.test.ts`.
 - Stage 2: `test/contract.test.ts` (each rule on synthetic contracts), `test/run.test.ts`
