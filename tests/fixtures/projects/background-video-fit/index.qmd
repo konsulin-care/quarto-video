@@ -1,0 +1,22 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/clip.mp4" placement="background" fit="contain" audio="mute"}
+:::
+
+Contain keeps the whole frame.
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/clip.mp4" placement="background" fit="cover" audio="mute"}
+:::
+
+Cover fills the frame.
+:::

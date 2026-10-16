@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/background-video-fit",
+  "theme": "modern",
+  "frames": [15, 45],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

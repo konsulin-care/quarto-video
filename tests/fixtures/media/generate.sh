@@ -2,8 +2,8 @@
 # Generates the media test fixtures (task 037; ADR-0008) with ffmpeg test
 # patterns. Run from anywhere: paths resolve from this script's directory.
 # Outputs are gitignored: tests/fixtures/media/out/ (probe fixtures), the
-# unsupported clip in the media-unsupported project, and the clip copied into
-# the media-range-* projects (task 038). Re-running overwrites them.
+# unsupported clip in the media-unsupported project, the clip copied into the
+# media-range-* projects (task 038) and the background-video projects (task 039). Re-running overwrites them.
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -35,6 +35,20 @@ for name in overrun short loop freeze; do
   cp "$out/clip-2s-audio.mp4" "$ranges/media-range-$name/assets/clip.mp4"
 done
 
+# The background-video fixtures (task 039): 4 s at 30 fps, where frame n shows its
+# own index n in eight bits. Bit k is the k-th 40 px column of the top band (white
+# is 1); below the band a grey gradient shows the framing. The 16:9 clip matches
+# the canvas; the 4:3 clip shows contain against cover.
+# The clips carry a 440 Hz tone, so a render that keeps the source audio is visible.
+counter() {
+  ff -f lavfi -i "color=c=black:size=$1:rate=30:duration=4" \
+    -f lavfi -i "sine=frequency=440:duration=4" \
+    -vf "geq=lum='if(lt(Y,40),255*mod(floor(N/pow(2,floor(X/40))),2),255*X/W)':cb=128:cr=128" \
+    -map 0:v -map 1:a -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 96k "$out/$2"
+}
+counter 640x360 counter-4s.mp4
+counter 640x480 counter-4s-4x3.mp4
+
 # 16-bit PCM WAV, 2 s, mono, 44.1 kHz.
 ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
   -t 2 -ac 1 -c:a pcm_s16le "$out/tone-2s.wav"
@@ -42,5 +56,13 @@ ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
 # An unsupported container for the media-unsupported project: MPEG-4 in AVI, 1 s.
 ff -f lavfi -i "testsrc=size=320x240:rate=25" \
   -t 1 -c:v mpeg4 "$unsupported/clip.avi"
+
+background="$repo/tests/fixtures/projects"
+for name in background-video background-video-loop background-video-freeze; do
+  mkdir -p "$background/$name/assets"
+  cp "$out/counter-4s.mp4" "$background/$name/assets/clip.mp4"
+done
+mkdir -p "$background/background-video-fit/assets"
+cp "$out/counter-4s-4x3.mp4" "$background/background-video-fit/assets/clip.mp4"
 
 echo "media fixtures written to $out, $unsupported and the media-range-* projects"

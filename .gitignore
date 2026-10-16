@@ -18,6 +18,7 @@ tests/visual/report/
 tests/fixtures/media/out/
 tests/fixtures/projects/media-unsupported/assets/*.avi
 tests/fixtures/projects/media-range-*/assets/*.mp4
+tests/fixtures/projects/background-video*/assets/*.mp4
 
 # Quarto render output in videos/* (task 007a): quarto writes these next to
 # index.qmd when `quarto render` runs the post-render hook.
