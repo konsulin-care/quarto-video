@@ -1,5 +1,5 @@
 # docs/decisions/ — Architecture Decision Records
-Status: ADR-0001 to ADR-0008, ADR-0010 to ADR-0015 accepted. Other ADRs are written by the tasks listed below.
+Status: ADR-0001 to ADR-0016 accepted (0009 by task 044). Other ADRs are written by the tasks listed below.
 
 ## Purpose
 Record every decision that shapes parsing, timing, portability, or the
