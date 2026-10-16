@@ -1,0 +1,66 @@
+---
+title: "Component split-screen invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+Each scene has one violation. The scene with four regions also names the
+fourth region, which is not one of the component's regions.
+
+::: {.scene component="split-screen" duration="2s"}
+::: {.left}
+One region of text, and the scene needs two.
+:::
+:::
+
+::: {.scene component="split-screen" duration="2s"}
+::: {.left}
+Four regions.
+:::
+::: {.middle}
+Middle.
+:::
+::: {.right}
+Right.
+:::
+::: {.top}
+A fourth region.
+:::
+:::
+
+::: {.scene component="split-screen" duration="2s"}
+::: {.video src="assets/wide.mp4" region="top" fit="cover" audio="mute" alt="A counter clip"}
+:::
+::: {.left}
+Footage in a region the component does not have.
+:::
+:::
+
+::: {.scene component="split-screen" duration="2s"}
+::: {.video src="assets/wide.mp4" region="left" fit="contain" audio="mute" alt="A counter clip"}
+:::
+::: {.left}
+Text and footage in one region.
+:::
+::: {.right}
+Right region.
+:::
+:::
+
+::: {.scene component="split-screen" duration="0.5s"}
+::: {.left}
+Too short a scene.
+:::
+::: {.right}
+Right region.
+:::
+:::
+
+::: {.scene component="statement" duration="2s"}
+::: {.video src="assets/wide.mp4" region="left" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+Statement with region footage, which it does not take.
+:::

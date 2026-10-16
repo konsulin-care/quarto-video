@@ -78,7 +78,15 @@ cp "$out/counter-4s-4x3.mp4" "$devices/device-frames-media/assets/four-three.mp4
 
 # The product-demo fixtures (task 041): the same three counter clips, in one
 # project for the valid run and one for the invalid run (task 042: text-media too).
-for name in component-product-demo component-product-demo-invalid component-text-media component-text-media-invalid; do
+for name in component-product-demo component-product-demo-invalid component-text-media component-text-media-invalid component-split-screen component-split-screen-invalid; do
+  mkdir -p "$devices/$name/assets"
+  cp "$out/counter-4s.mp4" "$devices/$name/assets/wide.mp4"
+  cp "$out/counter-2s-9x16.mp4" "$devices/$name/assets/tall.mp4"
+  cp "$out/counter-4s-4x3.mp4" "$devices/$name/assets/four-three.mp4"
+done
+
+# The split-screen fixtures (task 043): the counter clips as region footage; the tall clip loops.
+for name in component-split-screen component-split-screen-invalid; do
   mkdir -p "$devices/$name/assets"
   cp "$out/counter-4s.mp4" "$devices/$name/assets/wide.mp4"
   cp "$out/counter-2s-9x16.mp4" "$devices/$name/assets/tall.mp4"

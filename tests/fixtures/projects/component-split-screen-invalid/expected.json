@@ -1,0 +1,37 @@
+[
+  {
+    "code": "E_REGION_COUNT",
+    "line": 12,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_SLOT_UNKNOWN",
+    "line": 18,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_REGION_COUNT",
+    "line": 18,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_SLOT_UNKNOWN",
+    "line": 33,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_SLOT_CONSTRAINT",
+    "line": 41,
+    "sceneId": "scene-004"
+  },
+  {
+    "code": "E_DURATION_BOUNDS",
+    "line": 52,
+    "sceneId": "scene-005"
+  },
+  {
+    "code": "E_MEDIA_PLACEMENT",
+    "line": 61,
+    "sceneId": "scene-006"
+  }
+]
