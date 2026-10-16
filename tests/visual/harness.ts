@@ -5,7 +5,7 @@
 // reference. `approve` replaces the references instead of comparing.
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
-import { copyFile, cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { chmod, copyFile, cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import type { ThemeTokens } from "@quarto-video/registry";
@@ -60,6 +60,25 @@ export function findBrowser(): string {
     );
   }
   return join(root, dir, "chrome-linux", "headless_shell");
+}
+
+/**
+ * A launcher that starts the headless shell with --disable-lcd-text, so every
+ * still is drawn with greyscale antialiasing. Without it, a host's compositor
+ * may draw the glyph edges of transformed or faded layers with subpixel (LCD)
+ * colour fringes: CI (ubuntu-24.04) did, and the approved references do not.
+ * Greyscale text is the same on every host, so the references stay valid.
+ */
+async function greyscaleBrowser(binary: string, dir: string): Promise<string> {
+  await mkdir(dir, { recursive: true });
+  const launcher = join(dir, "headless-shell-greyscale");
+  const quoted = `'${binary.replace(/'/g, `'\\''`)}'`;
+  await writeFile(
+    launcher,
+    `#!/bin/sh\nexec ${quoted} --disable-lcd-text "$@"\n`,
+  );
+  await chmod(launcher, 0o755);
+  return launcher;
 }
 
 /** Copies the fixture project into scratch and returns the IR file from `video validate --print-ir`. */
@@ -151,7 +170,10 @@ async function compareFrame(
 export async function runVisual(options: VisualOptions): Promise<VisualRun> {
   const cases = await loadCases(options.casesDir, options.only);
   if (cases.length === 0) throw new Error("no visual cases to run");
-  const browserExecutable = options.browserExecutable ?? findBrowser();
+  const browserExecutable = await greyscaleBrowser(
+    options.browserExecutable ?? findBrowser(),
+    options.scratchDir,
+  );
   const run: VisualRun = { passed: true, results: [], approved: [] };
   if (options.mode === "test") {
     await rm(options.reportDir, { recursive: true, force: true });

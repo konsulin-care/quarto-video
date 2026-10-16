@@ -47,6 +47,9 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
   stated in the task's Completion log.
 - A new component adds its own case and references; the harness never
   approves anything by itself.
+- Stills are drawn with greyscale text antialiasing: the harness launches the
+  headless shell with `--disable-lcd-text` (`harness.ts`, `greyscaleBrowser`). Without
+  it, CI's host drew subpixel colour fringes on text inside transformed layers.
 - Integration tests that encode video must keep fixtures short (≤ 2 s,
   ≤ 640×360) unless the task requires otherwise.
 
