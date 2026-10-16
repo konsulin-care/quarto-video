@@ -33,6 +33,7 @@ form humans and AI agents can act on (PRD §9).
   `src/stages/media.ts` (one video or audio reference). Stage 3 probes only references with `use` video or audio.
 - Media source ranges (038): `src/stages/media-range.ts` (pure: a `.video` block's source range against the probed duration; E_MEDIA_RANGE, E_MEDIA_SHORT_SOURCE). `assetRefsOf` gives each `.video` block its range; the stage never stretches footage.
 - Device frames (040): `src/stages/media-frame.ts` (stage 2, before the IR schema: a framed `.video` block's `frame` against the registry's `frames/`; E_MEDIA_FRAME lists the registered frames). The IR 1.6 frame enum is frozen and mirrors the registry (a parity test).
+- Required footage (041): `src/stages/media-required.ts` (stage 2, pure: a component with `requiresMedia` and no `.video` block in its scene; E_SLOT_MISSING). Its test is `test/media-required.test.ts`.
 - Placement and source end (039): `src/stages/media-placement.ts` (stage 2, pure: a `.video` block's placement against its component's `placements`; E_MEDIA_PLACEMENT). `src/stages/media-source.ts` (stage 3, after the range check: a block without `sourceEnd` gets `sourceEndFrames` from the probed duration in the resolved IR, so the renderer can loop, freeze or trim without probing). Slot `alternative` (`src/stages/contract.ts`): `default` or `text-overlay` fills a required slot, both is E_SLOT_CONSTRAINT.
 
 ## Does not own
