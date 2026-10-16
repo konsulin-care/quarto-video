@@ -1,7 +1,7 @@
 // Registry id -> renderer implementation. Only ids listed here can render;
 // render.ts rejects any other component before the browser starts.
 import type { FC } from "react";
-import type { IrBlock, IrTable } from "@quarto-video/ir";
+import type { IrBlock, IrMediaVideo, IrTable } from "@quarto-video/ir";
 import { Chart } from "../components/chart/Chart.js";
 import { SectionDivider } from "../components/section-divider/SectionDivider.js";
 import { Statement } from "../components/statement/Statement.js";
@@ -12,6 +12,7 @@ import { EndCard } from "../components/end-card/EndCard.js";
 import { Image } from "../components/image/Image.js";
 import { ProductDemo } from "../components/product-demo/ProductDemo.js";
 import { Statistic } from "../components/statistic/Statistic.js";
+import { TextMedia } from "../components/text-media/TextMedia.js";
 
 export interface SceneProps {
   /** Plain text of each slot the scene has, by slot name (task 024). */
@@ -22,7 +23,15 @@ export interface SceneProps {
   props: Readonly<Record<string, string | number>>;
   /** The parsed CSV tables by prop name, from the validator (ADR-0014). */
   tables: Readonly<Record<string, IrTable>>;
+  /** The scene's framed footage, for components that place it themselves (task 042). */
+  media?: IrMediaVideo | undefined;
 }
+
+/**
+ * Components that place their scene's footage in their own layout (task 042):
+ * IrVideo does not wrap them in FramedScene, and they take `media`.
+ */
+export const PLACES_OWN_MEDIA: ReadonlySet<string> = new Set(["text-media"]);
 
 export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   chart: Chart,
@@ -35,4 +44,5 @@ export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   image: Image,
   statistic: Statistic,
   "product-demo": ProductDemo,
+  "text-media": TextMedia,
 };

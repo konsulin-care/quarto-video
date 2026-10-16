@@ -18,7 +18,7 @@ import { ThemeProvider } from "../themes/ThemeProvider.js";
 import { AnimatedScene } from "./AnimatedScene.js";
 import { TransitionScene } from "./TransitionScene.js";
 import { effectiveAnimation } from "../animations/index.js";
-import { COMPONENTS } from "./registry-map.js";
+import { COMPONENTS, PLACES_OWN_MEDIA } from "./registry-map.js";
 import type { Overlap } from "../transitions/index.js";
 import { BackgroundScene } from "../media/BackgroundScene.js";
 import { FramedScene } from "../media/FramedScene.js";
@@ -91,6 +91,7 @@ function reducedMotionOf(ir: IrManifest): boolean {
 
 /** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
 function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
+  if (PLACES_OWN_MEDIA.has(scene.component)) return component;
   const framed = mediaOf(scene, "framed");
   if (framed !== undefined) {
     // A caption draws under the frame, in a band the frame leaves (task 041).
@@ -147,6 +148,7 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                       blocks={contentOf(scene).blocks}
                       props={propsOf(scene)}
                       tables={tablesOf(scene)}
+                      media={mediaOf(scene, "framed")}
                     />,
                   )}
                 </AnimatedScene>
