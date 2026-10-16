@@ -1,6 +1,6 @@
 # 042 — Component `text-media`
 
-Phase 4 · Status: todo · Depends on: 039 · PRD: §5.4 (8), §5.5 · ADR: —
+Phase 4 · Status: in-progress · Depends on: 039 · PRD: §5.4 (8), §5.5 · ADR: —
 
 ## Goal
 Release the `text-media` component: text paired with image or video footage.
