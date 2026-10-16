@@ -1,10 +1,14 @@
--- Video footage blocks (IR 1.6; task 038; lib/media.lua, lib/media_props.lua).
+-- Video footage blocks (IR 1.6; task 038; region footage, IR 1.7, task 043;
+-- lib/media.lua, lib/media_props.lua).
 -- A `.video` Div is a scene media item, not a slot. Each shape error has its
 -- own code; source times are source frames at the fps (30 here).
 local h = require("tests.helpers")
 local content = require("lib.content")
 local locate = require("lib.locate")
 local json = require("lib.json")
+local manifest = require("lib.manifest")
+
+local SETTINGS = { width = 1920, height = 1080, fps = 30, background = "#10131C" }
 
 local FPS = 30
 
@@ -207,5 +211,78 @@ return {
     local text = json.encode({ playbackRate = media[1].playbackRate, loop = media[1].loop })
     h.contains(text, '"playbackRate": 1', "rate")
     h.contains(text, '"loop": false', "loop")
+  end,
+  ["a region block is region footage with no placement or frame (IR 1.7)"] = function()
+    local _, found, media = convert(scene(video(BASE .. ' region="left" fit="cover"')))
+    h.eq(#found, 0, "finding count")
+    h.eq(media[1].placement, "region", "placement")
+    h.eq(media[1].region, "left", "region")
+    h.eq(media[1].frame, nil, "no frame")
+    h.eq(media[1].fit, "cover", "fit")
+  end,
+
+  ["two region blocks for different regions are both kept, in order"] = function()
+    local _, found, media =
+      convert(scene(video(BASE .. ' region="left"') .. "\n" .. video(BASE .. ' region="right"')))
+    h.eq(#found, 0, "finding count")
+    h.eq(#media, 2, "media count")
+    h.eq(media[2].region, "right", "second region")
+  end,
+
+  ["a second block for the same region is E_VIDEO_BLOCK, the second one"] = function()
+    local _, found =
+      convert(scene(video(BASE .. ' region="left"') .. "\n" .. video(BASE .. ' region="left"')))
+    h.eq(#found, 1, "finding count")
+    h.eq(found[1].code, "E_VIDEO_BLOCK", "code")
+    h.eq(found[1].nth, 2, "the second block")
+  end,
+
+  ["a background block and a region block in one scene is E_VIDEO_BLOCK"] = function()
+    local _, found = convert(scene(video(BASE) .. "\n" .. video(BASE .. ' region="left"')))
+    h.eq(#found, 1, "finding count")
+    h.eq(found[1].code, "E_VIDEO_BLOCK", "code")
+    h.eq(found[1].nth, 2, "the second block")
+  end,
+
+  ["a region block after a background block is E_VIDEO_BLOCK"] = function()
+    local _, found = convert(scene(video(BASE .. ' region="left"') .. "\n" .. video(BASE)))
+    h.eq(#found, 1, "finding count")
+    h.eq(found[1].code, "E_VIDEO_BLOCK", "code")
+  end,
+
+  ["a region block with a placement is E_VIDEO_BLOCK"] = function()
+    local diagnostic =
+      one_code(scene(video(BASE .. ' region="left" placement="background"')), "E_VIDEO_BLOCK")
+    h.contains(diagnostic.message, "both region and placement", "message")
+  end,
+
+  ["a frame on a region block is E_VIDEO_BLOCK"] = function()
+    one_code(scene(video(BASE .. ' region="left" frame="browser"')), "E_VIDEO_BLOCK")
+  end,
+
+  ["a region name that is not an identifier is E_VIDEO_BLOCK"] = function()
+    local diagnostic = one_code(scene(video(BASE .. ' region="Left!"')), "E_VIDEO_BLOCK")
+    h.contains(diagnostic.message, 'region="Left!"', "message")
+  end,
+
+  ["a scene with region footage is written as IR 1.7, others as IR 1.6"] = function()
+    local plain = {
+      id = "s1",
+      component = "title",
+      durationFrames = 30,
+      media = { { placement = "background" } },
+    }
+    local region = {
+      id = "s1",
+      component = "split-screen",
+      durationFrames = 30,
+      media = { { placement = "region", region = "left" } },
+    }
+    h.eq(
+      manifest.build(SETTINGS, { plain }, "index.qmd").schemaVersion,
+      "1.6",
+      "background footage"
+    )
+    h.eq(manifest.build(SETTINGS, { region }, "index.qmd").schemaVersion, "1.7", "region footage")
   end,
 }

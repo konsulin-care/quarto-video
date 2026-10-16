@@ -1,10 +1,12 @@
--- Video footage blocks (IR 1.6, task 038; PRD §6.1, §6.2): a Div with the class
--- `video`, directly in a scene. Its properties (lib/media_props.lua) become one
--- `media` item of the scene, with source times as source frames at the project
--- fps (lib/duration.lua), never timeline frames. A shape error is a finding for
--- lib/content.lua with its own code. Nothing is stretched, and an unknown
--- property is an error (AGENT.md). `count` numbers the video Divs of the scene
--- (the `nth` that lib/content_lines.lua searches for). M.reset() starts a scene.
+-- Video footage blocks (IR 1.6, task 038; IR 1.7 region footage, task 043 and
+-- ADR-0016; PRD §6.1, §6.2): a Div with the class `video`, directly in a scene.
+-- Its properties (lib/media_props.lua) become one `media` item of the scene, with
+-- source times as source frames at the project fps (lib/duration.lua), never
+-- timeline frames. A scene holds one background or framed block, or one region
+-- block per region, never both. A shape error is a finding for lib/content.lua
+-- with its own code. Nothing is stretched, and an unknown property is an error
+-- (AGENT.md). `count` numbers the video Divs of the scene (the `nth` that
+-- lib/content_lines.lua searches for). M.reset() starts a scene.
 local json = require("lib.json")
 local props = require("lib.media_props")
 
@@ -14,6 +16,7 @@ local VIDEO_CLASS = "video"
 local PROPERTIES = {
   src = true,
   placement = true,
+  region = true,
   fit = true,
   frame = true,
   sourceStart = true,
@@ -25,12 +28,17 @@ local PROPERTIES = {
   alt = true,
 }
 local PROPERTY_LIST =
-  "src, placement, fit, frame, sourceStart, sourceEnd, audio, loop, freeze, playbackRate, alt"
+  "src, placement, region, fit, frame, sourceStart, sourceEnd, audio, loop, freeze, playbackRate, alt"
 local count = 0
+-- Regions read in this scene, and whether a background or framed block was.
+local seen = {}
+local plain = false
 
 --- Starts counting the video Divs of a new scene.
 function M.reset()
   count = 0
+  seen = {}
+  plain = false
 end
 
 --- True for a Div that has the class `video`.
@@ -96,11 +104,24 @@ local function check_shape(el, report)
       "Keep the video block empty; put the text in the scene's slots."
     )
   end
-  if count > 1 then
+  return true
+end
+
+-- Repeats: a second background or framed block, or a region block whose region
+-- is taken or that shares the scene with a background or framed block.
+local function check_repeat(region, report)
+  if region == nil and count > 1 then
     return report(
       "E_VIDEO_BLOCK",
       'Scene "%s" has a second video block.',
       "Give each video its own scene; a scene holds one video block."
+    )
+  end
+  if region ~= nil and (seen[region] or plain) then
+    return report(
+      "E_VIDEO_BLOCK",
+      'Scene "%s" has a second video block for its region.',
+      "Give each region one video block, and do not mix region and background or framed blocks in one scene."
     )
   end
   return true
@@ -115,9 +136,22 @@ function M.node(el, found, fps)
     return nil
   end
   local attrs = el.attributes
+  local region = nil
+  if attrs.region ~= nil then
+    region = props.region(report, attrs)
+    if region == nil or not check_repeat(region, report) then
+      return nil
+    end
+    seen[region] = true
+  else
+    if not check_repeat(nil, report) then
+      return nil
+    end
+    plain = true
+  end
   local src = props.src(report, attrs)
   local audio = props.audio(report, attrs)
-  local placement = props.placement(report, attrs)
+  local placement = region ~= nil and "region" or props.placement(report, attrs)
   if src == nil or audio == nil or placement == nil then
     return nil
   end
@@ -165,6 +199,7 @@ function M.node(el, found, fps)
     type = "video",
     src = src,
     placement = placement,
+    region = region,
     fit = fit,
     frame = frame,
     sourceStartFrames = start,

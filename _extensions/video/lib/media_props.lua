@@ -52,14 +52,35 @@ function M.audio(report, attrs)
   return "mute"
 end
 
---- The placement: background (the default) or framed. Slot placement is task 043.
+--- The region of a region block (ADR-0016, task 043): a lowercase name the
+--- validator checks against the component's regions. Returns nil after a
+--- finding when the block also has a placement or the name is not an identifier.
+function M.region(report, attrs)
+  if attrs.placement ~= nil then
+    return report(
+      "E_VIDEO_BLOCK",
+      'Scene "%s" has a video block with both region and placement.',
+      "Remove placement: a region block takes its region, not a placement."
+    )
+  end
+  if not attrs.region:match(FRAME_NAME) then
+    return report(
+      "E_VIDEO_BLOCK",
+      string.format('Scene "%%s" has a video block with region="%s".', M.quoted(attrs.region)),
+      'Use a lowercase region name, for example region="left".'
+    )
+  end
+  return attrs.region
+end
+
+--- The placement: background (the default) or framed.
 function M.placement(report, attrs)
   local placement = attrs.placement or DEFAULT_PLACEMENT
   if not PLACEMENTS[placement] then
     return report(
       "E_VIDEO_BLOCK",
       string.format('Scene "%%s" has a video block with placement="%s".', M.quoted(placement)),
-      'Use placement="background" or placement="framed". Placing video in a slot is not supported yet.'
+      'Use placement="background" or placement="framed", or region="<name>" for footage in a region.'
     )
   end
   return placement

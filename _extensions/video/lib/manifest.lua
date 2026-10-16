@@ -23,6 +23,19 @@ function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
+--- The IR version a manifest is written as: 1.7 when a scene has region
+--- footage (ADR-0016), 1.6 otherwise, so other manifests stay as they were.
+local function version_of(scenes)
+  for _, scene in ipairs(scenes) do
+    for _, item in ipairs(scene.media or {}) do
+      if item.placement == "region" then
+        return "1.7"
+      end
+    end
+  end
+  return "1.6"
+end
+
 --- Assembles the IR table. Field names follow schema/ir-1.6.json. The
 --- timeline (ADR-0005) is resolved here from the scenes' durations and
 --- transitions.
@@ -45,7 +58,7 @@ function M.build(settings, scenes, source_file)
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
   return {
-    schemaVersion = "1.6",
+    schemaVersion = version_of(list),
     type = "video",
     settings = settings,
     scenes = list,
