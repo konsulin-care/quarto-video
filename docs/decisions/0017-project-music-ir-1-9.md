@@ -47,7 +47,7 @@ for a track that belongs to the whole video: the top level and `settings` are cl
    never silence filler). Longer is cut at the timeline's last frame.
 6. **Fade-out.** With `fadeOut` of N frames and a timeline of T frames, frame f in
    [T-N, T) plays at `volume x (T-f-1)/N`, falling linearly and reaching 0 on the last frame.
-   The fade starts at the first frame of the window and is otherwise unchanged.
+   Before the window the track plays at `volume`.
 7. **Mixing.** The track is added to the kept footage audio: a sum, with no normalisation,
    no ducking and no limiter. The author keeps the volumes low enough to avoid clipping.
 8. **IR 1.9** (`schema/ir-1.9.json`, additive under ADR-0007). An optional top-level `music`:
@@ -57,6 +57,10 @@ for a track that belongs to the whole video: the top level and `settings` are cl
    ADR-0009 and ADR-0016 otherwise.
 9. **Renderer.** `IrVideo` mounts one music track over the whole timeline. Its passes and gains
    are pure functions of the frame number.
+10. **Output length.** The stitched MP4 is cut to the timeline's frames (`-t frames/fps`, set through
+    Remotion's `ffmpegOverride`, `renderer/remotion/src/exact-length.ts`). Without it the AAC encoder
+    left the audio about 60 ms past the last frame, in every output (measured on the 044 `audio-keep`
+    fixture too); the cut brings it to within about 15 ms of the video.
 
 ## Consequences
 
@@ -72,7 +76,8 @@ for a track that belongs to the whole video: the top level and `settings` are cl
 - `_extensions/video/tests/test_music.lua`: settings, keys, the version written.
 - `packages/validator/test/music.test.ts`: format, unreadable, lengthFrames, E_MUSIC_SHORT, E_MUSIC_FADE.
 - `renderer/remotion/test/music.test.ts`: passes, end, fade, volume (pure).
-- `tests/integration/music.test.ts`: duration, fade, music with kept footage, short music error.
+- `renderer/remotion/test/exact-length.test.ts`: the `-t` cut before the output file.
+- `tests/integration/music.test.ts`: duration, start and loop, fade, music with kept footage, short music error.
 
 ## References
 
