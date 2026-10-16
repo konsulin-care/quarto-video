@@ -41,14 +41,15 @@ done
 # the canvas; the 4:3 clip shows contain against cover.
 # The clips carry a 440 Hz tone, so a render that keeps the source audio is visible.
 counter() {
-  ff -f lavfi -i "color=c=black:size=$1:rate=30:duration=4" \
-    -f lavfi -i "sine=frequency=440:duration=4" \
+  ff -f lavfi -i "color=c=black:size=$1:rate=30:duration=$3" \
+    -f lavfi -i "sine=frequency=440:duration=$3" \
     -vf "geq=lum='if(lt(Y,40),255*mod(floor(N/pow(2,floor(X/40))),2),255*X/W)':cb=128:cr=128" \
     -map 0:v -map 1:a -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 96k "$out/$2"
 }
-counter 640x360 counter-4s.mp4
-counter 640x480 counter-4s-4x3.mp4
-counter 360x640 counter-4s-9x16.mp4
+counter 640x360 counter-4s.mp4 4
+counter 640x480 counter-4s-4x3.mp4 4
+# 2 s: the device-frames scenes use at most 2 s of footage (keeps the generator fast).
+counter 360x640 counter-2s-9x16.mp4 2
 
 # 16-bit PCM WAV, 2 s, mono, 44.1 kHz.
 ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
@@ -72,7 +73,7 @@ devices="$repo/tests/fixtures/projects"
 mkdir -p "$devices/device-frames/assets" "$devices/device-frames-media/assets"
 cp "$out/counter-4s.mp4" "$devices/device-frames/assets/clip.mp4"
 cp "$out/counter-4s.mp4" "$devices/device-frames-media/assets/wide.mp4"
-cp "$out/counter-4s-9x16.mp4" "$devices/device-frames-media/assets/tall.mp4"
+cp "$out/counter-2s-9x16.mp4" "$devices/device-frames-media/assets/tall.mp4"
 cp "$out/counter-4s-4x3.mp4" "$devices/device-frames-media/assets/four-three.mp4"
 
 echo "media fixtures written to $out, $unsupported and the media-range-*, background-video* and device-frames* projects"
