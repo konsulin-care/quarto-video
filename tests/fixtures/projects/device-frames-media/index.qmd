@@ -1,0 +1,198 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute"}
+:::
+
+browser 16:9 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="browser" fit="contain" audio="mute"}
+:::
+
+browser 9:16 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="browser" fit="contain" audio="mute"}
+:::
+
+browser 4:3 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="cover" audio="mute"}
+:::
+
+browser 16:9 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="browser" fit="cover" audio="mute"}
+:::
+
+browser 9:16 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="browser" fit="cover" audio="mute"}
+:::
+
+browser 4:3 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="phone" fit="contain" audio="mute"}
+:::
+
+phone 16:9 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="phone" fit="contain" audio="mute"}
+:::
+
+phone 9:16 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="phone" fit="contain" audio="mute"}
+:::
+
+phone 4:3 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="phone" fit="cover" audio="mute"}
+:::
+
+phone 16:9 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="phone" fit="cover" audio="mute"}
+:::
+
+phone 9:16 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="phone" fit="cover" audio="mute"}
+:::
+
+phone 4:3 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="tablet" fit="contain" audio="mute"}
+:::
+
+tablet 16:9 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="tablet" fit="contain" audio="mute"}
+:::
+
+tablet 9:16 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="tablet" fit="contain" audio="mute"}
+:::
+
+tablet 4:3 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="tablet" fit="cover" audio="mute"}
+:::
+
+tablet 16:9 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="tablet" fit="cover" audio="mute"}
+:::
+
+tablet 9:16 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="tablet" fit="cover" audio="mute"}
+:::
+
+tablet 4:3 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="generic" fit="contain" audio="mute"}
+:::
+
+generic 16:9 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="generic" fit="contain" audio="mute"}
+:::
+
+generic 9:16 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="generic" fit="contain" audio="mute"}
+:::
+
+generic 4:3 contain
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/wide.mp4" placement="framed" frame="generic" fit="cover" audio="mute"}
+:::
+
+generic 16:9 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/tall.mp4" placement="framed" frame="generic" fit="cover" audio="mute"}
+:::
+
+generic 9:16 cover
+:::
+
+::: {.scene component="statement" duration="1s"}
+
+::: {.video src="assets/four-three.mp4" placement="framed" frame="generic" fit="cover" audio="mute"}
+:::
+
+generic 4:3 cover
+:::

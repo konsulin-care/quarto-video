@@ -1,0 +1,22 @@
+{
+  "project": "tests/fixtures/projects/device-frames-media",
+  "theme": "modern",
+  "frames": [
+    105,
+    135,
+    165,
+    285,
+    315,
+    345,
+    465,
+    495,
+    525,
+    645,
+    675,
+    705
+  ],
+  "threshold": {
+    "channelTolerance": 2,
+    "maxDiffRatio": 0.0005
+  }
+}

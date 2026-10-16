@@ -48,6 +48,7 @@ counter() {
 }
 counter 640x360 counter-4s.mp4
 counter 640x480 counter-4s-4x3.mp4
+counter 360x640 counter-4s-9x16.mp4
 
 # 16-bit PCM WAV, 2 s, mono, 44.1 kHz.
 ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
@@ -65,4 +66,13 @@ done
 mkdir -p "$background/background-video-fit/assets"
 cp "$out/counter-4s-4x3.mp4" "$background/background-video-fit/assets/clip.mp4"
 
-echo "media fixtures written to $out, $unsupported and the media-range-* projects"
+# The device-frames fixtures (task 040): one counter clip per shape, 16:9 for the
+# one-scene-per-frame project, and 16:9, 9:16 and 4:3 for the visual cases.
+devices="$repo/tests/fixtures/projects"
+mkdir -p "$devices/device-frames/assets" "$devices/device-frames-media/assets"
+cp "$out/counter-4s.mp4" "$devices/device-frames/assets/clip.mp4"
+cp "$out/counter-4s.mp4" "$devices/device-frames-media/assets/wide.mp4"
+cp "$out/counter-4s-9x16.mp4" "$devices/device-frames-media/assets/tall.mp4"
+cp "$out/counter-4s-4x3.mp4" "$devices/device-frames-media/assets/four-three.mp4"
+
+echo "media fixtures written to $out, $unsupported and the media-range-*, background-video* and device-frames* projects"

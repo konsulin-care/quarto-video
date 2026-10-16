@@ -1,0 +1,14 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="framed" frame="laptop" fit="contain" audio="mute"}
+:::
+
+A frame that is not registered.
+:::
