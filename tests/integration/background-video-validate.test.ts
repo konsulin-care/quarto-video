@@ -65,7 +65,7 @@ describe("background footage validation", () => {
         "",
         "ERROR index.qmd:16",
         'Component "title" does not take "framed" footage.',
-        'Components that take "framed" footage: statement.',
+        'Components that take "framed" footage: product-demo, statement.',
         "",
       ].join("\n"),
     );
