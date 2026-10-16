@@ -19,11 +19,33 @@ describe("component lookups", () => {
     const title = listComponents().find((c) => c.id === "title");
     expect(title).toBeDefined();
     expect(title?.slots).toEqual({
-      default: { required: true, accepts: ["paragraph", "heading"] },
+      default: {
+        required: true,
+        alternative: "text-overlay",
+        accepts: ["paragraph", "heading"],
+      },
+      "text-overlay": {
+        required: false,
+        accepts: ["paragraph", "heading"],
+        maxBlocks: 1,
+      },
       subtitle: { required: false, accepts: ["paragraph"] },
     });
     expect(title?.props).toEqual({});
+    expect(title?.placements).toEqual(["background"]);
     expect(title?.duration).toEqual({ minMs: 1000, maxMs: 30000 });
+  });
+
+  it("every alternative names a slot of the same contract", () => {
+    for (const contract of listComponents()) {
+      for (const [name, slot] of Object.entries(contract.slots)) {
+        if (slot.alternative === undefined) continue;
+        expect(
+          contract.slots[slot.alternative],
+          `${contract.id}.${name}`,
+        ).toBeDefined();
+      }
+    }
   });
 
   it("lists section-divider with a kicker slot and short duration bounds", () => {

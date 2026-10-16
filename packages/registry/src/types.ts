@@ -10,6 +10,12 @@ export interface SlotContract {
   accepts: BlockKind[];
   /** More blocks than this is a warning (W_SLOT_TOO_MANY_BLOCKS), not an error. */
   maxBlocks?: number;
+  /**
+   * Optional (task 039): another slot of the same component that holds this
+   * slot's text instead. The slot is then not required, and the two are
+   * exclusive: a scene fills one of them.
+   */
+  alternative?: string;
   /** Optional: the slot holds one list whose item count is in this range (task 027). */
   items?: { minItems: number; maxItems: number };
 }
@@ -106,6 +112,8 @@ export interface ThemeTokens {
   /** Keyed by aspect ratio, e.g. "16:9". */
   safeArea: Record<string, SafeArea>;
   motion: { fastMs: number; baseMs: number; slowMs: number };
+  /** Legibility scrim over background footage (task 039): the background colour at this opacity. */
+  scrim: { opacity: number };
 }
 
 /** An animation preset's data (schema/animation.json, PRD §5.6). */
