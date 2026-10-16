@@ -13,7 +13,9 @@ export function checkKinetic(ir: IrVideo): Diagnostic[] {
     if (!("animation" in scene) || scene.animation?.name !== "kinetic") {
       return [];
     }
-    const words = countWords(slotTexts(scene.content)["default"] ?? "");
+    // The text the statement draws: `text-overlay` when `default` is empty (task 039).
+    const slots = slotTexts(scene.content);
+    const words = countWords(slots["default"] || slots["text-overlay"] || "");
     if (words <= KINETIC_MAX_WORDS) return [];
     const { file, line } = scene.source;
     return [
