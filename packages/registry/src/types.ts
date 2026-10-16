@@ -70,7 +70,8 @@ export interface ComponentContract {
   purpose: string;
   slots: Record<string, SlotContract>;
   props: Record<string, PropContract>;
-  placements: ("background" | "framed")[];
+  /** Footage the component takes: background, framed, or region (IR 1.7, ADR-0016). */
+  placements: ("background" | "framed" | "region")[];
   /** The scene must hold a `.video` block (E_SLOT_MISSING); absent means false (task 041). */
   requiresMedia?: boolean;
   compatibleAnimations: string[];

@@ -14,12 +14,16 @@ export const SUPPORTED_VERSIONS = [
   "1.4",
   "1.5",
   "1.6",
+  "1.7",
 ] as const;
 
 export type SupportedVersion = (typeof SUPPORTED_VERSIONS)[number];
 
-/** The version the filter writes. Pre-1.0 versions are read, never written. */
-export const LATEST_VERSION: SupportedVersion = "1.6";
+/**
+ * The newest version. The filter writes 1.7 for a manifest with region footage and
+ * 1.6 otherwise (ADR-0016). Pre-1.0 versions are read, never written.
+ */
+export const LATEST_VERSION: SupportedVersion = "1.7";
 
 /** Code of the version-gate error (`/schemaVersion`). */
 export const UNSUPPORTED_VERSION_CODE = "E_IR_UNSUPPORTED_VERSION";

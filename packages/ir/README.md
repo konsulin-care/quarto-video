@@ -1,13 +1,13 @@
 # packages/ir/ — Video IR schema, types, time rules
-Status: IR 0.1, 0.2, 0.3 and frozen 1.0 to 1.6 schemas (1.6: scene `media` for `.video` footage, task 038; 1.5: number prop values, task 031, ADR-0015; 1.1: scene `animation`, task 021, ADR-0011; 1.2: `settings.reducedMotion`, task 023, ADR-0012; 1.3: the image block, task 033, ADR-0013; 1.4: scene `props` and `tables`, task 035, ADR-0014), types, `validateIr()` and `ir:check` (tasks 002, 012, 015, 017); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004); timeline and transitions (015, ADR-0005); versions, the 1.0 freeze and the version gate (017, ADR-0007).
+Status: IR 0.1, 0.2, 0.3 and frozen 1.0 to 1.7 schemas (1.7: region footage, `placement: "region"` and a `region` name, task 043, ADR-0016; 1.6: scene `media` for `.video` footage, task 038; 1.5: number prop values, task 031, ADR-0015; 1.1: scene `animation`, task 021, ADR-0011; 1.2: `settings.reducedMotion`, task 023, ADR-0012; 1.3: the image block, task 033, ADR-0013; 1.4: scene `props` and `tables`, task 035, ADR-0014), types, `validateIr()` and `ir:check` (tasks 002, 012, 015, 017); duration → frames (009, ADR-0003); typed content and `plainText` (012, ADR-0004); timeline and transitions (015, ADR-0005); versions, the 1.0 freeze and the version gate (017, ADR-0007).
 Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video/ir -- <file.json>`; tests: root `npm run test`.
 
 ## Layout
 | Path | Owns |
 | --- | --- |
-| `schema/ir-0.1.json` … `ir-1.6.json` | JSON Schemas, draft 2020-12, `additionalProperties: false`. Released files are frozen (ADR-0007) |
+| `schema/ir-0.1.json` … `ir-1.7.json` | JSON Schemas, draft 2020-12, `additionalProperties: false`. Released files are frozen (ADR-0007) |
 | `src/types.ts`, `src/content-types.ts` | Hand-written types for 0.1 to 1.5 (timeline, transitions, `generator`), content nodes and image blocks, scene props (1.5: text or number) and tables, `IrError`, `IrValidation` |
-| `src/versions.ts` | `SUPPORTED_VERSIONS`, `LATEST_VERSION` (1.5), `UNSUPPORTED_VERSION_CODE`, the gate's message |
+| `src/versions.ts` | `SUPPORTED_VERSIONS`, `LATEST_VERSION` (1.7), `UNSUPPORTED_VERSION_CODE`, the gate's message |
 | `src/validate.ts` | `validateIr(json)`: the version gate, then the schema for the declared version; all errors, JSON Pointer paths |
 | `src/text.ts` | `plainText(content)`: the `default` slot as text; `slotTexts(content)`: each slot's text by name (task 024; subpath `@quarto-video/ir/text`) |
 | `src/check.ts` | File text → `OK` or `<path>: <message>` lines (pure) |
@@ -22,7 +22,7 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 
 ## Versions (ADR-0007)
 - `schemaVersion` is `"MAJOR.MINOR"`, one file per version. The filter writes `1.5` only.
-- `validateIr` reads 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4 and 1.5. Any other `schemaVersion` is
+- `validateIr` reads 0.1, 0.2, 0.3, 1.0 to 1.7. Any other `schemaVersion` is
   `E_IR_UNSUPPORTED_VERSION` at `/schemaVersion`, and the message lists the supported versions.
   A missing `schemaVersion` is `is required` at `/schemaVersion` and nothing else.
 - IR 1.0 is IR 0.3 plus a required `generator: {extension, cli}` (semver strings). Nothing else changed.
@@ -30,6 +30,7 @@ Run: `npm run typecheck -w @quarto-video/ir`; `npm run ir:check -w @quarto-video
 - IR 1.2 (ADR-0012) is 1.1 plus an optional `settings.reducedMotion` boolean (absent means false). The filter always writes it; the renderer applies each preset's reduced-motion rule.
 - IR 1.3 (ADR-0013) is 1.2 plus an image block in scene content (`{type: "image", src, fit, alt}`).
 - IR 1.4 (ADR-0014) is 1.3 plus, on a scene, `props` (strings: the authored attributes, checked by the validator against the contract) and `tables` (`{columns, rows}` per CSV prop, written by the validator only). A scene may have no slots; the contract decides which are required.
+- IR 1.7 (task 043, ADR-0016) is 1.6 plus a media item `placement` of `region` and its `region` name (an identifier; absent for other placements; no `frame`). The filter writes 1.7 only for a manifest with region footage.
 - IR 1.6 (task 038, ADR-0007) is 1.5 plus a scene `media` array of `.video` items: `src`, `placement` (`background` or `framed`), `fit`, optional `frame`, `sourceStartFrames`, optional `sourceEndFrames` (source frames at the project fps, never timeline frames), `audio` (`mute` only until task 044), `loop`, `freeze`, `playbackRate` (positive), `alt`. Additive: 1.0 to 1.5 are frozen and unchanged.
 - IR 1.5 (ADR-0015) is 1.4 plus scene `props` values that may be JSON numbers (the validator writes them from a number prop). Text props are unchanged. Additive: 1.0 to 1.4 are frozen and unchanged.
 - A released schema file never changes; `test/frozen.test.ts` checks its SHA-256. A change is a new file and an ADR.

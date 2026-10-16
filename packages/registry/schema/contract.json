@@ -57,7 +57,7 @@
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "enum": ["background", "framed"]
+        "enum": ["background", "framed", "region"]
       }
     },
     "requiresMedia": {

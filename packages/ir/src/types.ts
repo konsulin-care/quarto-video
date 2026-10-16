@@ -1,4 +1,4 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 and 1.6 (ir-1.6.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 to 1.7 (ir-1.7.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
@@ -6,7 +6,17 @@ import type { IrContentV02 } from "./content-types.js";
 export type * from "./content-types.js";
 
 export type SchemaVersion =
-  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5" | "1.6";
+  | "0.1"
+  | "0.2"
+  | "0.3"
+  | "1.0"
+  | "1.1"
+  | "1.2"
+  | "1.3"
+  | "1.4"
+  | "1.5"
+  | "1.6"
+  | "1.7";
 
 export interface IrSettings {
   width: number;
@@ -176,7 +186,10 @@ export interface IrVideoV15 extends Omit<
 export interface IrMediaVideo {
   type: "video";
   src: string;
-  placement: "background" | "framed";
+  /** `region` (IR 1.7, ADR-0016): footage of a named region of the scene (see `region`). */
+  placement: "background" | "framed" | "region";
+  /** The region the footage fills; present only with `region` placement (IR 1.7). */
+  region?: string;
   fit: "cover" | "contain";
   /** Frame style; present only with `framed` placement. */
   frame?: "browser" | "phone" | "tablet" | "generic";
@@ -208,7 +221,12 @@ export interface IrVideoV16 extends Omit<
   scenes: IrSceneV16[];
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.6). */
+/** IR 1.7 (ADR-0016): IR 1.6 whose media may be region footage. */
+export interface IrVideoV17 extends Omit<IrVideoV16, "schemaVersion"> {
+  schemaVersion: "1.7";
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.7). */
 export type IrVideoWithTimeline =
   | IrVideoV03
   | IrVideoV10
@@ -217,7 +235,8 @@ export type IrVideoWithTimeline =
   | IrVideoV13
   | IrVideoV14
   | IrVideoV15
-  | IrVideoV16;
+  | IrVideoV16
+  | IrVideoV17;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -230,7 +249,8 @@ export type IrVideo =
   | IrVideoV13
   | IrVideoV14
   | IrVideoV15
-  | IrVideoV16;
+  | IrVideoV16
+  | IrVideoV17;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {
