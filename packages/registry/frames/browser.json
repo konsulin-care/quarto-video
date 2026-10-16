@@ -1,0 +1,8 @@
+{
+  "id": "browser",
+  "version": "1.0.0",
+  "purpose": "A browser window: a title bar above the page, for footage of a web app or site.",
+  "aspect": "16:10",
+  "content": { "xPercent": 2, "yPercent": 12, "widthPercent": 96, "heightPercent": 86 },
+  "tokens": ["colors.surface", "colors.background", "colors.mutedText", "radius.md"]
+}

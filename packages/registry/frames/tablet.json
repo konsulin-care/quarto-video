@@ -1,0 +1,8 @@
+{
+  "id": "tablet",
+  "version": "1.0.0",
+  "purpose": "A tablet in landscape: a thin bezel with a camera dot, for footage of a touch app.",
+  "aspect": "4:3",
+  "content": { "xPercent": 4, "yPercent": 5, "widthPercent": 92, "heightPercent": 90 },
+  "tokens": ["colors.surface", "colors.background", "colors.mutedText", "radius.sm"]
+}

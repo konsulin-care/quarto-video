@@ -140,3 +140,21 @@ export interface TransitionPreset {
   /** The registered transition drawn when reduced motion is requested (task 023). */
   reducedMotion: string;
 }
+
+/** A device frame (task 040, PRD §5.5): its shape, its safe content box and the tokens it draws with. */
+export interface FrameContract {
+  id: string;
+  version: string;
+  purpose: string;
+  /** The frame's own shape, "width:height". */
+  aspect: string;
+  /** Where footage is drawn, as percentages of the frame box. */
+  content: {
+    xPercent: number;
+    yPercent: number;
+    widthPercent: number;
+    heightPercent: number;
+  };
+  /** Theme token paths the frame draws with. */
+  tokens: string[];
+}

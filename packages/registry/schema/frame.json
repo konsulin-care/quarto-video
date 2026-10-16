@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quarto-video.local/registry/frame.json",
+  "title": "Device frame",
+  "description": "Data contract of one reusable device frame (PRD §5.5, §6.1). Static data only: the frame's drawing lives in renderer/remotion/media/frames, keyed by id. Positions are percentages of the frame box, so no pixels or CSS appear here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "purpose", "aspect", "content", "tokens"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "aspect": {
+      "description": "The frame's own shape, width:height. The frame box is the largest of this shape inside the canvas safe area.",
+      "type": "string",
+      "pattern": "^[1-9][0-9]*:[1-9][0-9]*$"
+    },
+    "content": {
+      "description": "The safe content box: where footage is drawn, as percentages of the frame box. The box must lie inside the frame (checked by the loader).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["xPercent", "yPercent", "widthPercent", "heightPercent"],
+      "properties": {
+        "xPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "yPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "widthPercent": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+        "heightPercent": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 }
+      }
+    },
+    "tokens": {
+      "description": "Theme token paths the frame draws with, for example colors.surface. Each must exist in every theme (checked by the renderer's parity test).",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(colors|space|radius)\\.[a-zA-Z]+$"
+      }
+    }
+  }
+}
