@@ -1,4 +1,4 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4 and 1.5 (ir-1.5.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 and 1.6 (ir-1.6.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
@@ -6,7 +6,7 @@ import type { IrContentV02 } from "./content-types.js";
 export type * from "./content-types.js";
 
 export type SchemaVersion =
-  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5";
+  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5" | "1.6";
 
 export interface IrSettings {
   width: number;
@@ -172,7 +172,43 @@ export interface IrVideoV15 extends Omit<
   scenes: IrSceneV15[];
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.5). */
+/** Video footage of a scene (task 038). Source times are integer frames of the project fps. */
+export interface IrMediaVideo {
+  type: "video";
+  src: string;
+  placement: "background" | "framed";
+  fit: "cover" | "contain";
+  /** Frame style; present only with `framed` placement. */
+  frame?: "browser" | "phone" | "tablet" | "generic";
+  /** Source in-point, in source frames (not timeline frames). */
+  sourceStartFrames: number;
+  /** Source out-point, in source frames. Absent means the end of the source. */
+  sourceEndFrames?: number;
+  audio: "mute";
+  loop: boolean;
+  freeze: boolean;
+  /** Positive playback speed; 1 is normal speed. */
+  playbackRate: number;
+  alt: string;
+}
+
+export type IrMedia = IrMediaVideo;
+
+/** IR 1.6 (task 038): a scene may carry `.video` footage. */
+export interface IrSceneV16 extends IrSceneV15 {
+  media?: IrMedia[];
+}
+
+/** IR 1.6 (task 038): IR 1.5 plus scene `media`. */
+export interface IrVideoV16 extends Omit<
+  IrVideoV15,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.6";
+  scenes: IrSceneV16[];
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.6). */
 export type IrVideoWithTimeline =
   | IrVideoV03
   | IrVideoV10
@@ -180,7 +216,8 @@ export type IrVideoWithTimeline =
   | IrVideoV12
   | IrVideoV13
   | IrVideoV14
-  | IrVideoV15;
+  | IrVideoV15
+  | IrVideoV16;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -192,7 +229,8 @@ export type IrVideo =
   | IrVideoV12
   | IrVideoV13
   | IrVideoV14
-  | IrVideoV15;
+  | IrVideoV15
+  | IrVideoV16;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

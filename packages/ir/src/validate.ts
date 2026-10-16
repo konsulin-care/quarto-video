@@ -32,6 +32,7 @@ const SCHEMAS: Readonly<Record<string, ValidateFunction>> = {
   "1.3": compile("ir-1.3.json"),
   "1.4": compile("ir-1.4.json"),
   "1.5": compile("ir-1.5.json"),
+  "1.6": compile("ir-1.6.json"),
 };
 
 /** Maps one ajv error to a JSON Pointer path and a readable message. */
