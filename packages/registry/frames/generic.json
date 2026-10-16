@@ -4,5 +4,5 @@
   "purpose": "A plain rounded panel with a thin border, for footage with no device to show.",
   "aspect": "16:9",
   "content": { "xPercent": 3, "yPercent": 3, "widthPercent": 94, "heightPercent": 94 },
-  "tokens": ["colors.surface", "colors.background", "colors.accent", "radius.sm"]
+  "tokens": ["colors.surface", "colors.background", "colors.accent", "radius.md", "radius.sm", "space.xs"]
 }

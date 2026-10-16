@@ -21,6 +21,7 @@ import { effectiveAnimation } from "../animations/index.js";
 import { COMPONENTS } from "./registry-map.js";
 import type { Overlap } from "../transitions/index.js";
 import { BackgroundScene } from "../media/BackgroundScene.js";
+import { FramedScene } from "../media/FramedScene.js";
 import { withOverlay } from "./overlay.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
@@ -43,12 +44,13 @@ function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
   return effectiveAnimation(name, contentOf(scene).texts["default"] ?? "");
 }
 
-/** The scene's background footage (task 039), if it has one. */
-function backgroundOf(
+/** The scene's `.video` footage with the given placement, if it has one (tasks 039, 040). */
+function mediaOf(
   scene: IrManifest["scenes"][number],
+  placement: IrMediaVideo["placement"],
 ): IrMediaVideo | undefined {
   if (!("media" in scene) || scene.media === undefined) return undefined;
-  return scene.media.find((item) => item.placement === "background");
+  return scene.media.find((item) => item.placement === placement);
 }
 
 /** The overlap a scene's transition makes; none for cut or no transition. */
@@ -87,12 +89,13 @@ function reducedMotionOf(ir: IrManifest): boolean {
   return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
 }
 
-/** The component, over its scene's background footage when it has some (task 039). */
-function withBackground(
-  scene: IrManifest["scenes"][number],
-  component: ReactNode,
-) {
-  const background = backgroundOf(scene);
+/** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
+function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
+  const framed = mediaOf(scene, "framed");
+  if (framed !== undefined) {
+    return <FramedScene media={framed}>{component}</FramedScene>;
+  }
+  const background = mediaOf(scene, "background");
   return background === undefined ? (
     component
   ) : (
@@ -131,7 +134,7 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >
-                  {withBackground(
+                  {withMedia(
                     scene,
                     <Component
                       slots={contentOf(scene).texts}

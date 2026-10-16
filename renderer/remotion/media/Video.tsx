@@ -14,11 +14,16 @@ import {
 import { fitStyle } from "./fit.js";
 import { planOf, sourceFrameAt } from "./schedule.js";
 
-export interface BackgroundVideoProps {
+export interface FootageProps {
   media: IrMediaVideo;
 }
 
-export function BackgroundVideo({ media }: BackgroundVideoProps) {
+/**
+ * The clip, filling its positioned parent (task 039, shared with framed footage,
+ * task 040): one muted frame per scene frame, at the source frame `sourceFrameAt`
+ * names, framed by `fit`.
+ */
+export function Footage({ media }: FootageProps) {
   const frame = useCurrentFrame();
   const source = sourceFrameAt(frame, planOf(media));
   return (
@@ -33,4 +38,9 @@ export function BackgroundVideo({ media }: BackgroundVideoProps) {
       </AbsoluteFill>
     </Sequence>
   );
+}
+
+/** Background footage: the clip over the whole canvas (task 039). */
+export function BackgroundVideo({ media }: FootageProps) {
+  return <Footage media={media} />;
 }

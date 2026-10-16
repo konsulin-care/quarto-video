@@ -4,5 +4,5 @@
   "purpose": "A phone in portrait: a rounded body with a home bar, for footage of a mobile app.",
   "aspect": "9:19",
   "content": { "xPercent": 5, "yPercent": 3, "widthPercent": 90, "heightPercent": 94 },
-  "tokens": ["colors.surface", "colors.background", "colors.mutedText", "radius.md"]
+  "tokens": ["colors.surface", "colors.background", "colors.mutedText", "radius.md", "radius.sm", "space.xs"]
 }
