@@ -11,6 +11,7 @@ import { resolveAsset } from "../assets/resolve.js";
 import type { AssetProblem } from "../assets/syntax.js";
 import { formatProblem, type MediaUse } from "../media/formats.js";
 import { probeMedia, type MediaOptions } from "./media.js";
+import { keptAudioProblem } from "./audio.js";
 import { videoRangeProblem, type VideoRange } from "./media-range.js";
 
 /** One asset reference: the path as the author wrote it, and where it is written. */
@@ -25,6 +26,8 @@ export interface AssetRef {
   use?: MediaUse;
   /** A `.video` block's source range and timing (task 038); `path` is set per file. */
   range?: Omit<VideoRange, "path">;
+  /** A `.video` block with audio="keep" (ADR-0009): its file needs an audio stream. */
+  keepAudio?: boolean;
 }
 
 /** The scene fields the references are read from, plus its `.video` media. */
@@ -84,6 +87,7 @@ export function assetRefsOf(ir: RefIr): AssetRef[] {
       use: "video",
       ...where,
       range: rangeOf(item, ir.settings.fps, scene.durationFrames),
+      keepAudio: item.audio === "keep",
     }));
     return [...images, ...videos];
   });
@@ -101,17 +105,19 @@ function referenceProblem(
   const format = formatProblem(use, resolved.path);
   if (format !== null || use === "image") return format;
   const probed = probeMedia(use, resolved.path, root, media);
-  if (
-    probed.problem !== null ||
-    probed.media === undefined ||
-    ref.range === undefined
-  ) {
+  if (probed.problem !== null || probed.media === undefined) {
     return probed.problem;
   }
-  return videoRangeProblem(
-    { ...ref.range, path: resolved.path },
-    probed.media.durationS,
-  );
+  if (ref.range !== undefined) {
+    const range = videoRangeProblem(
+      { ...ref.range, path: resolved.path },
+      probed.media.durationS,
+    );
+    if (range !== null) return range;
+  }
+  return ref.keepAudio === true
+    ? keptAudioProblem(resolved.path, probed.media)
+    : null;
 }
 
 /**
