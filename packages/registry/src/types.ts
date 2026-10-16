@@ -64,6 +64,12 @@ export interface TextFit extends TextRange {
   subtitle?: TextRange;
 }
 
+/** The number of regions a scene may use: the component's slots are its regions (task 043). */
+export interface RegionLimit {
+  min: number;
+  max: number;
+}
+
 export interface ComponentContract {
   id: string;
   version: string;
@@ -72,6 +78,8 @@ export interface ComponentContract {
   props: Record<string, PropContract>;
   /** Footage the component takes: background, framed, or region (IR 1.7, ADR-0016). */
   placements: ("background" | "framed" | "region")[];
+  /** Regions a scene uses (split-screen, ADR-0016); present exactly when `placements` lists region. */
+  regions?: RegionLimit;
   /** The scene must hold a `.video` block (E_SLOT_MISSING); absent means false (task 041). */
   requiresMedia?: boolean;
   compatibleAnimations: string[];

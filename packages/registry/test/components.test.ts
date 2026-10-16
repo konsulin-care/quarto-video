@@ -89,7 +89,7 @@ describe("component lookups", () => {
   it("rejects an unknown component id with an error, not undefined", () => {
     expect(() => getComponent("gallery")).toThrow(RegistryError);
     expect(() => getComponent("gallery")).toThrow(
-      /unknown component "gallery" \(known: bullets, chart, comparison, end-card, image, product-demo, section-divider, statement, statistic, text-media, title\)/,
+      /unknown component "gallery" \(known: bullets, chart, comparison, end-card, image, product-demo, section-divider, split-screen, statement, statistic, text-media, title\)/,
     );
   });
 });

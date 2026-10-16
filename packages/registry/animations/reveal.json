@@ -12,7 +12,8 @@
     "chart",
     "statistic",
     "product-demo",
-    "text-media"
+    "text-media",
+    "split-screen"
   ],
   "minFrames": 15,
   "shortScene": "static",

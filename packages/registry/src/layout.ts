@@ -210,6 +210,30 @@ export function mediaSideOf(value: unknown): MediaSide {
 }
 
 /**
+ * `count` equal columns of `area`, left to right, with `gap` between them (task
+ * 043). The width an uneven split leaves over goes to the last column. The
+ * columns never overlap and lie inside `area`.
+ */
+export function splitColumns(area: Rect, count: number, gap: number): Rect[] {
+  const width = Math.floor((area.width - gap * (count - 1)) / count);
+  const right = area.left + area.width;
+  const columns: Rect[] = [];
+  let left = area.left;
+  for (let index = 0; index < count; index += 1) {
+    const last = index === count - 1;
+    const columnWidth = last ? right - left : width;
+    columns.push({
+      left,
+      top: area.top,
+      width: columnWidth,
+      height: area.height,
+    });
+    left += columnWidth + gap;
+  }
+  return columns;
+}
+
+/**
  * The two columns of `text-media` (task 042) inside `area`: the footage column
  * on `side`, the text column on the other side, with `gap` between them. The
  * columns never overlap and lie inside `area`; the width left over by an odd
@@ -221,18 +245,16 @@ export function sideColumns(
   side: MediaSide,
   gap: number,
 ): { text: Rect; media: Rect } {
-  const half = Math.floor((area.width - gap) / 2);
-  const rest = area.width - gap - half;
-  const first: Rect = { ...area, width: half };
-  const second: Rect = {
-    left: area.left + half + gap,
-    top: area.top,
-    width: rest,
-    height: area.height,
-  };
+  const [first = area, second = area] = splitColumns(area, 2, gap);
   return side === "left"
     ? { media: first, text: second }
     : { text: first, media: second };
+}
+
+/** The canvas safe area as a rectangle (task 042). */
+function safeRect(theme: ThemeTokens, width: number, height: number): Rect {
+  const margin = safeAreaPixels(theme, width, height);
+  return { left: margin.x, top: margin.y, ...safeBox(theme, width, height) };
 }
 
 /**
@@ -247,8 +269,22 @@ export function textMediaColumns(
   height: number,
   side: MediaSide,
 ): { text: Rect; media: Rect } {
-  const margin = safeAreaPixels(theme, width, height);
-  const box = safeBox(theme, width, height);
-  const area = { left: margin.x, top: margin.y, ...box };
-  return sideColumns(area, side, theme.space.md);
+  return sideColumns(safeRect(theme, width, height), side, theme.space.md);
+}
+
+/** The region names of split-screen, left to right (task 043; ADR-0016). */
+export const REGION_ORDER = ["left", "middle", "right"] as const;
+
+/**
+ * The columns of `count` regions (task 043) on a `width` x `height` canvas: the
+ * canvas safe area split with `space.md` between them. The renderer draws each
+ * region in its column, in REGION_ORDER.
+ */
+export function regionColumns(
+  theme: ThemeTokens,
+  width: number,
+  height: number,
+  count: number,
+): Rect[] {
+  return splitColumns(safeRect(theme, width, height), count, theme.space.md);
 }

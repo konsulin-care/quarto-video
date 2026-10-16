@@ -78,6 +78,7 @@ describe("animation presets", () => {
       "statistic",
       "product-demo",
       "text-media",
+      "split-screen",
     ]);
   });
 
