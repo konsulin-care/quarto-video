@@ -36,6 +36,7 @@ import { checkMediaPlacement } from "./stages/media-placement.js";
 import { checkMediaRequired } from "./stages/media-required.js";
 import { checkRegions } from "./stages/regions.js";
 import { resolveSourceEnds } from "./stages/media-source.js";
+import { resolveMusic } from "./stages/music.js";
 import { resolveData } from "./stages/data.js";
 import { withNumbers } from "./stages/number.js";
 import { checkProps } from "./stages/props.js";
@@ -159,8 +160,14 @@ export function checkManifest(
       const assetErrors = checkAssets(refs, assets.root, assets.media);
       if (ir === undefined) return assetErrors;
       const data = resolveData(ir, components, assets.root);
-      state.ir = resolveSourceEnds(data.ir, assets.root, assets.media ?? {});
-      return [...assetErrors, ...data.diagnostics];
+      const sourced = resolveSourceEnds(
+        data.ir,
+        assets.root,
+        assets.media ?? {},
+      );
+      const track = resolveMusic(sourced, assets.root, assets.media ?? {});
+      state.ir = track.ir;
+      return [...assetErrors, ...data.diagnostics, ...track.diagnostics];
     },
     () => {
       const ir = state.ir;
