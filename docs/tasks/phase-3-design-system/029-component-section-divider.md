@@ -39,5 +39,4 @@ Human check:
 
 ## Completion log
 - 2026-10-15: `section-divider` released. Contract, renderer, fixtures, integration test, three visual cases (approved references, reviewed), docs page. Gates: `check.sh --all` exit 0 on the worktree; `test.sh --all` exit 0 on the non-hidden copy (scripts 16, unit 475, lua 201, integration, visual 75 frames).
-
-## Completion log
+- 2026-10-16: log completed; Status stays `done`. Human check 1 stays partly met: nobody has watched the render in motion. The merge run on `claude/stoic-meitner-i9rmkv` (after 029 was merged with the other wave branches) gave `check.sh --all` exit 0 and `test.sh --all` exit 0; that run's log is kept outside the repo.
