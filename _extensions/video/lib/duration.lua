@@ -126,4 +126,18 @@ function M.default_frames(text, fps)
   return frames_of(text, DEFAULT_CONTEXT, fps)
 end
 
+--- Returns the frames of a front matter duration setting `property` (for
+--- example audio.music.fadeOut, task 045). The message names the setting.
+function M.setting_frames(text, property, fps)
+  return frames_of(text, {
+    head = function(value)
+      return string.format('The duration "%s" (%s)', value, property)
+    end,
+    property = property,
+    one = property .. ": 1s",
+    four = property .. ": 4s",
+    shorter = "Use a shorter duration.",
+  }, fps)
+end
+
 return M

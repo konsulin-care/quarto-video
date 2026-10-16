@@ -13,6 +13,7 @@ local config_keys = require("lib.config_keys")
 local scenes = require("lib.scenes")
 local source_scan = require("lib.scan")
 local manifest = require("lib.manifest")
+local music_track = require("lib.music")
 local diagnostics = require("lib.diagnostics")
 
 -- Path of the .qmd being rendered. Under `quarto render` Pandoc only sees a
@@ -57,6 +58,9 @@ function Pandoc(doc)
   end, found)
   -- With settings in error the frames are discarded, so fps 1 is a placeholder.
   local fps = video and video.fps or 1
+  local music = diagnostics.try(function()
+    return music_track.read(doc.meta, fps)
+  end, found)
   local before = #found
   local defaults = diagnostics.try(function()
     return config.scene_defaults(doc.meta, fps)
@@ -81,7 +85,7 @@ function Pandoc(doc)
     error(diagnostics.messages(found), 0)
   end
   diagnostics.write(diagnostics_path, {})
-  manifest.write(path, manifest.build(video, list, file_name))
+  manifest.write(path, manifest.build(video, list, file_name, music))
   -- The theme name is resolved by the validator (E_THEME_UNKNOWN), not here.
   -- The explicit background is kept too; the renderer's canvas default is the theme's.
   manifest.write(render_path, {
