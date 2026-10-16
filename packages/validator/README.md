@@ -67,6 +67,11 @@ form humans and AI agents can act on (PRD §9).
 | `E_DURATION_RANGE` | 1 filter | A `duration` (a scene's, `transitionDuration`, or `defaults.scene.duration`) is zero or negative, above 3600 s, or rounds to less than one frame (ADR-0003) | 008 (widened 015) |
 | `E_CONTENT_UNSUPPORTED` | 1 filter | Scene content has Markdown the content model does not support (a table, raw HTML or comment, footnote, math, link, image, ...), a block with a bad or missing slot class, a duplicate or empty slot; the line is the element's (ADR-0004) | 012 |
 | `E_IMAGE_BLOCK` | 1 filter | An image block (`.image`, ADR-0013) has no `src`, has no `alt`, a `fit` other than `cover` or `contain`, an unknown attribute, an id, extra classes or content, or a scene has a second image; the line is the block's | 033 |
+| `E_VIDEO_BLOCK` | 1 filter | A `.video` block (ADR-0008, IR 1.6) has an unknown attribute, no `src`, an `audio` other than `mute`, a `placement` other than `background` or `framed`, a `frame` without `framed` (or framed without one), a `fit` other than `cover` or `contain`, a `loop` or `freeze` that is not `true` or `false`, an id or extra classes, content, a second block in the scene, or a block inside a slot; the line is the block's | 038 |
+| `E_VIDEO_AUDIO_REQUIRED` | 1 filter | A `.video` block has no `audio` attribute; the suggestion is `audio="mute"` (PRD §6.2) | 038 |
+| `E_VIDEO_RANGE` | 1 filter | A `.video` block's `sourceStart` is at or after its `sourceEnd` (equal is an empty range); the message gives both values | 038 |
+| `E_VIDEO_PLAYBACK_RATE` | 1 filter | A `.video` block's `playbackRate` is not a positive number (zero, negative, or text such as `fast`) | 038 |
+| `E_VIDEO_LOOP_FREEZE` | 1 filter | A `.video` block has both `loop="true"` and `freeze="true"`; they are mutually exclusive (task 038) | 038 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.1 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017, 1.1 in 021) |
 | `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3, 1.0 or 1.1, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |

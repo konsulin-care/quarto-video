@@ -32,7 +32,7 @@
       }
     }
   ],
-  "schemaVersion": "1.5",
+  "schemaVersion": "1.6",
   "settings": {
     "background": "#000000",
     "fps": 30,

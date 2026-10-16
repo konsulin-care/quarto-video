@@ -55,6 +55,9 @@ local function line_matches(finding, lines, n)
   elseif kind == "image-block" then
     -- An opener of a Div with the class `image` (the `nth` one of the scene).
     return line:match("^[%s>]*:::+%s*{.*%.image[%s}]") ~= nil
+  elseif kind == "video-block" then
+    -- An opener of a Div with the class `video` (the `nth` one of the scene).
+    return line:match("^[%s>]*:::+%s*{.*%.video[%s}]") ~= nil
   elseif kind == "list" then
     -- The first item of an ordered list that starts at `text`.
     return finding.text ~= nil and line:match("^%s*" .. finding.text .. "[.)]%s") ~= nil

@@ -1,10 +1,22 @@
 -- Minimal deterministic JSON encoder for the manifest (no dependencies).
 -- Objects are plain tables with string keys, written in sorted key order.
 -- Arrays must be built with json.array(); an empty array encodes as [].
--- Only strings, integers, booleans, arrays and objects are supported.
+-- Only strings, integers, booleans, arrays and objects are supported, plus
+-- decimals written with json.decimal (a numeral text kept exactly as given).
 local M = {}
 
 local ARRAY = {}
+local DECIMAL = {}
+
+--- Marks a decimal numeral text (`1`, `0.5`) to be written as a JSON number
+--- exactly as it is. Only plain digits and one fraction are accepted.
+function M.decimal(text)
+  assert(
+    type(text) == "string" and (text:match("^%d+$") or text:match("^%d+%.%d+$")),
+    "json.decimal: not a plain decimal numeral: " .. tostring(text)
+  )
+  return setmetatable({ text = text }, DECIMAL)
+end
 
 --- Marks a Lua list as a JSON array (so an empty list still encodes as []).
 function M.array(list)
@@ -73,6 +85,9 @@ encode = function(value, depth)
   elseif kind == "boolean" then
     return value and "true" or "false"
   elseif kind == "table" then
+    if getmetatable(value) == DECIMAL then
+      return value.text
+    end
     if getmetatable(value) == ARRAY then
       return encode_array(value, depth)
     end

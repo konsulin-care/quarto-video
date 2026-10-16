@@ -77,7 +77,17 @@ local function scene_frames(div, id, fps, default_frames)
   )
 end
 
-local function scene_record(div, id, fps, default_frames, line, slots, transition, animation)
+local function scene_record(
+  div,
+  id,
+  fps,
+  default_frames,
+  line,
+  slots,
+  transition,
+  animation,
+  footage
+)
   check_shape(div, id)
   local props = props_of(div)
   local component = div.attributes.component
@@ -96,6 +106,7 @@ local function scene_record(div, id, fps, default_frames, line, slots, transitio
     animation = animation,
     props = props,
     slots = slots,
+    media = footage,
     line = line,
   }
 end
@@ -139,13 +150,13 @@ end
 
 -- Converts the content of one scene. Each unsupported element becomes an
 -- E_CONTENT_UNSUPPORTED diagnostic in `found`, at its line when it is found.
-local function content_slots(div, id, line, scan, found)
-  local slots, unsupported = content.convert(div)
+local function content_slots(div, id, line, scan, found, fps)
+  local slots, unsupported, footage = content.convert(div, fps)
   content_lines.assign(scan, content_lines.opener_at(scan, line), unsupported)
   for _, finding in ipairs(unsupported) do
     found[#found + 1] = content.problem(finding, id, div.attributes.component)
   end
-  return slots
+  return slots, footage
 end
 
 --- Returns one record { id, component, durationFrames, transition, slots,
@@ -201,7 +212,7 @@ function M.collect(doc, fps, default_frames, scan, default_transition)
         line = line,
       })
     else
-      local slots = content_slots(entry.div, id, line, scan, found)
+      local slots, footage = content_slots(entry.div, id, line, scan, found, fps)
       local context = {
         sceneId = id,
         component = entry.div.attributes.component,
@@ -214,7 +225,17 @@ function M.collect(doc, fps, default_frames, scan, default_transition)
         return animations.resolve(entry.div, id)
       end, found, context)
       list[#list + 1] = diagnostics.try(function()
-        return scene_record(entry.div, id, fps, default_frames, line, slots, transition, animation)
+        return scene_record(
+          entry.div,
+          id,
+          fps,
+          default_frames,
+          line,
+          slots,
+          transition,
+          animation,
+          footage
+        )
       end, found, context)
     end
   end

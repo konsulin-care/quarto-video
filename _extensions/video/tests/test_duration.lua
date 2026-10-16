@@ -99,4 +99,16 @@ return {
       frames("1234567890s", 30)
     end, "E_DURATION_RANGE", "overlong digits")
   end,
+  ["zero is a source in-point when allowed, and a negative value still fails"] = function()
+    h.eq(duration.to_frames("0s", "scene-001", 30, "sourceStart", true), 0, "0s")
+    h.eq(duration.to_frames("0ms", "scene-001", 30, "sourceStart", true), 0, "0ms")
+    local err = h.error_of(function()
+      duration.to_frames("-1s", "scene-001", 30, "sourceStart", true)
+    end)
+    h.contains(
+      err,
+      'Scene "scene-001" has sourceStart "-1s", which must not be negative',
+      "message"
+    )
+  end,
 }

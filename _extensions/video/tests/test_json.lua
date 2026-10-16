@@ -22,6 +22,18 @@ return {
     h.contains(text, '"say \\"hi\\"\\\\\\n"', "output")
   end,
 
+  ["a decimal numeral is written exactly as a JSON number"] = function()
+    h.contains(json.encode({ r = json.decimal("0.5") }), '"r": 0.5', "decimal")
+    h.contains(json.encode({ r = json.decimal("2") }), '"r": 2', "integer text")
+  end,
+
+  ["json.decimal refuses text that is not a plain numeral"] = function()
+    local err = h.error_of(function()
+      json.decimal("1e3")
+    end)
+    h.contains(err, "not a plain decimal numeral", "error")
+  end,
+
   ["non-integer numbers are rejected"] = function()
     local err = h.error_of(function()
       json.encode({ n = 1.5 })
