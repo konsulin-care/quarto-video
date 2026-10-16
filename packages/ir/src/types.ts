@@ -4,6 +4,8 @@
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
+export type * from "./music-types.js";
+import type { IrMusic } from "./music-types.js";
 
 export type SchemaVersion =
   | "0.1"
@@ -17,7 +19,8 @@ export type SchemaVersion =
   | "1.5"
   | "1.6"
   | "1.7"
-  | "1.8";
+  | "1.8"
+  | "1.9";
 
 export interface IrSettings {
   width: number;
@@ -235,7 +238,13 @@ export interface IrVideoV18 extends Omit<IrVideoV17, "schemaVersion"> {
   schemaVersion: "1.8";
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.8). */
+/** IR 1.9 (ADR-0017): IR 1.8 with the optional project music track. */
+export interface IrVideoV19 extends Omit<IrVideoV18, "schemaVersion"> {
+  schemaVersion: "1.9";
+  music?: IrMusic;
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.9). */
 export type IrVideoWithTimeline =
   | IrVideoV03
   | IrVideoV10
@@ -246,7 +255,8 @@ export type IrVideoWithTimeline =
   | IrVideoV15
   | IrVideoV16
   | IrVideoV17
-  | IrVideoV18;
+  | IrVideoV18
+  | IrVideoV19;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -261,7 +271,8 @@ export type IrVideo =
   | IrVideoV15
   | IrVideoV16
   | IrVideoV17
-  | IrVideoV18;
+  | IrVideoV18
+  | IrVideoV19;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {
