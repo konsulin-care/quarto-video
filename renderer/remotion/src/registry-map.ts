@@ -13,6 +13,7 @@ import { Image } from "../components/image/Image.js";
 import { ProductDemo } from "../components/product-demo/ProductDemo.js";
 import { Statistic } from "../components/statistic/Statistic.js";
 import { TextMedia } from "../components/text-media/TextMedia.js";
+import { SplitScreen } from "../components/split-screen/SplitScreen.js";
 
 export interface SceneProps {
   /** Plain text of each slot the scene has, by slot name (task 024). */
@@ -25,13 +26,19 @@ export interface SceneProps {
   tables: Readonly<Record<string, IrTable>>;
   /** The scene's framed footage, for components that place it themselves (task 042). */
   media?: IrMediaVideo | undefined;
+  /** The scene's region footage by region name (IR 1.7, task 043). */
+  regions?: Readonly<Record<string, IrMediaVideo>> | undefined;
 }
 
 /**
- * Components that place their scene's footage in their own layout (task 042):
- * IrVideo does not wrap them in FramedScene, and they take `media`.
+ * Components that place their scene's footage in their own layout (task 042;
+ * split-screen, task 043): IrVideo does not wrap them in FramedScene, and they
+ * take `media` or `regions`.
  */
-export const PLACES_OWN_MEDIA: ReadonlySet<string> = new Set(["text-media"]);
+export const PLACES_OWN_MEDIA: ReadonlySet<string> = new Set([
+  "text-media",
+  "split-screen",
+]);
 
 export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   chart: Chart,
@@ -45,4 +52,5 @@ export const COMPONENTS: Readonly<Record<string, FC<SceneProps>>> = {
   statistic: Statistic,
   "product-demo": ProductDemo,
   "text-media": TextMedia,
+  "split-screen": SplitScreen,
 };

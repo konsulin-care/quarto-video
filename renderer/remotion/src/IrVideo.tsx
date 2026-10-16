@@ -89,6 +89,20 @@ function reducedMotionOf(ir: IrManifest): boolean {
   return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
 }
 
+/** The scene's region footage by region name (IR 1.7, task 043); none before 1.7. */
+function regionsOf(
+  scene: IrManifest["scenes"][number],
+): Record<string, IrMediaVideo> {
+  const regions: Record<string, IrMediaVideo> = {};
+  if (!("media" in scene) || scene.media === undefined) return regions;
+  for (const item of scene.media) {
+    if (item.placement === "region" && item.region !== undefined) {
+      regions[item.region] = item;
+    }
+  }
+  return regions;
+}
+
 /** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
 function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   if (PLACES_OWN_MEDIA.has(scene.component)) return component;
@@ -149,6 +163,7 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                       props={propsOf(scene)}
                       tables={tablesOf(scene)}
                       media={mediaOf(scene, "framed")}
+                      regions={regionsOf(scene)}
                     />,
                   )}
                 </AnimatedScene>
