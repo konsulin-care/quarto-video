@@ -16,18 +16,22 @@ import { fitFrame, screenBox } from "./frames/layout.js";
 
 export interface FramedSceneProps {
   media: IrMediaVideo;
-  /** A caption draws under the frame: its band is reserved (task 041). */
-  caption?: boolean;
+  /** The caption under the frame, if any: its band is reserved (task 041). */
+  caption?: string;
   children: ReactNode;
 }
 
-export function FramedScene({ media, caption, children }: FramedSceneProps) {
+export function FramedScene({
+  media,
+  caption = "",
+  children,
+}: FramedSceneProps) {
   const theme = useTheme();
   const { width, height } = useVideoConfig();
   const contract = frameContract(media.frame ?? "");
   const margin = safeAreaPixels(theme, width, height);
   const safe = safeBox(theme, width, height);
-  const reserve = caption === true ? captionBand(theme) : 0;
+  const reserve = caption === "" ? 0 : captionBand(theme, caption, safe.width);
   const box = fitFrame(
     {
       left: margin.x,

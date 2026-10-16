@@ -1,0 +1,48 @@
+---
+title: "Component product-demo invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.caption}
+A caption and no footage.
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="background" fit="cover" audio="mute" alt="A counter clip"}
+:::
+
+::: {.caption}
+Background footage is not a framed clip.
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+::: {.caption}
+# A heading is not a caption
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+
+Text is not a caption: it has no default slot.
+:::
+
+::: {.scene component="product-demo" duration="0.5s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s" animation="kinetic"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
+:::
+:::

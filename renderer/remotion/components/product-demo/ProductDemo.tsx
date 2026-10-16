@@ -1,8 +1,9 @@
 // `product-demo` component (task 041; contract: packages/registry/components/product-demo.json).
 // The footage in its device frame is drawn by FramedScene, which IrVideo wraps
-// around this component; this component draws the optional caption in the band
-// FramedScene reserved under the frame (media/frames/caption.ts). Colour, type and
-// spacing come from the theme tokens (task 019). The caption wraps in the safe area.
+// around this component. This component draws the optional caption in the band
+// FramedScene reserved under the frame, as tall as the caption's lines need
+// (media/frames/caption.ts). Colour, type and spacing come from the theme tokens
+// (task 019). The caption wraps in the safe area.
 import { useVideoConfig } from "remotion";
 import { safeAreaPixels, safeBox } from "@quarto-video/registry/layout";
 import { useTheme } from "../../themes/ThemeProvider.js";
@@ -20,7 +21,7 @@ export function ProductDemo({ slots }: ProductDemoProps) {
   if (caption === "") return null;
   const margin = safeAreaPixels(theme, width, height);
   const safe = safeBox(theme, width, height);
-  const band = captionBand(theme);
+  const band = captionBand(theme, caption, safe.width);
   const { colors, typography, space } = theme;
   return (
     <div

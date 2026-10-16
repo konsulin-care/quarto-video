@@ -76,4 +76,13 @@ cp "$out/counter-4s.mp4" "$devices/device-frames-media/assets/wide.mp4"
 cp "$out/counter-2s-9x16.mp4" "$devices/device-frames-media/assets/tall.mp4"
 cp "$out/counter-4s-4x3.mp4" "$devices/device-frames-media/assets/four-three.mp4"
 
-echo "media fixtures written to $out, $unsupported and the media-range-*, background-video* and device-frames* projects"
+# The product-demo fixtures (task 041): the same three counter clips, in one
+# project for the valid run and one for the invalid run.
+for name in component-product-demo component-product-demo-invalid; do
+  mkdir -p "$devices/$name/assets"
+  cp "$out/counter-4s.mp4" "$devices/$name/assets/wide.mp4"
+  cp "$out/counter-2s-9x16.mp4" "$devices/$name/assets/tall.mp4"
+  cp "$out/counter-4s-4x3.mp4" "$devices/$name/assets/four-three.mp4"
+done
+
+echo "media fixtures written to $out, $unsupported and the media-range-*, background-video*, device-frames* and component-product-demo* projects"

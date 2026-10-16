@@ -1,0 +1,43 @@
+---
+title: "Component product-demo"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+Four framed clips, one per frame. The browser scene has no animation, so its
+frames show the source directly: from 1 s to 3 s of the clip. The others use
+the compatible animations, and show whole clips with their own fits.
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" sourceStart="1s" sourceEnd="3s" audio="mute" alt="A counter clip in a browser frame"}
+:::
+
+::: {.caption}
+Browser frame: 16:9 footage from 1 s to 3 s of the source.
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s" animation="fade-in"}
+::: {.video src="assets/tall.mp4" placement="framed" frame="phone" fit="contain" audio="mute" alt="A counter clip in a phone frame"}
+:::
+
+::: {.caption}
+Phone frame: 9:16 footage in contain, with a caption long enough to wrap onto a second line.
+:::
+:::
+
+::: {.scene component="product-demo" duration="3s" animation="reveal"}
+::: {.video src="assets/four-three.mp4" placement="framed" frame="tablet" fit="cover" audio="mute" alt="A counter clip in a tablet frame"}
+:::
+:::
+
+::: {.scene component="product-demo" duration="3s" animation="slide-up"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="generic" fit="cover" audio="mute" alt="A counter clip in a generic frame"}
+:::
+
+::: {.caption}
+Generic frame: 16:9 footage in cover, cropped to the screen.
+:::
+:::

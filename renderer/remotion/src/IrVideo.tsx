@@ -94,7 +94,7 @@ function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   const framed = mediaOf(scene, "framed");
   if (framed !== undefined) {
     // A caption draws under the frame, in a band the frame leaves (task 041).
-    const caption = (contentOf(scene).texts["caption"] ?? "") !== "";
+    const caption = contentOf(scene).texts["caption"] ?? "";
     return (
       <FramedScene media={framed} caption={caption}>
         {component}
