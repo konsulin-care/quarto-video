@@ -73,6 +73,7 @@ form humans and AI agents can act on (PRD §9).
 | `E_VIDEO_RANGE` | 1 filter | A `.video` block's `sourceStart` is at or after its `sourceEnd` (equal is an empty range); the message gives both values | 038 |
 | `E_VIDEO_PLAYBACK_RATE` | 1 filter | A `.video` block's `playbackRate` is not a positive number (zero, negative, or text such as `fast`) | 038 |
 | `E_VIDEO_LOOP_FREEZE` | 1 filter | A `.video` block has both `loop="true"` and `freeze="true"`; they are mutually exclusive (task 038) | 038 |
+| `E_MEDIA_PLACEMENT` | 2 contract | A `.video` block's placement is not in its component's `placements` (task 039) | 039 |
 | `E_IR_SCHEMA` | 2 schema | The manifest fails the IR version it declares, 0.1 to 1.1 (`message` gives the JSON path) | 008 (0.2 in 012, 0.3 in 015, 1.0 in 017, 1.1 in 021) |
 | `E_IR_UNSUPPORTED_VERSION` | 2 schema | `schemaVersion` is not a supported IR version (any value other than 0.1, 0.2, 0.3, 1.0 or 1.1, including numbers); the message lists the supported versions (ADR-0007) | 017 |
 | `E_COMPONENT_UNKNOWN` | 2 contract | A scene's `component` is not in the registry; the suggestion lists the available components | 014 |

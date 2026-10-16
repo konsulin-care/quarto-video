@@ -92,6 +92,44 @@ function listConstraint(
   );
 }
 
+/** Whether a required slot has its content: its own blocks, or its alternative's (task 039). */
+function filled(
+  slots: IrSceneV02["content"]["slots"],
+  contract: ComponentContract,
+  name: string,
+): boolean {
+  const alternative = contract.slots[name]?.alternative;
+  return (
+    blocksIn(slots, name).length > 0 ||
+    (alternative !== undefined && blocksIn(slots, alternative).length > 0)
+  );
+}
+
+/** A slot and its alternative hold one text between them: both filled is E_SLOT_CONSTRAINT (task 039). */
+function alternativeConflicts(
+  scene: IrSceneV02,
+  contract: ComponentContract,
+): Diagnostic[] {
+  const slots = scene.content.slots;
+  return Object.keys(contract.slots)
+    .sort()
+    .flatMap((name) => {
+      const alternative = contract.slots[name]?.alternative;
+      if (alternative === undefined) return [];
+      if (blocksIn(slots, name).length === 0) return [];
+      if (blocksIn(slots, alternative).length === 0) return [];
+      return [
+        problem(
+          scene,
+          "E_SLOT_CONSTRAINT",
+          `Slots "${name}" and "${alternative}" of component "${contract.id}" are alternatives; a scene fills one of them.`,
+          `slots.${alternative}`,
+          `Move the text into "${name}" or into "${alternative}", not both.`,
+        ),
+      ];
+    });
+}
+
 function checkSlots(
   scene: IrSceneV02,
   contract: ComponentContract,
@@ -133,17 +171,21 @@ function checkSlots(
   }
   for (const name of Object.keys(contract.slots).sort()) {
     const slot = contract.slots[name];
-    if (slot?.required !== true || blocksIn(slots, name).length > 0) continue;
+    if (slot?.required !== true || filled(slots, contract, name)) continue;
+    const alternative = slot.alternative;
+    const either =
+      alternative === undefined ? "" : ` or in slot "${alternative}"`;
     found.push(
       problem(
         scene,
         "E_SLOT_REQUIRED",
-        `Component "${contract.id}" needs content in slot "${name}".`,
+        `Component "${contract.id}" needs content in slot "${name}"${either}.`,
         `slots.${name}`,
         `Slot "${name}" accepts ${slot.accepts.join(", ")}.`,
       ),
     );
   }
+  found.push(...alternativeConflicts(scene, contract));
   for (const name of Object.keys(contract.slots).sort()) {
     const max = contract.slots[name]?.maxBlocks;
     const count = blocksIn(slots, name).length;

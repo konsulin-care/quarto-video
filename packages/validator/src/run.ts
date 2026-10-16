@@ -28,6 +28,7 @@ import {
   type MediaOptions,
 } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
+import { checkMediaPlacement } from "./stages/media-placement.js";
 import { resolveData } from "./stages/data.js";
 import { withNumbers } from "./stages/number.js";
 import { checkProps } from "./stages/props.js";
@@ -130,6 +131,7 @@ export function checkManifest(
       if (ir === undefined) return [];
       const found = inDocumentOrder([
         ...checkContracts(ir, components),
+        ...checkMediaPlacement(ir, components),
         ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
         ...checkKinetic(ir),
