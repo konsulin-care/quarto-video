@@ -1,5 +1,5 @@
 # docs/tasks/ — sequential development tasks
-Status: Tasks 000 through 038 done (including 007a and 019a); 039 through 051 `todo`. Numbers are the execution order.
+Status: Tasks 000 through 039 done (including 007a and 019a); 040 through 051 `todo`. Numbers are the execution order.
 
 ## Picking work
 1. Take the lowest-numbered task whose `Status` is not `done` and whose
