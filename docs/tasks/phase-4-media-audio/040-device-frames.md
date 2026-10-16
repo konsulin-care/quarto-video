@@ -1,6 +1,6 @@
 # 040 — Device frames
 
-Phase 4 · Status: todo · Depends on: 039 · PRD: §5.5, §6.1 (2), §10.2 · ADR: —
+Phase 4 · Status: in-progress · Depends on: 039 · PRD: §5.5, §6.1 (2), §10.2 · ADR: —
 
 ## Goal
 Reusable `browser`, `phone`, `tablet` and `generic` frames that any framed
