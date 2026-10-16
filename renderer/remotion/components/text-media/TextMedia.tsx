@@ -7,7 +7,11 @@
 // from the theme tokens (task 019).
 import type { IrMediaVideo } from "@quarto-video/ir";
 import type { TextFit } from "@quarto-video/registry";
-import { mediaSideOf, textMediaColumns } from "@quarto-video/registry/layout";
+import {
+  fitText,
+  mediaSideOf,
+  textMediaColumns,
+} from "@quarto-video/registry/layout";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import { useTheme } from "../../themes/ThemeProvider.js";
 import { FramedFootage } from "../../media/FramedFootage.js";
@@ -36,13 +40,11 @@ export function TextMedia({ slots, props, media }: TextMediaProps) {
     height,
     mediaSideOf(props["side"]),
   );
+  const text = slots["text"] ?? "";
+  const { fontPx } = fitText(text, columns.text, theme, TEXT_FIT);
   return (
     <AbsoluteFill>
-      <TextColumn
-        text={slots["text"] ?? ""}
-        box={columns.text}
-        fit={TEXT_FIT}
-      />
+      <TextColumn text={text} box={columns.text} fontPx={fontPx} />
       {media !== undefined && (
         <FramedFootage
           media={media}

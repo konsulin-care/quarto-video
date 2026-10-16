@@ -1,9 +1,7 @@
 // Text in one box of the canvas (task 042, shared with split-screen task 043): the
-// largest size of `fit` at which the text fits the box (fitText, the geometry the
-// validator also fits with), wrapped inside it and centred vertically. Colours
-// and sizes come from the theme tokens.
-import type { TextFit } from "@quarto-video/registry";
-import { fitText, type Rect } from "@quarto-video/registry/layout";
+// text at the font size its caller fits (fitText or sharedTextPx), wrapped inside
+// the box and centred vertically. Colours and sizes come from the theme tokens.
+import type { Rect } from "@quarto-video/registry/layout";
 import { useTheme } from "../../themes/ThemeProvider.js";
 
 export interface TextColumnProps {
@@ -11,13 +9,12 @@ export interface TextColumnProps {
   text: string;
   /** The box, in output pixels of the canvas. */
   box: Rect;
-  /** The type-scale range the text is fitted in. */
-  fit: TextFit;
+  /** The font size in px, already fitted to the box by the caller. */
+  fontPx: number;
 }
 
-export function TextColumn({ text, box, fit }: TextColumnProps) {
+export function TextColumn({ text, box, fontPx }: TextColumnProps) {
   const theme = useTheme();
-  const { fontPx } = fitText(text, box, theme, fit);
   const { colors, typography } = theme;
   return (
     <div
