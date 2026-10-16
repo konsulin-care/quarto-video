@@ -1,6 +1,6 @@
 # 037 — Media probe and supported formats
 
-Phase 4 · Status: todo · Depends on: 036 · PRD: §6.3, §18.8 · ADR: writes 0008
+Phase 4 · Status: in-progress · Depends on: 036 · PRD: §6.3, §18.8 · ADR: writes 0008
 
 ## Goal
 The validator knows each media asset's type, duration, dimensions, frame rate
