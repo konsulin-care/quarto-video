@@ -1,6 +1,6 @@
 # 044 — Source audio policy
 
-Phase 4 · Status: todo · Depends on: 039 · PRD: §7, §18.6 · ADR: writes 0009
+Phase 4 · Status: in-progress · Depends on: 039 · PRD: §7, §18.6 · ADR: writes 0009
 
 ## Goal
 Each piece of footage has explicit audio behaviour (`mute` or `keep` with a
