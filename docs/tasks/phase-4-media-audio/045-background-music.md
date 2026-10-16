@@ -1,6 +1,6 @@
 # 045 — Background music
 
-Phase 4 · Status: todo · Depends on: 044 · PRD: §7.1, §7.2 · ADR: reads 0009
+Phase 4 · Status: in-progress · Depends on: 044 · PRD: §7.1, §7.2 · ADR: reads 0009
 
 ## Goal
 A project-level music track with deterministic start, end, volume and
