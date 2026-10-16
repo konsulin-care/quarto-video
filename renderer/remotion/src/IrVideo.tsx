@@ -5,6 +5,7 @@
 import type {
   IrBlock,
   IrMediaVideo,
+  IrMusic,
   IrVideo as IrManifest,
 } from "@quarto-video/ir";
 import type { ThemeTokens } from "@quarto-video/registry";
@@ -23,6 +24,7 @@ import type { Overlap } from "../transitions/index.js";
 import { BackgroundScene } from "../media/BackgroundScene.js";
 import { FramedScene } from "../media/FramedScene.js";
 import { SourceAudio } from "../media/SourceAudio.js";
+import { MusicTrack } from "../media/MusicTrack.js";
 import { withOverlay } from "./overlay.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
@@ -110,6 +112,11 @@ function keptOf(scene: IrManifest["scenes"][number]): IrMediaVideo[] {
   return scene.media.filter((item) => item.audio === "keep");
 }
 
+/** The project music track, when the manifest has one (IR 1.9, ADR-0017). */
+function musicOf(ir: IrManifest): IrMusic | undefined {
+  return "music" in ir ? ir.music : undefined;
+}
+
 /** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
 function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   if (PLACES_OWN_MEDIA.has(scene.component)) return component;
@@ -134,6 +141,7 @@ function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
 export function IrVideo({ ir, theme }: IrVideoProps) {
   const timeline = timelineOf(ir);
   const reducedMotion = reducedMotionOf(ir);
+  const music = musicOf(ir);
   return (
     <ThemeProvider theme={theme}>
       <AbsoluteFill
@@ -189,6 +197,9 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
             </Sequence>
           );
         })}
+        {music === undefined ? null : (
+          <MusicTrack music={music} durationFrames={timeline.durationFrames} />
+        )}
       </AbsoluteFill>
     </ThemeProvider>
   );
