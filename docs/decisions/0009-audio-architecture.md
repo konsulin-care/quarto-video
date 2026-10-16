@@ -6,6 +6,7 @@
 - PRD: §6.2, §7, §13.1, §18.6
 
 ## Context
+
 PRD §7.2 requires audio behaviour to be explicit (never inferred from whether a
 source has an audio stream), muted footage to be silent, and the renderer to define
 how audio is trimmed, looped, mixed and ended. PRD §18.6 asks whether project-wide
@@ -15,6 +16,7 @@ audio is this task. Until now `.video` accepts only `audio="mute"` (task 038). T
 renderer mutes every footage clip (task 039), so no audio reaches the output.
 
 ## Options
+
 1. **Policy on each media item, no audio section** (chosen for source audio). Each
    `.video` block states `audio="mute"` or `audio="keep"`; the audio of a kept clip
    is that block's source range, on its scene's timeline.
@@ -24,6 +26,7 @@ renderer mutes every footage clip (task 039), so no audio reaches the output.
 3. **Infer keep from the file.** Rejected by PRD §7.2.
 
 ## Decision
+
 1. **Policy.** `audio` is required on every `.video` block (E_VIDEO_AUDIO_REQUIRED,
    unchanged). `mute`: the footage contributes no sound. `keep`: its source audio plays.
 2. **Volume.** `volume` is a decimal linear gain on the source samples, `0 < volume <= 1`,
@@ -62,23 +65,32 @@ renderer mutes every footage clip (task 039), so no audio reaches the output.
     audio here. Task 045 decides how music is represented, in its own ADR.
 
 ## Consequences
+
 - An author chooses audio on every clip; mute is never implied.
 - Looping and freezing have a defined sound, so no hidden stretch or silent filler.
 - The crossfade is a policy the author cannot switch off; a later option needs an ADR.
 - Audio is exact to the frame boundary, not to the sample: edits fall on frame edges.
+- **Known deviation.** The output is stereo. ffmpeg mixes a mono source into stereo at the
+  centre level, -3 dB, so a mono clip plays 3 dB quieter than its file (measured: a 1 kHz mono
+  tone peaks at -20.8 dB, not -17.5 dB). Stereo sources are exact. Fixing it needs a Remotion
+  channel option or a per-source pan, a follow-up task; until then this ADR does not claim exact
+  level for mono sources, and the fixtures use stereo tones.
 - Only the first audio stream of a file is used, as ffprobe and the renderer both choose it.
 
 ## Verification
+
 - `packages/ir/test/v18.test.ts`, `frozen.test.ts` (1.8 hash): `keep` needs `volume`, `mute`
   forbids it, `volume` range.
 - `_extensions/video/tests/test_media.lua`: `keep` with `volume`, `volume` range, `volume` on
   `mute`, `keep` with a rate other than 1.
 - `packages/validator/test/audio.test.ts`: E_AUDIO_NO_STREAM with a stub prober.
 - `renderer/remotion/test/source-audio.test.ts`: repetitions, trim, end, freeze and ramp (pure).
-- `tests/integration/audio-policy.test.ts`: `audio-mute` silent and `audio-keep` at -18 dB ±1
-  in its scene only, through `volumedetect`; `audio-keep-silent-source` is E_AUDIO_NO_STREAM.
+- `tests/integration/audio-policy.test.ts`: `audio-mute` has no audio stream; `audio-keep` at
+  -18 dB ±1 in its scene only, through `volumedetect`; `audio-keep-fade` quiet at the overlap's
+  start, full at its end; `audio-keep-silent-source` is E_AUDIO_NO_STREAM.
 
 ## References
+
 - PRD §6.2, §7.1, §7.2, §13.1, §18.6.
 - ADR-0005 (transition overlap), ADR-0007 (additive minors), ADR-0008 (probe and cache),
   ADR-0016 (region footage, IR 1.7).

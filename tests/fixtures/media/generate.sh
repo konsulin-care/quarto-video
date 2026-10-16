@@ -51,6 +51,14 @@ counter 640x480 counter-4s-4x3.mp4 4
 # 2 s: the device-frames scenes use at most 2 s of footage (keeps the generator fast).
 counter 360x640 counter-2s-9x16.mp4 2
 
+# H.264 MP4, 2 s, 640x360 at 30 fps, with a stereo 1 kHz tone of amplitude 1/8 (about -18 dBFS
+# peak) on both channels (AAC): the audio-keep fixture (task 044). Stereo, because a mono source
+# is mixed into the stereo output at the centre level (-3 dB; ADR-0009).
+ff -f lavfi -i "testsrc2=size=640x360:rate=30" \
+  -f lavfi -i "aevalsrc=0.125*sin(2*PI*1000*t)|0.125*sin(2*PI*1000*t):s=44100" \
+  -t 2 -map 0:v -map 1:a -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 128k \
+  "$out/clip-2s-1khz-stereo.mp4"
+
 # 16-bit PCM WAV, 2 s, mono, 44.1 kHz.
 ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
   -t 2 -ac 1 -c:a pcm_s16le "$out/tone-2s.wav"
@@ -92,5 +100,15 @@ for name in component-split-screen component-split-screen-invalid; do
   cp "$out/counter-2s-9x16.mp4" "$devices/$name/assets/tall.mp4"
   cp "$out/counter-4s-4x3.mp4" "$devices/$name/assets/four-three.mp4"
 done
+
+# The source-audio fixtures (task 044): audio-mute keeps the 440 Hz clip muted, audio-keep plays
+# the 1 kHz clip, audio-keep-fade fades it in over a transition, and audio-keep-silent-source keeps
+# a clip with no audio stream (an error).
+audio="$repo/tests/fixtures/projects"
+mkdir -p "$audio/audio-mute/assets" "$audio/audio-keep/assets" "$audio/audio-keep-fade/assets" "$audio/audio-keep-silent-source/assets"
+cp "$out/clip-2s-audio.mp4" "$audio/audio-mute/assets/clip.mp4"
+cp "$out/clip-2s-1khz-stereo.mp4" "$audio/audio-keep/assets/tone.mp4"
+cp "$out/clip-2s-1khz-stereo.mp4" "$audio/audio-keep-fade/assets/tone.mp4"
+cp "$out/clip-5s-silent.mp4" "$audio/audio-keep-silent-source/assets/silent.mp4"
 
 echo "media fixtures written to $out, $unsupported and the media-range-*, background-video*, device-frames* and component-* projects"

@@ -1,0 +1,25 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+One.
+:::
+
+::: {.scene component="statement" duration="2s"}
+Two.
+:::
+
+::: {.scene component="statement" duration="2s" transition="fade" transitionDuration="1s"}
+
+::: {.video src="assets/tone.mp4" placement="background" fit="contain" audio="keep"}
+:::
+
+::: {.text-overlay}
+Three.
+:::
+
+:::
