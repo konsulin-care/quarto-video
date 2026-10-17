@@ -69,6 +69,25 @@ function streamSeconds(file: string, type: "video" | "audio"): number {
 const at = (seconds: number) => Math.round(seconds * SAMPLE_RATE);
 
 /** The per-frame RMS, in dB, of timeline frames `first` to `last` (inclusive). */
+/** The RMS level, in dB, of `frames` frames from `first` (a window of whole frames). */
+function windowDb(pcm: Float32Array, first: number, frames: number): number {
+  const size = SAMPLE_RATE / FPS;
+  return rmsDb(pcm, Math.round(first * size), Math.round(frames * size));
+}
+
+/**
+ * The expected level, in dB relative to the steady level, of a window of `frames` frames
+ * from `first`: the fade's gain (149-f)/30 (ADR-0017, volume times (T-f-1)/N), in power.
+ */
+function expectedWindowDb(first: number, frames: number): number {
+  let power = 0;
+  for (let f = first; f < first + frames; f++) {
+    const gain = Math.max(149 - f, 0) / 30;
+    power += gain * gain;
+  }
+  return 10 * Math.log10(power / frames);
+}
+
 function frameLevels(pcm: Float32Array, first: number, last: number): number[] {
   const size = SAMPLE_RATE / FPS;
   const levels: number[] = [];
@@ -107,6 +126,11 @@ describe("project music track", () => {
 
   it("starts on frame 0 and repeats the track in each pass", () => {
     const pcm = decodeMono(loopOutput);
+    // The first audible sample sits at frame 0, within 64 samples (1.5 ms): the stitch
+    // moves the encoder's 2048-sample delay out (exact-length.ts; measured index 1).
+    let onset = 0;
+    while (onset < pcm.length && Math.abs(pcm[onset] ?? 0) < 1e-3) onset++;
+    assert.ok(onset <= 64, `the track starts ${onset} samples after frame 0`);
     // Pass starts (1.5 s each): 0, 1.5, 3.0 and 4.5 s. Windows sit inside each pass.
     for (const [from, to] of [
       [0.0, 0.5],
@@ -121,18 +145,51 @@ describe("project music track", () => {
     }
   });
 
-  it("fades out over the last 30 frames: the level falls on every frame to silence", () => {
+  it("fades out over the last 30 frames: three-frame levels fall along the gain curve to silence", () => {
     const pcm = decodeMono(loopOutput);
     const steady = frameLevels(pcm, 100, 110);
     const fade = frameLevels(pcm, 120, 149);
     const spread = Math.max(...steady) - Math.min(...steady);
     assert.ok(spread <= 0.5, `steady before the fade varies by ${spread} dB`);
-    for (let k = 1; k < fade.length; k++) {
+    // Per-frame levels are not monotone: the encoder's gain steps land on 1024-sample
+    // AAC blocks, about 0.64 frame (ADR-0017). So the fade is read in windows of three
+    // frames (4410 samples, four blocks). Measured on the aligned render: every window
+    // falls (the largest rise is -0.68 dB, the window starting at 123 against 120).
+    // Windows are checked to 0.5 dB, which is well above that margin and far below
+    // the 0.3 to 3 dB steps of the fade. The curve match stops at the window starting at
+    // 141: after that the expected slope passes 3 dB a frame and the measured tail lags
+    // by about two frames (the fit in ADR-0017), so the match would test that timing
+    // rather than the fade. The tail still falls in the monotone check and must reach silence.
+    const WINDOW = 3;
+    const windows: number[] = [];
+    for (let first = 120; first + WINDOW <= 150; first += WINDOW) {
+      windows.push(windowDb(pcm, first, WINDOW));
+    }
+    for (let k = 1; k < windows.length; k++) {
       assert.ok(
-        (fade[k] as number) < (fade[k - 1] as number),
-        `frame ${120 + k} at ${fade[k]} dB is not below frame ${119 + k} at ${fade[k - 1]} dB`,
+        (windows[k] as number) <= (windows[k - 1] as number) + 0.5,
+        `window ${120 + k * WINDOW} at ${windows[k]} dB rises over window ${120 + (k - 1) * WINDOW} at ${windows[k - 1]} dB`,
       );
     }
+    const base = steady.reduce((sum, level) => sum + level, 0) / steady.length;
+    const matched = windows.slice(0, 8); // windows starting at 120 to 141
+    matched.forEach((level, k) => {
+      const first = 120 + k * WINDOW;
+      const expected = base + expectedWindowDb(first, WINDOW);
+      assert.ok(
+        Math.abs(level - expected) <= 1,
+        `window ${first} at ${level} dB, expected ${expected} dB along the gain curve +-1`,
+      );
+    });
+    // The total drop from the first window to the last matched one is the fade's depth.
+    const drop =
+      (matched[0] as number) - (matched[matched.length - 1] as number);
+    const expectedDrop =
+      expectedWindowDb(120, WINDOW) - expectedWindowDb(141, WINDOW);
+    assert.ok(
+      Math.abs(drop - expectedDrop) <= 1,
+      `the fade drops ${drop} dB over windows 120 to 141, expected ${expectedDrop} dB +-1`,
+    );
     assert.ok(
       (fade[fade.length - 1] as number) <= (steady[0] as number) - 40,
       `the last frame at ${fade[fade.length - 1]} dB is not near silence`,

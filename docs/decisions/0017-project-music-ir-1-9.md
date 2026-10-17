@@ -66,7 +66,7 @@ for a track that belongs to the whole video: the top level and `settings` are cl
 
 - Music is one track, with no separate timeline, ducking or effects.
 - A mono WAV plays 3 dB quieter, as a mono source does (ADR-0009, Consequences).
-- Onset: the stitch moves the pre-encoded audio earlier by the AAC encoder delay (2048 samples at 48 kHz, measured as 1882 at 44.1 kHz in the first render), so the track starts on frame 0. Per-frame gain resolution is limited by the AAC blocks: the fade steps of about 0.3 dB near its start are not all monotone in the rendered levels (task 045 Notes). Open for a decision.
+- Onset and fade: the stitch moves the pre-encoded audio earlier by the AAC encoder delay (2048 samples at 48 kHz; the first audible sample was 1882 samples late at 44.1 kHz), so the track starts on frame 0 (integration test: index within 64 samples). Per-frame fade levels are not monotone, because AAC blocks of 1024 samples (about 0.64 frame) hold the gain steps. The per-frame check is therefore replaced by three-frame windows: each must not rise by more than 0.5 dB, and windows 120 to 141 must match (149-f)/30 within 1 dB, with the total drop within 1 dB. The tail is checked for monotone fall and silence only (the measured tail lags by about two frames). Human listening check still open.
 - The version tests that list the supported versions now include 1.9. This follows
   the precedent of IR 1.8 (task 044).
 - Multitrack music, ducking, or a start offset each need their own ADR.
