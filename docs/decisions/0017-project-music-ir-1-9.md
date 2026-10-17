@@ -66,7 +66,7 @@ for a track that belongs to the whole video: the top level and `settings` are cl
 
 - Music is one track, with no separate timeline, ducking or effects.
 - A mono WAV plays 3 dB quieter, as a mono source does (ADR-0009, Consequences).
-- Known deviation: Remotion starts its pre-encoded audio about 42.7 ms (1882 samples at 44.1 kHz) after frame 0, so the track starts about 1.3 frames late. Gain steps also land on AAC blocks, so per-frame levels are only resolved to about 0.3 dB. Open for a decision (see task 045 Notes).
+- Onset: the stitch moves the pre-encoded audio earlier by the AAC encoder delay (2048 samples at 48 kHz, measured as 1882 at 44.1 kHz in the first render), so the track starts on frame 0. Per-frame gain resolution is limited by the AAC blocks: the fade steps of about 0.3 dB near its start are not all monotone in the rendered levels (task 045 Notes). Open for a decision.
 - The version tests that list the supported versions now include 1.9. This follows
   the precedent of IR 1.8 (task 044).
 - Multitrack music, ducking, or a start offset each need their own ADR.
