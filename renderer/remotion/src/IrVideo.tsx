@@ -4,6 +4,7 @@
 // (PRD §8.4). The theme's tokens are passed in as props.
 import type {
   IrBlock,
+  IrMedia,
   IrMediaVideo,
   IrMusic,
   IrVideo as IrManifest,
@@ -53,10 +54,15 @@ function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
 /** The scene's `.video` footage with the given placement, if it has one (tasks 039, 040). */
 function mediaOf(
   scene: IrManifest["scenes"][number],
-  placement: IrMediaVideo["placement"],
-): IrMediaVideo | undefined {
+  placement: IrMedia["placement"],
+): IrMedia | undefined {
   if (!("media" in scene) || scene.media === undefined) return undefined;
   return scene.media.find((item) => item.placement === placement);
+}
+
+/** Footage that is video: background and region footage are video (ADR-0018). */
+function videoOf(item: IrMedia | undefined): IrMediaVideo | undefined {
+  return item !== undefined && item.kind !== "image" ? item : undefined;
 }
 
 /** The overlap a scene's transition makes; none for cut or no transition. */
@@ -102,7 +108,11 @@ function regionsOf(
   const regions: Record<string, IrMediaVideo> = {};
   if (!("media" in scene) || scene.media === undefined) return regions;
   for (const item of scene.media) {
-    if (item.placement === "region" && item.region !== undefined) {
+    if (
+      item.kind !== "image" &&
+      item.placement === "region" &&
+      item.region !== undefined
+    ) {
       regions[item.region] = item;
     }
   }
@@ -112,7 +122,9 @@ function regionsOf(
 /** The scene's kept `.video` blocks, whichever placement they have (task 044). */
 function keptOf(scene: IrManifest["scenes"][number]): IrMediaVideo[] {
   if (!("media" in scene) || scene.media === undefined) return [];
-  return scene.media.filter((item) => item.audio === "keep");
+  return scene.media.flatMap((item) =>
+    item.kind !== "image" && item.audio === "keep" ? [item] : [],
+  );
 }
 
 /** The project music track, when the manifest has one (IR 1.9, ADR-0017). */
@@ -133,7 +145,7 @@ function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
       </FramedScene>
     );
   }
-  const background = mediaOf(scene, "background");
+  const background = videoOf(mediaOf(scene, "background"));
   return background === undefined ? (
     component
   ) : (

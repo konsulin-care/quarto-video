@@ -24,7 +24,7 @@ export function soundSourcesOf(ir: IrVideo): string[] {
   for (const scene of ir.scenes) {
     if (!("media" in scene) || scene.media === undefined) continue;
     for (const item of scene.media) {
-      if (item.audio === "keep") sources.add(item.src);
+      if (item.kind !== "image" && item.audio === "keep") sources.add(item.src);
     }
   }
   if ("music" in ir && ir.music !== undefined) sources.add(ir.music.src);

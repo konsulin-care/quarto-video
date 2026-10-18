@@ -2,7 +2,7 @@
 // its screen inside a device frame, at the largest size of the frame's shape in
 // the canvas safe area, above the caption band (task 041) when there is one. The
 // scene's content draws on top. FramedFootage draws the frame and the footage.
-import type { IrMediaVideo } from "@quarto-video/ir";
+import type { IrMedia } from "@quarto-video/ir";
 import type { ReactNode } from "react";
 import { AbsoluteFill, useVideoConfig } from "remotion";
 import { safeAreaPixels, safeBox } from "@quarto-video/registry/layout";
@@ -13,7 +13,8 @@ import { captionBand } from "./frames/caption.js";
 import { fitFrame } from "./frames/layout.js";
 
 export interface FramedSceneProps {
-  media: IrMediaVideo;
+  /** The framed footage or still (ADR-0018). */
+  media: IrMedia;
   /** The caption under the frame, if any: its band is reserved (task 041). */
   caption?: string;
   children: ReactNode;

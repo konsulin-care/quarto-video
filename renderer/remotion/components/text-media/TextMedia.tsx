@@ -5,7 +5,7 @@
 // fits its column, wraps inside it and is centred vertically (TextColumn). The
 // footage is a device frame in its column (FramedFootage). Colours and sizes come
 // from the theme tokens (task 019).
-import type { IrMediaVideo } from "@quarto-video/ir";
+import type { IrMedia } from "@quarto-video/ir";
 import type { TextFit } from "@quarto-video/registry";
 import {
   fitText,
@@ -27,8 +27,8 @@ export interface TextMediaProps {
   slots: Readonly<Record<string, string>>;
   /** The authored props: `side`, when given. */
   props: Readonly<Record<string, string | number>>;
-  /** The scene's framed footage (task 040), which this component places. */
-  media?: IrMediaVideo | undefined;
+  /** The scene's framed footage or still (task 040, ADR-0018), which this component places. */
+  media?: IrMedia | undefined;
 }
 
 export function TextMedia({ slots, props, media }: TextMediaProps) {

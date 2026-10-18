@@ -1,7 +1,7 @@
 // Registry id -> renderer implementation. Only ids listed here can render;
 // render.ts rejects any other component before the browser starts.
 import type { FC } from "react";
-import type { IrBlock, IrMediaVideo, IrTable } from "@quarto-video/ir";
+import type { IrBlock, IrMedia, IrMediaVideo, IrTable } from "@quarto-video/ir";
 import { Chart } from "../components/chart/Chart.js";
 import { SectionDivider } from "../components/section-divider/SectionDivider.js";
 import { Statement } from "../components/statement/Statement.js";
@@ -24,8 +24,8 @@ export interface SceneProps {
   props: Readonly<Record<string, string | number>>;
   /** The parsed CSV tables by prop name, from the validator (ADR-0014). */
   tables: Readonly<Record<string, IrTable>>;
-  /** The scene's framed footage, for components that place it themselves (task 042). */
-  media?: IrMediaVideo | undefined;
+  /** The scene's framed footage or still, for components that place it themselves (task 042, ADR-0018). */
+  media?: IrMedia | undefined;
   /** The scene's region footage by region name (IR 1.7, task 043). */
   regions?: Readonly<Record<string, IrMediaVideo>> | undefined;
 }
