@@ -26,6 +26,7 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
   `projects/media-unsupported`, the clip copied to `projects/media-range-*/assets/`, and the 4 s counter clips copied to `projects/background-video*/assets/` (task 039),
   task 038); the media tests run the script themselves.
 - `videos/demo` (task 047) is checked by `integration/demo.test.ts`, not a fixture; its visual case is `visual/cases/demo-scenes.json`.
+- `integration/paths.test.ts` (task 048) copies the demo to `My Videos/démo 動画`, renders it from four cwds with relative, absolute and `.qmd` paths, re-renders a moved copy (framemd5 per frame), and checks the ADR-0006 separator rejections.
 - `integration/` — CLI-level tests: spawn `video`, assert exit code, output,
   files.
 - `visual/cases/<case>.json` — fixture project + frames to capture.

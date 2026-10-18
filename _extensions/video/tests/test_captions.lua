@@ -46,6 +46,14 @@ return {
     h.eq(t.mode, "both", "mode")
   end,
 
+  ["a backslash in src is kept as written, so the validator rejects it (ADR-0006)"] = function()
+    h.eq(
+      track("  captions:\n    src: assets\\captions.vtt\n    mode: both\n").src,
+      "assets\\captions.vtt",
+      "src"
+    )
+  end,
+
   ["each mode is accepted: burn, sidecar and both"] = function()
     for _, mode in ipairs({ "burn", "sidecar", "both" }) do
       h.eq(track(SRC .. "    mode: " .. mode .. "\n").mode, mode, "mode " .. mode)
