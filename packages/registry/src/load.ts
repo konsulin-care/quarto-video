@@ -53,6 +53,14 @@ export function parseContract(text: string, file: string): ComponentContract {
       `${file}: /duration: maxMs (${contract.duration.maxMs}) is below minMs (${contract.duration.minMs})`,
     );
   }
+  if (
+    contract.mediaKinds?.includes("image") &&
+    !contract.placements.includes("framed")
+  ) {
+    throw new RegistryError(
+      `${file}: /mediaKinds lists "image", which needs the "framed" placement (ADR-0018)`,
+    );
+  }
   const regions = contract.regions;
   if ((regions !== undefined) !== contract.placements.includes("region")) {
     throw new RegistryError(

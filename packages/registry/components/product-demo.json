@@ -12,6 +12,7 @@
   "requiresMedia": true,
   "props": {},
   "placements": ["framed"],
+  "mediaKinds": ["video", "image"],
   "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {

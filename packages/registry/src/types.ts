@@ -78,6 +78,8 @@ export interface ComponentContract {
   props: Record<string, PropContract>;
   /** Footage the component takes: background, framed, or region (IR 1.7, ADR-0016). */
   placements: ("background" | "framed" | "region")[];
+  /** The footage kinds the component takes (ADR-0018); absent means ["video"]. Images need "framed". */
+  mediaKinds?: ("video" | "image")[];
   /** Regions a scene uses (split-screen, ADR-0016); present exactly when `placements` lists region. */
   regions?: RegionLimit;
   /** The scene must hold a `.video` block (E_SLOT_MISSING); absent means false (task 041). */

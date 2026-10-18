@@ -60,6 +60,15 @@
         "enum": ["background", "framed", "region"]
       }
     },
+    "mediaKinds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["video", "image"]
+      },
+      "description": "The footage kinds a framed or background block may be (ADR-0018). Absent means [\"video\"]. An image is framed, so \"image\" needs \"framed\" in placements."
+    },
     "regions": {
       "type": "object",
       "additionalProperties": false,
