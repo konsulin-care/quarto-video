@@ -14,10 +14,10 @@ One page per released component (`<id>.md`), plus this index. A page says what a
 | `comparison` | [comparison.md](comparison.md) | Released (task 034: left, right and optional middle slots) |
 | `bullets` | [bullets.md](bullets.md) | Released (task 027: one list of 2 to 6 items, optional heading) |
 | `image` | [image.md](image.md) | Released (task 033: image block, caption slot, fit; IR 1.3, ADR-0013) |
-| `.video` block | [video-block.md](video-block.md) | Source ranges and short-source rule (task 038, IR 1.6); background under `title` and `statement` (task 039); framed under `statement` (task 040) and `product-demo` (task 041) |
+| `.video` block | [video-block.md](video-block.md) | Source ranges and short-source rule (task 038, IR 1.6); background under `title` and `statement` (task 039); framed under `statement` (task 040) and `product-demo` (task 041); a framed still image (IR 1.10, ADR-0018) under `product-demo` and `text-media` |
 | `chart` | [chart.md](chart.md) | Released (task 035: bar or line from a CSV; IR 1.4, ADR-0014) |
 | `statistic` | [statistic.md](statistic.md) | Released (task 031: value, unit, prefix and decimals; label and context; IR 1.5, ADR-0015) |
-| `product-demo` | [product-demo.md](product-demo.md) | Released (task 041: one framed `.video` block, optional caption; no framed images yet) |
+| `product-demo` | [product-demo.md](product-demo.md) | Released (task 041: one framed `.video` block, optional caption; a framed still image too, IR 1.10, ADR-0018) |
 | `text-media` | [text-media.md](text-media.md) | Released (task 042: text in one column, one framed `.video` block in the other, `side`; no image footage yet) |
 | `split-screen` | [split-screen.md](split-screen.md) | Released (task 043: two or three regions, each text or one region `.video` block; IR 1.7, ADR-0016; no image footage yet) |
 

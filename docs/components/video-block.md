@@ -1,6 +1,6 @@
 # Video block (`.video`)
 
-Status: source ranges and the short-source rule (task 038, IR 1.6, ADR-0007); region footage for `split-screen` (task 043, IR 1.7, ADR-0016). The validator checks each block against its file (stage 3, `E_MEDIA_RANGE`, `E_MEDIA_SHORT_SOURCE`). `background` placement is rendered (task 039) under `title` and `statement`; `framed` placement (task 040) is rendered under `statement` and `product-demo` (task 041), in a device frame.
+Status: source ranges and the short-source rule (task 038, IR 1.6, ADR-0007); region footage for `split-screen` (task 043, IR 1.7, ADR-0016); framed image footage, a still (IR 1.10, ADR-0018), for `product-demo` and `text-media`. The validator checks each block against its file (stage 3, `E_MEDIA_RANGE`, `E_MEDIA_SHORT_SOURCE`). `background` placement is rendered (task 039) under `title` and `statement`; `framed` placement (task 040) is rendered under `statement` and `product-demo` (task 041), in a device frame.
 
 ## Purpose
 
@@ -17,6 +17,13 @@ Cities are being transformed by AI.
 :::
 ```
 
+A framed image (a still held for the scene, with no source range or sound):
+
+```markdown
+::: {.video src="assets/landing.png" placement="framed" frame="phone" fit="cover" alt="The landing page"}
+:::
+```
+
 A framed clip with a source range:
 
 ```markdown
@@ -29,10 +36,10 @@ fit="contain" sourceStart="12s" sourceEnd="22s" audio="mute" alt="Product demo"}
 
 | Attribute      | Required                 | Values                                                                                                          | Default             |
 | -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------- | ------------------- |
-| `src`          | yes                      | a file inside the project (no URL, not absolute)                                                                | none                |
-| `audio`        | yes                      | `mute` (no source sound) or `keep` (the source sound plays, ADR-0009)                                           | none                |
+| `src`          | yes                      | a file inside the project (no URL, not absolute); `.png`, `.jpg`, `.jpeg`, `.webp` or `.svg` makes an image (ADR-0018) | none                |
+| `audio`        | video only               | `mute` (no source sound) or `keep` (the source sound plays, ADR-0009); not allowed on an image                  | none                |
 | `volume`       | with `keep` only         | a decimal above 0 and at most 1: the linear gain of the kept sound (`0.5` is about -6 dB)                       | `1`                 |
-| `placement`    | no                       | `background` or `framed`                                                                                        | `background`        |
+| `placement`    | no                       | `background` or `framed`; an image takes `framed` only                                                          | `background`        |
 | `region`       | with region footage only | a region of the component, for `split-screen`: `left`, `middle` or `right`; takes no `placement` and no `frame` | none                |
 | `fit`          | no                       | `cover` or `contain`                                                                                            | `contain`           |
 | `frame`        | with `framed` only       | a registered device frame: `browser`, `phone`, `tablet` or `generic` (see [README](README.md#frames-task-040))  | none                |
@@ -51,10 +58,12 @@ timeline. The scene's `duration` is timeline time.
 
 - A scene holds one background or framed block, or one region block per region (`split-screen`, ADR-0016); the two kinds do not mix. A second block of the same kind or region, a block with content, an unknown attribute, or a block inside a slot is an error (`E_VIDEO_BLOCK`).
 - A region block names an identifier (`region="left"`); `region` with `placement` or `frame` is `E_VIDEO_BLOCK`.
+- An image (ADR-0018) is a still: `placement="framed"` with a `frame`, and nothing else from the video attributes. `background`, no placement, or no frame is `E_VIDEO_BLOCK`. A video-only attribute on an image (`sourceStart`, `sourceEnd`, `audio`, `volume`, `loop`, `freeze`, `playbackRate`, `region`) is `E_VIDEO_BLOCK` naming it.
+- An image is held for its scene: it has no source range, so no `E_MEDIA_RANGE` or `E_MEDIA_SHORT_SOURCE`, and no sound. Its file must exist and have a format of ADR-0008 (`E_ASSET_MISSING`, `E_MEDIA_FORMAT`); it is not probed. An image needs a component whose `mediaKinds` list image (`product-demo`, `text-media`), or the block is `E_MEDIA_KIND`.
 - `loop` and `freeze` cannot both be `true` (`E_VIDEO_LOOP_FREEZE`).
 - `sourceStart` must be before `sourceEnd` (`E_VIDEO_RANGE`).
 - `playbackRate` must be positive (`E_VIDEO_PLAYBACK_RATE`).
-- `audio` is required (`E_VIDEO_AUDIO_REQUIRED`).
+- `audio` is required on video (`E_VIDEO_AUDIO_REQUIRED`).
 - `volume` is valid with `keep` only, above 0 and at most 1 (`E_VIDEO_VOLUME`; `E_VIDEO_BLOCK` on `mute`). Volume never boosts a source.
 - `keep` needs `playbackRate="1"` (`E_AUDIO_RATE`): the sound cannot follow another speed. A file with no audio stream is `E_AUDIO_NO_STREAM`.
 - Kept sound follows the picture: the source range plays from its start, `loop` repeats it, `freeze` leaves silence after it, and it stops with the scene. Across a transition the outgoing and incoming sound cross-fade over the overlap (ADR-0009). Mono sources play 3 dB quieter (ADR-0009, a known deviation).
@@ -67,4 +76,4 @@ timeline. The scene's `duration` is timeline time.
 - A component that needs footage (`requiresMedia`: `product-demo`, `text-media`) with no `.video` block is `E_SLOT_MISSING`.
 - Footage is drawn muted (the picture); its sound is `audio="mute"` or `keep` (task 044). Background footage is drawn with `fit` (`cover` or `contain`) as the image component draws its picture. Frame N of the scene shows source frame `sourceStart + N × playbackRate`; `loop` repeats the range at normal speed, `freeze` holds its last frame. Without `sourceEnd`, loop and freeze use the end of the file, which the validator reads from the probe.
 
-Fixtures: `tests/fixtures/projects/media-range-*` (overrun, short, loop, freeze). Background: `background-video`, `background-video-loop`, `background-video-freeze`, `background-video-fit`, and `background-video-unsupported` (E_MEDIA_PLACEMENT).
+Fixtures: `tests/fixtures/projects/media-range-*` (overrun, short, loop, freeze). Framed images: `component-image-footage` (valid; visual `image-footage`) and `component-image-footage-invalid` (one `E_VIDEO_BLOCK` per scene, `expected.json`). Background: `background-video`, `background-video-loop`, `background-video-freeze`, `background-video-fit`, and `background-video-unsupported` (E_MEDIA_PLACEMENT).
