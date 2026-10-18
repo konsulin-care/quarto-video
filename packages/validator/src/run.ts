@@ -1,5 +1,6 @@
-// The stage runner for a parsed manifest (PRD §9.1). Stage 2 is the IR schema,
-// then the component contracts; stage 3 is the asset references (ADR-0006);
+// The stage runner for a parsed manifest (PRD §9.1). Stage 2 checks the frame
+// names of `.video` blocks (task 040), then is the IR schema, then the component
+// contracts; stage 3 is the asset references (ADR-0006);
 // stage 4 is the timeline. A stage that reports an error stops the run: later
 // stages never see a manifest that is not valid yet. Stage 1 (the Lua filter)
 // and stage 5 (preflight) run in the CLI.
@@ -13,16 +14,30 @@ import {
 import {
   listAnimations,
   listComponents,
+  listFrames,
   listTransitionPresets,
   type AnimationPreset,
   type ComponentContract,
+  type FrameContract,
   type TransitionPreset,
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
 import { checkKinetic } from "./stages/kinetic.js";
-import { assetRefsOf, checkAssets, type AssetRef } from "./stages/assets.js";
+import {
+  assetRefsOf,
+  checkAssets,
+  type AssetRef,
+  type MediaOptions,
+} from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
+import { checkMediaFrames } from "./stages/media-frame.js";
+import { checkMediaKind } from "./stages/media-kind.js";
+import { checkMediaPlacement } from "./stages/media-placement.js";
+import { checkMediaRequired } from "./stages/media-required.js";
+import { checkRegions } from "./stages/regions.js";
+import { resolveSourceEnds } from "./stages/media-source.js";
+import { resolveMusic } from "./stages/music.js";
 import { resolveData } from "./stages/data.js";
 import { withNumbers } from "./stages/number.js";
 import { checkProps } from "./stages/props.js";
@@ -35,6 +50,8 @@ import { checkTimeline } from "./stages/timeline.js";
 export interface AssetCheck {
   root: string;
   refs?: readonly AssetRef[];
+  /** Probe and cache for video and audio references (ADR-0008). */
+  media?: MediaOptions;
 }
 
 export interface ManifestCheck {
@@ -95,9 +112,11 @@ export function checkManifest(
   transitions: readonly TransitionPreset[] = listTransitionPresets(),
   assets?: AssetCheck,
   animations: readonly AnimationPreset[] = listAnimations(),
+  frames: readonly FrameContract[] = listFrames(),
 ): ManifestCheck {
   const state: { ir?: IrVideoV02 | IrVideoWithTimeline } = {};
   const diagnostics = runStages([
+    () => checkMediaFrames(json, file, frames),
     () => {
       const result = validateIr(json);
       if (!result.ok) {
@@ -123,6 +142,10 @@ export function checkManifest(
       if (ir === undefined) return [];
       const found = inDocumentOrder([
         ...checkContracts(ir, components),
+        ...checkMediaPlacement(ir, components),
+        ...checkMediaKind(ir, components),
+        ...checkMediaRequired(ir, components),
+        ...checkRegions(ir, components),
         ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
         ...checkKinetic(ir),
@@ -136,11 +159,17 @@ export function checkManifest(
       const ir = state.ir;
       // Unset refs: the image blocks of the IR (ADR-0006, ADR-0013).
       const refs = assets.refs ?? (ir === undefined ? [] : assetRefsOf(ir));
-      const assetErrors = checkAssets(refs, assets.root);
+      const assetErrors = checkAssets(refs, assets.root, assets.media);
       if (ir === undefined) return assetErrors;
       const data = resolveData(ir, components, assets.root);
-      state.ir = data.ir;
-      return [...assetErrors, ...data.diagnostics];
+      const sourced = resolveSourceEnds(
+        data.ir,
+        assets.root,
+        assets.media ?? {},
+      );
+      const track = resolveMusic(sourced, assets.root, assets.media ?? {});
+      state.ir = track.ir;
+      return [...assetErrors, ...data.diagnostics, ...track.diagnostics];
     },
     () => {
       const ir = state.ir;

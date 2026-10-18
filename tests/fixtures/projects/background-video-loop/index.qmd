@@ -1,0 +1,17 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="3s"}
+
+::: {.video src="assets/clip.mp4" placement="background" sourceStart="1s" sourceEnd="2s" loop="true" audio="mute"}
+:::
+
+::: {.text-overlay}
+Looping footage.
+:::
+
+:::

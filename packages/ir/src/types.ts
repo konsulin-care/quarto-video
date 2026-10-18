@@ -1,12 +1,29 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4 and 1.5 (ir-1.5.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 to 1.10 (ir-1.10.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
 
 export type * from "./content-types.js";
+export type * from "./music-types.js";
+export type * from "./media-types.js";
+import type { IrMusic } from "./music-types.js";
+import type { IrMedia } from "./media-types.js";
 
 export type SchemaVersion =
-  "0.1" | "0.2" | "0.3" | "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "1.5";
+  | "0.1"
+  | "0.2"
+  | "0.3"
+  | "1.0"
+  | "1.1"
+  | "1.2"
+  | "1.3"
+  | "1.4"
+  | "1.5"
+  | "1.6"
+  | "1.7"
+  | "1.8"
+  | "1.9"
+  | "1.10";
 
 export interface IrSettings {
   width: number;
@@ -172,7 +189,42 @@ export interface IrVideoV15 extends Omit<
   scenes: IrSceneV15[];
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.5). */
+/** IR 1.6 (task 038): a scene may carry `.video` footage. */
+export interface IrSceneV16 extends IrSceneV15 {
+  media?: IrMedia[];
+}
+
+/** IR 1.6 (task 038): IR 1.5 plus scene `media`. */
+export interface IrVideoV16 extends Omit<
+  IrVideoV15,
+  "schemaVersion" | "scenes"
+> {
+  schemaVersion: "1.6";
+  scenes: IrSceneV16[];
+}
+
+/** IR 1.7 (ADR-0016): IR 1.6 whose media may be region footage. */
+export interface IrVideoV17 extends Omit<IrVideoV16, "schemaVersion"> {
+  schemaVersion: "1.7";
+}
+
+/** IR 1.8 (ADR-0009): IR 1.7 whose media may keep its source audio. */
+export interface IrVideoV18 extends Omit<IrVideoV17, "schemaVersion"> {
+  schemaVersion: "1.8";
+}
+
+/** IR 1.9 (ADR-0017): IR 1.8 with the optional project music track. */
+export interface IrVideoV19 extends Omit<IrVideoV18, "schemaVersion"> {
+  schemaVersion: "1.9";
+  music?: IrMusic;
+}
+
+/** IR 1.10 (ADR-0018): IR 1.9 whose media may be a framed image. */
+export interface IrVideoV110 extends Omit<IrVideoV19, "schemaVersion"> {
+  schemaVersion: "1.10";
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.10). */
 export type IrVideoWithTimeline =
   | IrVideoV03
   | IrVideoV10
@@ -180,7 +232,12 @@ export type IrVideoWithTimeline =
   | IrVideoV12
   | IrVideoV13
   | IrVideoV14
-  | IrVideoV15;
+  | IrVideoV15
+  | IrVideoV16
+  | IrVideoV17
+  | IrVideoV18
+  | IrVideoV19
+  | IrVideoV110;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -192,7 +249,12 @@ export type IrVideo =
   | IrVideoV12
   | IrVideoV13
   | IrVideoV14
-  | IrVideoV15;
+  | IrVideoV15
+  | IrVideoV16
+  | IrVideoV17
+  | IrVideoV18
+  | IrVideoV19
+  | IrVideoV110;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

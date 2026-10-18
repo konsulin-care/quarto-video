@@ -11,7 +11,10 @@
     "bullets",
     "image",
     "chart",
-    "statistic"
+    "statistic",
+    "product-demo",
+    "text-media",
+    "split-screen"
   ],
   "minFrames": 15,
   "shortScene": "static",

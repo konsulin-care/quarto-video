@@ -13,12 +13,21 @@ export const SUPPORTED_VERSIONS = [
   "1.3",
   "1.4",
   "1.5",
+  "1.6",
+  "1.7",
+  "1.8",
+  "1.9",
+  "1.10",
 ] as const;
 
 export type SupportedVersion = (typeof SUPPORTED_VERSIONS)[number];
 
-/** The version the filter writes. Pre-1.0 versions are read, never written. */
-export const LATEST_VERSION: SupportedVersion = "1.5";
+/**
+ * The newest version. The filter writes 1.10 for a manifest with framed image footage (ADR-0018),
+ * 1.9 for a manifest with a music track (ADR-0017), 1.8 for a manifest with a kept clip (ADR-0009),
+ * 1.7 for region footage and 1.6 otherwise (ADR-0016). Pre-1.0 versions are read, never written.
+ */
+export const LATEST_VERSION: SupportedVersion = "1.10";
 
 /** Code of the version-gate error (`/schemaVersion`). */
 export const UNSUPPORTED_VERSION_CODE = "E_IR_UNSUPPORTED_VERSION";

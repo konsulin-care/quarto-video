@@ -1,12 +1,15 @@
 # docs/decisions/ — Architecture Decision Records
-Status: ADR-0001 to ADR-0007, ADR-0010 to ADR-0015 accepted. Other ADRs are written by the tasks listed below.
+
+Status: ADR-0001 to ADR-0018 accepted (0009 by task 044). Other ADRs are written by the tasks listed below.
 
 ## Purpose
+
 Record every decision that shapes parsing, timing, portability, or the
 renderer boundary — in particular the open decisions in PRD §18. Code must
 follow accepted ADRs; changing course requires a new ADR.
 
 ## Format
+
 - File name: `NNNN-kebab-title.md`, numbered in the order listed below.
 - Copy `0000-template.md`. Sections: Status, Context, Options, Decision,
   Consequences, Verification, References.
@@ -18,27 +21,32 @@ follow accepted ADRs; changing course requires a new ADR.
   `docs/decisions/evidence/NNNN-*`.
 
 ## Index
+
 Numbers follow task order. Each ADR is written by the task shown.
 
-| ADR  | Topic                                            | PRD     | Task |
-| ---- | ------------------------------------------------ | ------- | ---- |
-| 0001 | Toolchain: TypeScript, npm workspaces, pinning   | §11.1   | 001  |
-| 0002 | Quarto-native invocation feasibility             | §18.1   | 007  |
-| 0003 | Duration units, frame rounding, default duration | §18.2   | 009  |
-| 0004 | IR content representation                        | §18.4   | 012  |
-| 0005 | Transition model and overlap semantics           | §18.3   | 015  |
-| 0006 | Asset security boundary                          | §18.5   | 016  |
-| 0007 | IR/DSL versioning and migration policy           | §18.7   | 017  |
-| 0008 | Supported media formats                          | §18.8   | 037  |
-| 0009 | Audio architecture                               | §18.6   | 044  |
-| 0010 | Dev environment, hooks, CI, testing policy       | §11.1   | 000  |
-| 0011 | Scene animation in IR 1.1                        | §5.6    | 021  |
-| 0012 | Reduced motion setting in IR 1.2                 | §5.6, §12 | 023 |
-| 0013 | Image block and IR 1.3                           | §5.4, §8.2 | 033 |
-| 0014 | Component props and CSV tables in IR 1.4         | §5.3, §5.5, §12 | 035 |
-| 0015 | Numeric props and IR 1.5                         | §5.4, §5.5, §10.2 | 031 |
+| ADR  | Topic                                            | PRD                    | Task |
+| ---- | ------------------------------------------------ | ---------------------- | ---- |
+| 0001 | Toolchain: TypeScript, npm workspaces, pinning   | §11.1                  | 001  |
+| 0002 | Quarto-native invocation feasibility             | §18.1                  | 007  |
+| 0003 | Duration units, frame rounding, default duration | §18.2                  | 009  |
+| 0004 | IR content representation                        | §18.4                  | 012  |
+| 0005 | Transition model and overlap semantics           | §18.3                  | 015  |
+| 0006 | Asset security boundary                          | §18.5                  | 016  |
+| 0007 | IR/DSL versioning and migration policy           | §18.7                  | 017  |
+| 0008 | Supported media formats                          | §18.8                  | 037  |
+| 0009 | Audio architecture                               | §18.6                  | 044  |
+| 0010 | Dev environment, hooks, CI, testing policy       | §11.1                  | 000  |
+| 0011 | Scene animation in IR 1.1                        | §5.6                   | 021  |
+| 0012 | Reduced motion setting in IR 1.2                 | §5.6, §12              | 023  |
+| 0013 | Image block and IR 1.3                           | §5.4, §8.2             | 033  |
+| 0014 | Component props and CSV tables in IR 1.4         | §5.3, §5.5, §12        | 035  |
+| 0015 | Numeric props and IR 1.5                         | §5.4, §5.5, §10.2      | 031  |
+| 0016 | Region footage and IR 1.7                        | §5.4, §5.5, §6.1, §6.2 | 043  |
+| 0017 | Project music track and IR 1.9                   | §7.1, §7.2, §18.6      | 045  |
+| 0018 | Framed image footage and IR 1.10                 | §5.4, §5.5, §6.1, §6.2 | 041, 042 |
 
 ## Rules for agents
+
 - If your task says "writes ADR-NNNN", the ADR must reach `accepted` (or be
   explicitly left `proposed` with the reason flagged) before the task is done.
 - If you find you need a decision not in this index, append a row with the

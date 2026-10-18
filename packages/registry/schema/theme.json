@@ -15,7 +15,8 @@
     "space",
     "radius",
     "safeArea",
-    "motion"
+    "motion",
+    "scrim"
   ],
   "properties": {
     "id": {
@@ -178,6 +179,18 @@
         },
         "slowMs": {
           "$ref": "#/$defs/milliseconds"
+        }
+      }
+    },
+    "scrim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["opacity"],
+      "properties": {
+        "opacity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       }
     }

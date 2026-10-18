@@ -82,7 +82,7 @@
       }
     }
   ],
-  "schemaVersion": "1.5",
+  "schemaVersion": "1.6",
   "settings": {
     "background": "#10131C",
     "fps": 30,

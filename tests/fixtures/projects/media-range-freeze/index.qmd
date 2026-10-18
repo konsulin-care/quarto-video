@@ -1,0 +1,17 @@
+---
+title: "Media range: frozen source"
+---
+
+::: {.scene component="statement" duration="4s"}
+
+::: {.video src="assets/clip.mp4"
+    placement="background"
+    fit="cover"
+    sourceEnd="2s"
+    freeze="true"
+    audio="mute"}
+:::
+
+The 2 s source does not cover the 4 s scene.
+
+:::

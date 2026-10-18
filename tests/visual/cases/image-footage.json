@@ -1,0 +1,9 @@
+{
+  "project": "tests/fixtures/projects/component-image-footage",
+  "theme": "modern",
+  "frames": [30, 90, 150, 210],
+  "threshold": {
+    "channelTolerance": 2,
+    "maxDiffRatio": 0.0005
+  }
+}

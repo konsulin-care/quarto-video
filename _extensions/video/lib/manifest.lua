@@ -1,4 +1,4 @@
--- Builds the Video IR 1.5 manifest and writes it to
+-- Builds the Video IR 1.6 manifest and writes it to
 -- <project>/.video-build/manifest.json, plus the render settings that stay
 -- outside the IR (<project>/.video-build/render.json: output, theme name and an
 -- explicit background).
@@ -23,10 +23,62 @@ function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
---- Assembles the IR table. Field names follow schema/ir-1.5.json. The
+-- True when a scene has an image item (IR 1.10, ADR-0018).
+local function has_image(scenes)
+  for _, scene in ipairs(scenes) do
+    for _, item in ipairs(scene.media or {}) do
+      if item.kind == "image" then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+--- The IR version a manifest is written as: 1.10 with a framed image (ADR-0018),
+--- 1.9 with a music track (ADR-0017), 1.8 when a scene keeps source audio
+--- (ADR-0009), 1.7 when a scene has region footage (ADR-0016), 1.6 otherwise, so
+--- other manifests stay as they were.
+local function version_of(scenes, music)
+  if has_image(scenes) then
+    return "1.10"
+  end
+  if music ~= nil then
+    return "1.9"
+  end
+  local region = false
+  for _, scene in ipairs(scenes) do
+    for _, item in ipairs(scene.media or {}) do
+      if item.audio == "keep" then
+        return "1.8"
+      end
+      if item.placement == "region" then
+        region = true
+      end
+    end
+  end
+  return region and "1.7" or "1.6"
+end
+
+-- The media items without `kind`: IR 1.6 to 1.9 have no such field (ADR-0018).
+local function without_kind(items)
+  local out = json.array({})
+  for i, item in ipairs(items) do
+    local copy = {}
+    for key, value in pairs(item) do
+      if key ~= "kind" then
+        copy[key] = value
+      end
+    end
+    out[i] = copy
+  end
+  return out
+end
+
+--- Assembles the IR table. Field names follow the schema of its version. The
 --- timeline (ADR-0005) is resolved here from the scenes' durations and
---- transitions.
-function M.build(settings, scenes, source_file)
+--- transitions. `music` is the track of lib/music.lua, or nil (ADR-0017).
+function M.build(settings, scenes, source_file, music)
   local starts, total = timeline.resolve(scenes)
   local list = json.array({})
   local entries = json.array({})
@@ -39,16 +91,26 @@ function M.build(settings, scenes, source_file)
       animation = scene.animation,
       props = scene.props,
       content = { slots = scene.slots },
+      media = scene.media,
       source = { file = source_file, line = scene.line },
     }
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
+  local version = version_of(list, music)
+  if version ~= "1.10" then
+    for _, scene in ipairs(list) do
+      if scene.media ~= nil then
+        scene.media = without_kind(scene.media)
+      end
+    end
+  end
   return {
-    schemaVersion = "1.5",
+    schemaVersion = version,
     type = "video",
     settings = settings,
     scenes = list,
     timeline = { durationFrames = total, scenes = entries },
+    music = music,
     generator = { extension = generator.extension, cli = generator.cli },
   }
 end

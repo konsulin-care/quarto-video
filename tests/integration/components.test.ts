@@ -55,9 +55,19 @@ describe("video components", () => {
     const title = list.find((c) => c["id"] === "title");
     assert.ok(title, "title is listed");
     assert.deepEqual(title["slots"], {
-      default: { required: true, accepts: ["paragraph", "heading"] },
+      default: {
+        required: true,
+        alternative: "text-overlay",
+        accepts: ["paragraph", "heading"],
+      },
+      "text-overlay": {
+        required: false,
+        accepts: ["paragraph", "heading"],
+        maxBlocks: 1,
+      },
       subtitle: { required: false, accepts: ["paragraph"] },
     });
+    assert.deepEqual(title["placements"], ["background"]);
     assert.deepEqual(title["props"], {});
     assert.deepEqual(title["duration"], { minMs: 1000, maxMs: 30000 });
   });

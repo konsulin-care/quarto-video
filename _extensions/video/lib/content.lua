@@ -1,12 +1,15 @@
 -- Scene content as typed blocks in named slots (IR 0.2; ADR-0004; PRD §5.3).
 -- A nested Div with exactly one class names a slot (`.left`, `.right`, ...);
--- every block outside a slot Div goes to the `default` slot. Pandoc elements
--- outside the node set are findings, reported as E_CONTENT_UNSUPPORTED at
--- their line (lib/content_lines.lua). Nothing is dropped silently.
+-- every block outside a slot Div goes to the `default` slot. A `.video` Div
+-- directly in the scene is footage, not a slot: it becomes a scene `media`
+-- item (IR 1.6, lib/media.lua). Pandoc elements outside the node set are
+-- findings, reported as E_CONTENT_UNSUPPORTED at their line
+-- (lib/content_lines.lua). Nothing is dropped silently.
 local json = require("lib.json")
 local inlines = require("lib.content_inlines")
 local diagnostics = require("lib.diagnostics")
 local image_block = require("lib.image_block")
+local media = require("lib.media")
 
 local M = {}
 
@@ -113,6 +116,10 @@ local function convert_one(el, found, in_slot)
   if t == "Div" and image_block.is_image(el) then
     return image_block.node(el, found)
   end
+  if t == "Div" and media.is_video(el) then
+    media.misplaced(found)
+    return nil
+  end
   if t == "Para" or t == "Plain" then
     return { type = "paragraph", inlines = inlines.convert(el.content, found) }
   elseif t == "Header" then
@@ -206,17 +213,25 @@ local function slot_of(div)
 end
 
 --- Converts the content of one `.scene` Div. Returns `slots` (slot name ->
---- JSON array of blocks; loose blocks are `default`) and `found` (the
---- unsupported elements, in document order). A duplicate or empty slot is
---- a finding; its first valid copy is kept.
-function M.convert(div)
+--- JSON array of blocks; loose blocks are `default`), `found` (the
+--- unsupported elements, in document order) and `media` (the scene's `.video`
+--- items, or nil when it has none). A duplicate or empty slot is a finding;
+--- its first valid copy is kept. `fps` is the project frame rate.
+function M.convert(div, fps)
   local found, slots = {}, {}
   local loose = json.array({})
+  local footage = json.array({})
   image_block.reset()
+  media.reset()
   -- How many Divs of each first class came before (the `nth` of a finding).
   local counts = {}
   for _, el in ipairs(div.content) do
-    if el.t == "Div" and not image_block.is_image(el) then
+    if el.t == "Div" and media.is_video(el) then
+      local item = media.node(el, found, fps)
+      if item then
+        footage[#footage + 1] = item
+      end
+    elseif el.t == "Div" and not image_block.is_image(el) then
       local key = el.classes[1]
       local nth = nil
       if key then
@@ -261,7 +276,7 @@ function M.convert(div)
   if #loose > 0 then
     slots[DEFAULT] = loose
   end
-  return slots, found
+  return slots, found, #footage > 0 and footage or nil
 end
 
 return M

@@ -1,0 +1,47 @@
+---
+title: "Component text-media"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+Four text-media scenes, one per frame. The browser scene has its footage on
+the right (the default) and shows the source from 1 s to 3 s. The others put
+the footage on the left, or use the compatible animations, and show whole clips.
+
+::: {.scene component="text-media" duration="2s"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" sourceStart="1s" sourceEnd="3s" audio="mute" alt="A counter clip in a browser frame"}
+:::
+
+::: {.text}
+Counter in a browser frame.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s" side="left" animation="fade-in"}
+::: {.video src="assets/tall.mp4" placement="framed" frame="phone" fit="contain" audio="mute" alt="A counter clip in a phone frame"}
+:::
+
+::: {.text}
+Phone frame on the left, with its text in the other column.
+:::
+:::
+
+::: {.scene component="text-media" duration="3s" animation="reveal"}
+::: {.video src="assets/four-three.mp4" placement="framed" frame="tablet" fit="cover" audio="mute" alt="A counter clip in a tablet frame"}
+:::
+
+::: {.text}
+# Tablet frame
+:::
+:::
+
+::: {.scene component="text-media" duration="3s" side="left" animation="slide-up"}
+::: {.video src="assets/wide.mp4" placement="framed" frame="generic" fit="cover" audio="mute" alt="A counter clip in a generic frame"}
+:::
+
+::: {.text}
+Text wraps in its own column, clear of the frame.
+:::
+:::

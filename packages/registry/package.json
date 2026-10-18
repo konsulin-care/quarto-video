@@ -7,6 +7,7 @@
     ".": "./src/index.ts",
     "./themes/*.json": "./themes/*.json",
     "./animations/*.json": "./animations/*.json",
+    "./frames/*.json": "./frames/*.json",
     "./transitions/*.json": "./transitions/*.json",
     "./layout": "./src/layout.ts",
     "./kinetic": "./src/kinetic.ts"

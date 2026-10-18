@@ -1,6 +1,6 @@
 -- Rejects front matter keys the filter does not know (AGENT.md invariant:
 -- unknown settings are errors, never ignored). Checked: every key under
--- `video` and under `defaults`. Top-level keys are shared with Quarto's own
+-- `video`, `defaults` and `audio` (task 045). Top-level keys are shared with Quarto's own
 -- front matter (title, format, filters, ...) and are not checked here.
 -- Each unknown key is E_CONFIG_UNKNOWN_KEY with a "did you mean" suggestion
 -- when a known key is close (PRD §5.2, §9.2).
@@ -20,6 +20,7 @@ local ALLOWED = {
     reducedMotion = true,
   },
   defaults = { scene = { duration = true, transition = true } },
+  audio = { music = { src = true, volume = true, loop = true, fadeOut = true } },
 }
 
 -- Known in PRD §5.2 but not supported yet (PRD §5.2: kept out of the IR).
@@ -109,7 +110,7 @@ end
 --- `defaults` (all of them, in document order of the sorted keys).
 function M.check(front)
   local found = {}
-  for _, name in ipairs({ "video", "defaults" }) do
+  for _, name in ipairs({ "video", "defaults", "audio" }) do
     local block = front[name]
     if shapes.is_map(block) then
       check_block(block, ALLOWED[name], name .. ".", found)

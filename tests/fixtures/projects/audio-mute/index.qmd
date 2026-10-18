@@ -1,0 +1,17 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="background" fit="contain" audio="mute"}
+:::
+
+::: {.text-overlay}
+Footage with its sound muted.
+:::
+
+:::

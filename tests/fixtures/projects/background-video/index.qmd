@@ -1,0 +1,17 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="1.5s"}
+
+::: {.video src="assets/clip.mp4" placement="background" fit="contain" sourceStart="1s" playbackRate="2" audio="mute"}
+:::
+
+::: {.text-overlay}
+Footage behind the text.
+:::
+
+:::

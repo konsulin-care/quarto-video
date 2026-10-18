@@ -1,0 +1,18 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+audio:
+  music:
+    src: assets/music.wav
+    volume: 0.5
+---
+
+::: {.scene component="statement" duration="2s"}
+The 1.5 s track does not loop.
+:::
+
+::: {.scene component="statement" duration="3s"}
+The video is longer than the track: this is an error.
+:::

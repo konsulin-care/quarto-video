@@ -2,25 +2,45 @@
 // its startFrame and runs its own durationFrames, so a transition's overlap
 // shows both scenes. Frames come from the IR, never from the wall clock
 // (PRD §8.4). The theme's tokens are passed in as props.
-import type { IrBlock, IrVideo as IrManifest } from "@quarto-video/ir";
+import type {
+  IrBlock,
+  IrMedia,
+  IrMediaVideo,
+  IrMusic,
+  IrVideo as IrManifest,
+} from "@quarto-video/ir";
 import type { ThemeTokens } from "@quarto-video/registry";
 // Subpaths, not the package index: the index pulls in the validator (node:fs)
 // and ajv, which the renderer bundle must not contain.
 import { timelineOf } from "@quarto-video/ir/timeline";
 import { slotTexts } from "@quarto-video/ir/text";
+import type { ReactNode } from "react";
 import { AbsoluteFill, Sequence } from "remotion";
 import { ThemeProvider } from "../themes/ThemeProvider.js";
 import { AnimatedScene } from "./AnimatedScene.js";
 import { TransitionScene } from "./TransitionScene.js";
 import { effectiveAnimation } from "../animations/index.js";
-import { COMPONENTS } from "./registry-map.js";
+import { COMPONENTS, PLACES_OWN_MEDIA } from "./registry-map.js";
 import type { Overlap } from "../transitions/index.js";
+import { BackgroundScene } from "../media/BackgroundScene.js";
+import { FramedScene } from "../media/FramedScene.js";
+import { SourceAudio } from "../media/SourceAudio.js";
+import { MusicTrack } from "../media/MusicTrack.js";
+import { audioSourceOf, type AudioSources } from "../media/audio-source.js";
+import { withOverlay } from "./overlay.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
-export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
-  string,
-  unknown
->;
+export type IrVideoProps = {
+  ir: IrManifest;
+  theme: ThemeTokens;
+  /** Stereo copies of mono sound sources (src/stereo-sources.ts); unset plays the files. */
+  audioSources?: AudioSources;
+} & Record<string, unknown>;
+
+/** The scene's text and blocks as the components read them (task 039: text-overlay). */
+function contentOf(scene: IrManifest["scenes"][number]) {
+  return withOverlay(slotTexts(scene.content), blocksOf(scene.content));
+}
 
 /**
  * The scene's animation as drawn: its preset id, or fade-in for a kinetic
@@ -28,7 +48,21 @@ export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
  */
 function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
   const name = "animation" in scene ? scene.animation?.name : undefined;
-  return effectiveAnimation(name, slotTexts(scene.content)["default"] ?? "");
+  return effectiveAnimation(name, contentOf(scene).texts["default"] ?? "");
+}
+
+/** The scene's `.video` footage with the given placement, if it has one (tasks 039, 040). */
+function mediaOf(
+  scene: IrManifest["scenes"][number],
+  placement: IrMedia["placement"],
+): IrMedia | undefined {
+  if (!("media" in scene) || scene.media === undefined) return undefined;
+  return scene.media.find((item) => item.placement === placement);
+}
+
+/** Footage that is video: background and region footage are video (ADR-0018). */
+function videoOf(item: IrMedia | undefined): IrMediaVideo | undefined {
+  return item !== undefined && item.kind !== "image" ? item : undefined;
 }
 
 /** The overlap a scene's transition makes; none for cut or no transition. */
@@ -67,9 +101,62 @@ function reducedMotionOf(ir: IrManifest): boolean {
   return "reducedMotion" in ir.settings && ir.settings.reducedMotion === true;
 }
 
-export function IrVideo({ ir, theme }: IrVideoProps) {
+/** The scene's region footage by region name (IR 1.7, task 043); none before 1.7. */
+function regionsOf(
+  scene: IrManifest["scenes"][number],
+): Record<string, IrMediaVideo> {
+  const regions: Record<string, IrMediaVideo> = {};
+  if (!("media" in scene) || scene.media === undefined) return regions;
+  for (const item of scene.media) {
+    if (
+      item.kind !== "image" &&
+      item.placement === "region" &&
+      item.region !== undefined
+    ) {
+      regions[item.region] = item;
+    }
+  }
+  return regions;
+}
+
+/** The scene's kept `.video` blocks, whichever placement they have (task 044). */
+function keptOf(scene: IrManifest["scenes"][number]): IrMediaVideo[] {
+  if (!("media" in scene) || scene.media === undefined) return [];
+  return scene.media.flatMap((item) =>
+    item.kind !== "image" && item.audio === "keep" ? [item] : [],
+  );
+}
+
+/** The project music track, when the manifest has one (IR 1.9, ADR-0017). */
+function musicOf(ir: IrManifest): IrMusic | undefined {
+  return "music" in ir ? ir.music : undefined;
+}
+
+/** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
+function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
+  if (PLACES_OWN_MEDIA.has(scene.component)) return component;
+  const framed = mediaOf(scene, "framed");
+  if (framed !== undefined) {
+    // A caption draws under the frame, in a band the frame leaves (task 041).
+    const caption = contentOf(scene).texts["caption"] ?? "";
+    return (
+      <FramedScene media={framed} caption={caption}>
+        {component}
+      </FramedScene>
+    );
+  }
+  const background = videoOf(mediaOf(scene, "background"));
+  return background === undefined ? (
+    component
+  ) : (
+    <BackgroundScene media={background}>{component}</BackgroundScene>
+  );
+}
+
+export function IrVideo({ ir, theme, audioSources }: IrVideoProps) {
   const timeline = timelineOf(ir);
   const reducedMotion = reducedMotionOf(ir);
+  const music = musicOf(ir);
   return (
     <ThemeProvider theme={theme}>
       <AbsoluteFill
@@ -87,6 +174,18 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
               from={start}
               durationInFrames={scene.durationFrames}
             >
+              {keptOf(scene).map((item, pass) => (
+                <SourceAudio
+                  key={`audio-${pass}`}
+                  media={item}
+                  file={audioSourceOf(item.src, audioSources)}
+                  durationFrames={scene.durationFrames}
+                  incomingFrames={overlapOf(scene)?.overlapFrames ?? 0}
+                  outgoingFrames={
+                    overlapOf(ir.scenes[index + 1])?.overlapFrames ?? 0
+                  }
+                />
+              ))}
               <TransitionScene
                 durationFrames={scene.durationFrames}
                 incoming={overlapOf(scene)}
@@ -98,17 +197,29 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >
-                  <Component
-                    slots={slotTexts(scene.content)}
-                    blocks={blocksOf(scene.content)}
-                    props={propsOf(scene)}
-                    tables={tablesOf(scene)}
-                  />
+                  {withMedia(
+                    scene,
+                    <Component
+                      slots={contentOf(scene).texts}
+                      blocks={contentOf(scene).blocks}
+                      props={propsOf(scene)}
+                      tables={tablesOf(scene)}
+                      media={mediaOf(scene, "framed")}
+                      regions={regionsOf(scene)}
+                    />,
+                  )}
                 </AnimatedScene>
               </TransitionScene>
             </Sequence>
           );
         })}
+        {music === undefined ? null : (
+          <MusicTrack
+            music={music}
+            durationFrames={timeline.durationFrames}
+            file={audioSourceOf(music.src, audioSources)}
+          />
+        )}
       </AbsoluteFill>
     </ThemeProvider>
   );

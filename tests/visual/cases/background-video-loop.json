@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/background-video-loop",
+  "theme": "modern",
+  "frames": [0, 29, 30, 59],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

@@ -14,6 +14,7 @@ export {
   loadAnimationDir,
   parseAnimation,
 } from "./animations.js";
+export { getFrame, listFrames, loadFrameDir, parseFrame } from "./frames.js";
 export {
   DEFAULT_THEME,
   getTheme,

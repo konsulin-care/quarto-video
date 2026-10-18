@@ -20,10 +20,11 @@ Without the `.subtitle` Div the title stands alone, centred on the frame.
 ## Slots and content
 | Slot | Required | Accepts |
 | --- | --- | --- |
-| `default` | yes | paragraph, heading |
+| `default` | yes, unless `text-overlay` is filled | paragraph, heading |
+| `text-overlay` | no | paragraph, heading |
 | `subtitle` | no | paragraph |
 
-The title has no props. Content is drawn as plain lines, one per block (ADR-0004). The `default` slot is the title, in the theme's bold title size. `subtitle` sits under it in the muted text colour, at the theme's subtitle size. Loose blocks go to `default`.
+The title has no props. Content is drawn as plain lines, one per block (ADR-0004). The `default` slot is the title, in the theme's bold title size. `subtitle` sits under it in the muted text colour, at the theme's subtitle size. Loose blocks go to `default`. The `text-overlay` slot is the title drawn over background footage (`.text-overlay` in the scene): it takes the place of `default`, and a scene fills one of the two (`E_SLOT_CONSTRAINT` when both are filled).
 
 Errors (validator, stage 2): a `.subtitle` with a list or code block is `E_SLOT_BLOCK_KIND`; any other slot name, such as `.caption`, is `E_SLOT_UNKNOWN`; a scene with no title is `E_SLOT_REQUIRED`.
 
@@ -35,7 +36,7 @@ Warning (validator, stage 2): `W_TEXT_FIT` when the title does not fit at 40px, 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the title and subtitle together.
-- Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
+- Placements: `background` (task 039): footage fills the canvas behind the title, under a theme scrim that keeps it legible. Framed footage is not taken (`E_MEDIA_PLACEMENT`; only `statement` takes framed, task 040). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 
 ## Accessibility
 The title and subtitle are the only content. Colour and size come from the theme (task 019). The subtitle uses the muted text token, a theme pair that meets WCAG AA. Long text wraps inside the safe area (PRD §10.2): a title of 80 characters or more takes several lines and is not clipped at 1920x1080, and it scales down to fit a small frame (see Text size). Under reduced motion, each animation draws its end state from the first frame (task 023).

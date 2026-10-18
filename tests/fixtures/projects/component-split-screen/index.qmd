@@ -1,0 +1,46 @@
+---
+title: "Component split-screen"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+Four split-screen scenes. The first two clips show different source ranges of
+the same counter clip, side by side. The others put text beside footage, put
+three regions across the canvas, and use compatible animations.
+
+::: {.scene component="split-screen" duration="2s"}
+::: {.video src="assets/wide.mp4" region="left" fit="contain" sourceStart="1s" sourceEnd="3s" audio="mute" alt="A counter clip, left region, from 1 s"}
+:::
+::: {.video src="assets/wide.mp4" region="right" fit="contain" sourceStart="0s" sourceEnd="2s" audio="mute" alt="A counter clip, right region, from 0 s"}
+:::
+:::
+
+::: {.scene component="split-screen" duration="3s"}
+::: {.left}
+Text in the left region, footage in the right.
+:::
+::: {.video src="assets/four-three.mp4" region="right" fit="cover" audio="mute" alt="A 4:3 counter clip in the right region"}
+:::
+:::
+
+::: {.scene component="split-screen" duration="3s" animation="fade-in"}
+::: {.left}
+Three regions.
+:::
+::: {.video src="assets/tall.mp4" region="middle" fit="contain" loop="true" audio="mute" alt="A tall counter clip in the middle region"}
+:::
+::: {.right}
+Each region is a column.
+:::
+:::
+
+::: {.scene component="split-screen" duration="2s" animation="reveal"}
+::: {.left}
+Two regions of text.
+:::
+::: {.right}
+Each one fits its own column.
+:::
+:::

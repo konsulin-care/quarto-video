@@ -1,0 +1,34 @@
+---
+title: "Component image footage invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+Each scene breaks one rule for an image: loop, background placement, audio,
+and no frame.
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/landscape.jpg" placement="framed" frame="browser" fit="cover" loop="true" alt="A still"}
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/portrait.png" placement="background" fit="cover" alt="A still"}
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/landscape.jpg" placement="framed" frame="browser" audio="mute" alt="A still"}
+:::
+:::
+
+::: {.scene component="text-media" duration="2s"}
+::: {.video src="assets/portrait.png" placement="framed" fit="contain" alt="A still"}
+:::
+
+::: {.text}
+No frame.
+:::
+:::

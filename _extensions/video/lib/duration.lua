@@ -55,10 +55,12 @@ end
 
 -- Frames for `text` at `fps`. Raises E_DURATION_SYNTAX for a bad form and
 -- E_DURATION_RANGE for a value that is not a positive duration of at least
--- one frame and at most 3600 s.
-local function frames_of(text, ctx, fps)
+-- one frame and at most 3600 s. With `allow_zero` (a source in-point, task
+-- 038) zero is 0 frames and only a negative value is a range error.
+local function frames_of(text, ctx, fps, allow_zero)
+  local floor = allow_zero and "must not be negative" or "must be greater than zero"
   if text:match("^%-%d") then
-    range(ctx, text, "must be greater than zero", positive_hint(ctx))
+    range(ctx, text, floor, positive_hint(ctx))
   end
   local whole, dot, fraction, unit = text:match("^(%d+)(%.?)(%d*)(m?s)$")
   if whole == nil or (dot == "." and fraction == "") then
@@ -90,6 +92,9 @@ local function frames_of(text, ctx, fps)
     micros = tonumber(whole) * 1000 + thousandths
   end
   if micros == 0 then
+    if allow_zero then
+      return 0
+    end
     range(ctx, text, "must be greater than zero", positive_hint(ctx))
   end
   if micros > MAX_MICROS then
@@ -109,15 +114,30 @@ end
 
 --- Returns the number of frames for a scene's `text` at `fps` (a positive
 --- integer). `scene_id` names the scene in the message; `attribute` is the
---- scene attribute the text came from (default "duration").
-function M.to_frames(text, scene_id, fps, attribute)
-  return frames_of(text, scene_context(scene_id, attribute or "duration"), fps)
+--- scene attribute the text came from (default "duration"). `allow_zero`
+--- accepts 0 (a source in-point), returning 0 frames.
+function M.to_frames(text, scene_id, fps, attribute, allow_zero)
+  return frames_of(text, scene_context(scene_id, attribute or "duration"), fps, allow_zero)
 end
 
 --- Returns the frames of the front matter default `defaults.scene.duration`.
 --- The message names the setting, not a scene.
 function M.default_frames(text, fps)
   return frames_of(text, DEFAULT_CONTEXT, fps)
+end
+
+--- Returns the frames of a front matter duration setting `property` (for
+--- example audio.music.fadeOut, task 045). The message names the setting.
+function M.setting_frames(text, property, fps)
+  return frames_of(text, {
+    head = function(value)
+      return string.format('The duration "%s" (%s)', value, property)
+    end,
+    property = property,
+    one = property .. ": 1s",
+    four = property .. ": 4s",
+    shorter = "Use a shorter duration.",
+  }, fps)
 end
 
 return M

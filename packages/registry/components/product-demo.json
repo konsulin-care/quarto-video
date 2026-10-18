@@ -1,0 +1,23 @@
+{
+  "id": "product-demo",
+  "version": "1.0.0",
+  "purpose": "Media presented inside a device or browser frame, with an optional caption.",
+  "slots": {
+    "caption": {
+      "required": false,
+      "accepts": ["paragraph"],
+      "maxBlocks": 1
+    }
+  },
+  "requiresMedia": true,
+  "props": {},
+  "placements": ["framed"],
+  "mediaKinds": ["video", "image"],
+  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "accessibility": "The footage is the picture: muted (source audio is task 044), its alt text kept in the IR and not drawn. It is clipped to the frame's screen under the theme scrim; the frame uses theme colours only. The caption uses the muted text token (WCAG AA) in its own band under the frame. A caption over two lines runs into the bottom margin."
+}

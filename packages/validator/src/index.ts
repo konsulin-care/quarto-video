@@ -10,7 +10,17 @@ export { checkTextFit } from "./stages/fit.js";
 export { checkTheme } from "./stages/theme.js";
 export type { ThemeCheck } from "./stages/theme.js";
 export { checkAssets } from "./stages/assets.js";
-export type { AssetRef } from "./stages/assets.js";
+export type { AssetRef, MediaOptions } from "./stages/assets.js";
+export { mediaProblem } from "./stages/media.js";
+export { probeFile, parseProbe } from "./media/probe.js";
+export type { MediaProbe, ProbeResult, Prober } from "./media/probe.js";
+export {
+  FORMATS,
+  codecProblem,
+  extensionOf,
+  formatProblem,
+} from "./media/formats.js";
+export type { MediaUse } from "./media/formats.js";
 export { checkOutput } from "./stages/output.js";
 export type { OutputFacts, VideoFacts } from "./stages/output.js";
 export { resolveAsset } from "./assets/resolve.js";

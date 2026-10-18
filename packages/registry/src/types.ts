@@ -10,6 +10,12 @@ export interface SlotContract {
   accepts: BlockKind[];
   /** More blocks than this is a warning (W_SLOT_TOO_MANY_BLOCKS), not an error. */
   maxBlocks?: number;
+  /**
+   * Optional (task 039): another slot of the same component that holds this
+   * slot's text instead. The slot is then not required, and the two are
+   * exclusive: a scene fills one of them.
+   */
+  alternative?: string;
   /** Optional: the slot holds one list whose item count is in this range (task 027). */
   items?: { minItems: number; maxItems: number };
 }
@@ -58,13 +64,26 @@ export interface TextFit extends TextRange {
   subtitle?: TextRange;
 }
 
+/** The number of regions a scene may use: the component's slots are its regions (task 043). */
+export interface RegionLimit {
+  min: number;
+  max: number;
+}
+
 export interface ComponentContract {
   id: string;
   version: string;
   purpose: string;
   slots: Record<string, SlotContract>;
   props: Record<string, PropContract>;
-  placements: ("background" | "framed")[];
+  /** Footage the component takes: background, framed, or region (IR 1.7, ADR-0016). */
+  placements: ("background" | "framed" | "region")[];
+  /** The footage kinds the component takes (ADR-0018); absent means ["video"]. Images need "framed". */
+  mediaKinds?: ("video" | "image")[];
+  /** Regions a scene uses (split-screen, ADR-0016); present exactly when `placements` lists region. */
+  regions?: RegionLimit;
+  /** The scene must hold a `.video` block (E_SLOT_MISSING); absent means false (task 041). */
+  requiresMedia?: boolean;
   compatibleAnimations: string[];
   compatibleTransitions: string[];
   duration: DurationBounds;
@@ -106,6 +125,8 @@ export interface ThemeTokens {
   /** Keyed by aspect ratio, e.g. "16:9". */
   safeArea: Record<string, SafeArea>;
   motion: { fastMs: number; baseMs: number; slowMs: number };
+  /** Legibility scrim over background footage (task 039): the background colour at this opacity. */
+  scrim: { opacity: number };
 }
 
 /** An animation preset's data (schema/animation.json, PRD §5.6). */
@@ -131,4 +152,22 @@ export interface TransitionPreset {
   duration: { defaultMs: number; minMs: number; maxMs: number };
   /** The registered transition drawn when reduced motion is requested (task 023). */
   reducedMotion: string;
+}
+
+/** A device frame (task 040, PRD §5.5): its shape, its safe content box and the tokens it draws with. */
+export interface FrameContract {
+  id: string;
+  version: string;
+  purpose: string;
+  /** The frame's own shape, "width:height". */
+  aspect: string;
+  /** Where footage is drawn, as percentages of the frame box. */
+  content: {
+    xPercent: number;
+    yPercent: number;
+    widthPercent: number;
+    heightPercent: number;
+  };
+  /** Theme token paths the frame draws with. */
+  tokens: string[];
 }

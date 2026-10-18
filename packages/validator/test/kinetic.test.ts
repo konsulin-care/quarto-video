@@ -52,6 +52,20 @@ describe("kinetic word limit", () => {
     ]);
   });
 
+  it("counts the words of text-overlay when default is empty (task 039)", () => {
+    const doc = statement(words(40));
+    const scene = (doc["scenes"] as Record<string, unknown>[])[0] as Record<
+      string,
+      unknown
+    >;
+    const content = scene["content"] as { slots: Record<string, unknown> };
+    content.slots = { "text-overlay": content.slots["default"] };
+    const result = checkManifest(doc, "index.qmd");
+    expect(result.diagnostics.map((d) => d.code)).toEqual([
+      "W_ANIMATION_FALLBACK",
+    ]);
+  });
+
   it("does not warn for other presets, whatever the word count", () => {
     const doc = statement(words(40));
     const first = (doc["scenes"] as Record<string, unknown>[])[0] as Record<

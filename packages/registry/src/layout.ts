@@ -189,3 +189,102 @@ export function fitStack(
     subtitle: fitText(slots.subtitle, rest, theme, subRange, body),
   };
 }
+
+/** A rectangle in output pixels: left and top from the canvas origin. */
+export interface Rect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/** The side the footage takes in `text-media` (task 042). */
+export type MediaSide = "left" | "right";
+
+/** The `side` default of text-media.json: the footage on the right. */
+export const DEFAULT_MEDIA_SIDE: MediaSide = "right";
+
+/** The `side` a text-media scene's prop gives; the default when absent or unknown (the validator rejects those). */
+export function mediaSideOf(value: unknown): MediaSide {
+  return value === "left" ? "left" : DEFAULT_MEDIA_SIDE;
+}
+
+/**
+ * `count` equal columns of `area`, left to right, with `gap` between them (task
+ * 043). The width an uneven split leaves over goes to the last column. The
+ * columns never overlap and lie inside `area`.
+ */
+export function splitColumns(area: Rect, count: number, gap: number): Rect[] {
+  const width = Math.floor((area.width - gap * (count - 1)) / count);
+  const right = area.left + area.width;
+  const columns: Rect[] = [];
+  let left = area.left;
+  for (let index = 0; index < count; index += 1) {
+    const last = index === count - 1;
+    const columnWidth = last ? right - left : width;
+    columns.push({
+      left,
+      top: area.top,
+      width: columnWidth,
+      height: area.height,
+    });
+    left += columnWidth + gap;
+  }
+  return columns;
+}
+
+/**
+ * The two columns of `text-media` (task 042) inside `area`: the footage column
+ * on `side`, the text column on the other side, with `gap` between them. The
+ * columns never overlap and lie inside `area`; the width left over by an odd
+ * `area` goes to the text column. Pure, so the validator fits the text in the
+ * same column the renderer draws it in.
+ */
+export function sideColumns(
+  area: Rect,
+  side: MediaSide,
+  gap: number,
+): { text: Rect; media: Rect } {
+  const [first = area, second = area] = splitColumns(area, 2, gap);
+  return side === "left"
+    ? { media: first, text: second }
+    : { text: first, media: second };
+}
+
+/** The canvas safe area as a rectangle (task 042). */
+function safeRect(theme: ThemeTokens, width: number, height: number): Rect {
+  const margin = safeAreaPixels(theme, width, height);
+  return { left: margin.x, top: margin.y, ...safeBox(theme, width, height) };
+}
+
+/**
+ * The text and footage columns of `text-media` on a `width` x `height` canvas
+ * (task 042): the two columns share the canvas safe area, with `space.md`
+ * between them. The validator fits the text in the same `text` box the renderer
+ * draws it in.
+ */
+export function textMediaColumns(
+  theme: ThemeTokens,
+  width: number,
+  height: number,
+  side: MediaSide,
+): { text: Rect; media: Rect } {
+  return sideColumns(safeRect(theme, width, height), side, theme.space.md);
+}
+
+/** The region names of split-screen, left to right (task 043; ADR-0016). */
+export const REGION_ORDER = ["left", "middle", "right"] as const;
+
+/**
+ * The columns of `count` regions (task 043) on a `width` x `height` canvas: the
+ * canvas safe area split with `space.md` between them. The renderer draws each
+ * region in its column, in REGION_ORDER.
+ */
+export function regionColumns(
+  theme: ThemeTokens,
+  width: number,
+  height: number,
+  count: number,
+): Rect[] {
+  return splitColumns(safeRect(theme, width, height), count, theme.space.md);
+}

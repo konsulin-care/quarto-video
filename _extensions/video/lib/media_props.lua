@@ -1,0 +1,222 @@
+-- Readers for the properties of a `.video` block (task 038; lib/media.lua).
+-- Each reader returns its value, or nil after one `report(code, message,
+-- suggestion)` call when the value is not allowed. A message is a format
+-- string: the scene id goes in %s, and any text the author wrote is quoted
+-- first (quoted). A source time goes through lib/duration.lua at the project
+-- fps, with zero allowed for an in-point.
+local diagnostics = require("lib.diagnostics")
+local duration = require("lib.duration")
+
+local M = {}
+
+local PLACEMENTS = { background = true, framed = true }
+local FITS = { cover = true, contain = true }
+-- A frame name is an identifier; the validator checks it against the registry (task 040).
+local FRAME_NAME = "^[a-z][a-z0-9-]*$"
+local DEFAULT_PLACEMENT = "background"
+local DEFAULT_FIT = "contain"
+local AUDIO = { mute = true, keep = true }
+local DEFAULT_VOLUME = "1"
+
+--- Doubles every % so the text can sit inside a format string.
+function M.quoted(text)
+  return (tostring(text):gsub("%%", "%%%%"))
+end
+
+--- The src attribute: a non-empty project path (stage 3 checks the file).
+function M.src(report, attrs)
+  if attrs.src == nil or attrs.src == "" then
+    return report(
+      "E_VIDEO_BLOCK",
+      'Scene "%s" has a video block with no src attribute.',
+      'Add src="assets/<file>" with a path inside the project, for example src="assets/clip.mp4".'
+    )
+  end
+  return attrs.src
+end
+
+--- The audio policy, which is required (PRD §6.2; ADR-0009): "mute" or "keep".
+function M.audio(report, attrs)
+  if attrs.audio == nil then
+    return report(
+      "E_VIDEO_AUDIO_REQUIRED",
+      'Scene "%s" has a video block with no audio attribute.',
+      'Add audio="mute" for no source sound, or audio="keep" to play it.'
+    )
+  end
+  if not AUDIO[attrs.audio] then
+    return report(
+      "E_VIDEO_BLOCK",
+      string.format('Scene "%%s" has a video block with audio="%s".', M.quoted(attrs.audio)),
+      'Use audio="mute" (no source sound) or audio="keep" (the source sound, ADR-0009).'
+    )
+  end
+  return attrs.audio
+end
+
+--- The volume of a kept clip (ADR-0009): a decimal above 0 and at most 1, default
+--- "1". Only `keep` takes one. Returns ok and the canonical text (nil for mute);
+--- ok is false after a finding.
+function M.volume(report, attrs, audio)
+  if audio == "mute" then
+    if attrs.volume ~= nil then
+      report(
+        "E_VIDEO_BLOCK",
+        'Scene "%s" has a volume on a video block with audio="mute".',
+        'Remove volume, or use audio="keep" to play the source sound at that volume.'
+      )
+      return false, nil
+    end
+    return true, nil
+  end
+  local text = attrs.volume or DEFAULT_VOLUME
+  local canonical = M.canonical_decimal(text)
+  if canonical == nil or tonumber(canonical) <= 0 or tonumber(canonical) > 1 then
+    report(
+      "E_VIDEO_VOLUME",
+      string.format('Scene "%%s" has a video block with volume="%s".', M.quoted(text)),
+      'Write a volume above 0 and at most 1, for example volume="0.5" (about -6 dB). Volume never boosts a source.'
+    )
+    return false, nil
+  end
+  return true, canonical
+end
+
+--- The region of a region block (ADR-0016, task 043): a lowercase name the
+--- validator checks against the component's regions. Returns nil after a
+--- finding when the block also has a placement or the name is not an identifier.
+function M.region(report, attrs)
+  if attrs.placement ~= nil then
+    return report(
+      "E_VIDEO_BLOCK",
+      'Scene "%s" has a video block with both region and placement.',
+      "Remove placement: a region block takes its region, not a placement."
+    )
+  end
+  if not attrs.region:match(FRAME_NAME) then
+    return report(
+      "E_VIDEO_BLOCK",
+      string.format('Scene "%%s" has a video block with region="%s".', M.quoted(attrs.region)),
+      'Use a lowercase region name, for example region="left".'
+    )
+  end
+  return attrs.region
+end
+
+--- The placement: background (the default) or framed.
+function M.placement(report, attrs)
+  local placement = attrs.placement or DEFAULT_PLACEMENT
+  if not PLACEMENTS[placement] then
+    return report(
+      "E_VIDEO_BLOCK",
+      string.format('Scene "%%s" has a video block with placement="%s".', M.quoted(placement)),
+      'Use placement="background" or placement="framed", or region="<name>" for footage in a region.'
+    )
+  end
+  return placement
+end
+
+--- The frame style: required with `framed` (a name; the validator checks it
+--- against the registry), and not allowed otherwise. Returns
+--- ok and the frame (nil when there is none); ok is false after a finding.
+function M.frame(report, attrs, placement)
+  if placement == "framed" then
+    if attrs.frame == nil or not attrs.frame:match(FRAME_NAME) then
+      report(
+        "E_VIDEO_BLOCK",
+        'Scene "%s" has a framed video block without a valid frame attribute.',
+        'Add frame="<name>" with the name of a device frame, for example frame="browser".'
+      )
+      return false, nil
+    end
+    return true, attrs.frame
+  end
+  if attrs.frame ~= nil then
+    report(
+      "E_VIDEO_BLOCK",
+      'Scene "%s" has a frame on a video block that is not framed.',
+      'Remove frame, or use placement="framed" to show the video in a frame.'
+    )
+    return false, nil
+  end
+  return true, nil
+end
+
+--- The fit: cover or contain (default contain: the whole footage is shown).
+function M.fit(report, attrs)
+  local fit = attrs.fit or DEFAULT_FIT
+  if not FITS[fit] then
+    return report(
+      "E_VIDEO_BLOCK",
+      string.format('Scene "%%s" has a video block with fit="%s".', M.quoted(fit)),
+      'Use fit="cover" to fill the frame or fit="contain" to show the whole video.'
+    )
+  end
+  return fit
+end
+
+--- A boolean attribute: "true" or "false" (default false).
+function M.flag(report, attrs, key)
+  local text = attrs[key]
+  if text == nil or text == "false" then
+    return false
+  end
+  if text == "true" then
+    return true
+  end
+  return report(
+    "E_VIDEO_BLOCK",
+    string.format('Scene "%%s" has a video block with %s="%s".', key, M.quoted(text)),
+    string.format('Write %s="true" or %s="false".', key, key)
+  )
+end
+
+--- A source time (sourceStart or sourceEnd) as source frames at fps. The
+--- duration errors of lib/duration.lua are reported as they are written.
+function M.source_frames(report, attribute, text, fps)
+  if text:find("%", 1, true) then
+    return report(
+      "E_DURATION_SYNTAX",
+      string.format('Scene "%%s" has %s "%s", which is not a duration.', attribute, M.quoted(text)),
+      'Write seconds or milliseconds, for example sourceStart="12s" or sourceEnd="22.5s".'
+    )
+  end
+  local errors = {}
+  local frames = diagnostics.try(function()
+    return duration.to_frames(text, "%s", fps, attribute, true)
+  end, errors)
+  for _, d in ipairs(errors) do
+    report(d.code, d.message, d.suggestion)
+  end
+  return frames
+end
+
+--- A plain decimal (`0.5`, `.5`, `2`, `1.0`) as a canonical numeral for
+--- json.decimal, or nil when the text is not one.
+function M.canonical_decimal(text)
+  local canonical = text:match("^%.%d+$") and ("0" .. text) or text
+  canonical = (canonical:gsub("^0+(%d)", "%1"))
+  if canonical:match("^%d+$") or canonical:match("^%d+%.%d+$") then
+    return canonical
+  end
+  return nil
+end
+
+--- The playback rate as a canonical decimal numeral (for json.decimal): a
+--- positive number, written exactly.
+function M.playback_rate(report, text)
+  local canonical = M.canonical_decimal(text)
+  if canonical == nil or tonumber(canonical) == 0 then
+    return report(
+      "E_VIDEO_PLAYBACK_RATE",
+      string.format(
+        'Scene "%%s" has a video block with playbackRate="%s", which must be a positive number.',
+        M.quoted(text)
+      ),
+      'Write a positive number, for example playbackRate="0.5" or playbackRate="2".'
+    )
+  end
+  return canonical
+end
+
+return M

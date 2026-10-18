@@ -28,5 +28,6 @@
     "9:16": { "xPercent": 8, "yPercent": 6 },
     "1:1": { "xPercent": 7, "yPercent": 7 }
   },
-  "motion": { "fastMs": 200, "baseMs": 400, "slowMs": 800 }
+  "motion": { "fastMs": 200, "baseMs": 400, "slowMs": 800 },
+  "scrim": { "opacity": 0.5 }
 }

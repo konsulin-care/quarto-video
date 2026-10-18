@@ -1,0 +1,33 @@
+{
+  "id": "text-media",
+  "version": "1.0.0",
+  "purpose": "Text beside framed footage: the text in one column, the footage in the other.",
+  "slots": {
+    "text": {
+      "required": true,
+      "accepts": ["paragraph", "heading"],
+      "maxBlocks": 1
+    }
+  },
+  "props": {
+    "side": {
+      "type": "enum",
+      "enum": ["left", "right"],
+      "default": "right"
+    }
+  },
+  "requiresMedia": true,
+  "placements": ["framed"],
+  "mediaKinds": ["video", "image"],
+  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "textFit": {
+    "max": "title",
+    "min": "body"
+  },
+  "accessibility": "The footage is the picture: muted (source audio is task 044), its alt text kept in the IR and not drawn. It is framed and clipped to its screen under the theme scrim. The text is drawn in the theme's text colour in its own column and scales down within the type scale, so it never runs over the footage. `side` sets the footage's side; the text reads first."
+}

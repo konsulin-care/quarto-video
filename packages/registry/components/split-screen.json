@@ -1,0 +1,35 @@
+{
+  "id": "split-screen",
+  "version": "1.0.0",
+  "purpose": "Simultaneous regions side by side, two or three, each with its footage or its text.",
+  "slots": {
+    "left": {
+      "required": false,
+      "accepts": ["paragraph", "heading"],
+      "maxBlocks": 1
+    },
+    "middle": {
+      "required": false,
+      "accepts": ["paragraph", "heading"],
+      "maxBlocks": 1
+    },
+    "right": {
+      "required": false,
+      "accepts": ["paragraph", "heading"],
+      "maxBlocks": 1
+    }
+  },
+  "props": {},
+  "placements": ["region"],
+  "regions": {
+    "min": 2,
+    "max": 3
+  },
+  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleTransitions": [],
+  "duration": {
+    "minMs": 1000,
+    "maxMs": 30000
+  },
+  "accessibility": "Each region is a column of the canvas safe area. Footage is muted (source audio is task 044), clipped to its region and framed by its fit; its alt text is kept in the IR and not drawn. A region's text is drawn in the theme's text colour in its own column and scales down within the type scale, so it never runs into a neighbour. Regions read left to right: left, middle, right."
+}

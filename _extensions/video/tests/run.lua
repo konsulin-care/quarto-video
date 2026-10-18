@@ -22,6 +22,10 @@ local SUITES = {
   "tests.test_timeline",
   "tests.test_generator",
   "tests.test_image",
+  "tests.test_media",
+  "tests.test_media_audio",
+  "tests.test_media_image",
+  "tests.test_music",
 }
 
 local passed, failed = 0, 0

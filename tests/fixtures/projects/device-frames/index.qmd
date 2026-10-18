@@ -1,0 +1,38 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="framed" frame="browser" fit="contain" audio="mute"}
+:::
+
+The browser frame, 16:9 footage in contain.
+:::
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="framed" frame="phone" fit="contain" audio="mute"}
+:::
+
+The phone frame, 16:9 footage in contain.
+:::
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="framed" frame="tablet" fit="contain" audio="mute"}
+:::
+
+The tablet frame, 16:9 footage in contain.
+:::
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/clip.mp4" placement="framed" frame="generic" fit="contain" audio="mute"}
+:::
+
+The generic frame, 16:9 footage in contain.
+:::

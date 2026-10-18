@@ -16,16 +16,19 @@ Parallel hardware runs **thousands of threads** at once.
 ## Slots and content
 | Slot | Required | Accepts |
 | --- | --- | --- |
-| `default` | yes | paragraph, heading |
+| `default` | yes, unless `text-overlay` is filled | paragraph, heading |
+| `text-overlay` | no | paragraph, heading |
 
 The statement has no props. Its `default` slot holds one block. A second block (for example a second paragraph) is the warning `W_SLOT_TOO_MANY_BLOCKS`; the text is still drawn, one block after the other.
+
+Over background footage the statement is written in `.text-overlay` instead of `default` (task 039). The two are alternatives: a scene fills one, and both is `E_SLOT_CONSTRAINT`. The words count for `kinetic` as they do in `default`.
 
 Content is drawn as plain lines, one per block (ADR-0004). Inline emphasis is kept: `strong` takes the accent colour (`colors.accent`), `emphasis` is italic, and quotes and line breaks are drawn as written.
 
 ## Timing and placement
 - Duration: 1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal`, `kinetic` (see [README](README.md#animations-task-021)). `kinetic` shows each word in turn; a statement over 12 words is drawn with `fade-in` and warns `W_ANIMATION_FALLBACK`.
-- Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
+- Placements: `background` (task 039): the footage fills the canvas and a theme scrim (`scrim.opacity` of the background colour) sits over it, so the text stays legible. `framed` (task 040): the footage sits in a device frame (`frame`) at the largest size of the frame's shape inside the canvas safe area; the scrim sits over the footage on the screen, and the statement draws over the frame. Layouts that place text beside a frame belong to `product-demo` (041) and `split-screen` (043). Other components do not take framed footage (`E_MEDIA_PLACEMENT`). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 
 ## Text size
 The text takes the largest size from the theme's `title` (96px) down to its `body` (40px) at which it fits the frame's safe area (`textFit` in the contract; the rule is `fitText` in `packages/registry/src/layout.ts`). A short sentence stays at title size. A longer one steps down, so a three-line statement at 640x360 is smaller than at 1920x1080. The renderer and the validator use the same rule.

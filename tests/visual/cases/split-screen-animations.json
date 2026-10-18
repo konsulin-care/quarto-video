@@ -1,0 +1,9 @@
+{
+  "project": "tests/fixtures/projects/component-split-screen",
+  "theme": "modern",
+  "frames": [155, 175, 245, 265],
+  "threshold": {
+    "channelTolerance": 2,
+    "maxDiffRatio": 0.0005
+  }
+}

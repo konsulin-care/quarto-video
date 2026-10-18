@@ -53,6 +53,33 @@ export function parseContract(text: string, file: string): ComponentContract {
       `${file}: /duration: maxMs (${contract.duration.maxMs}) is below minMs (${contract.duration.minMs})`,
     );
   }
+  if (
+    contract.mediaKinds?.includes("image") &&
+    !contract.placements.includes("framed")
+  ) {
+    throw new RegistryError(
+      `${file}: /mediaKinds lists "image", which needs the "framed" placement (ADR-0018)`,
+    );
+  }
+  const regions = contract.regions;
+  if ((regions !== undefined) !== contract.placements.includes("region")) {
+    throw new RegistryError(
+      `${file}: /regions and the "region" placement must both be set or both absent`,
+    );
+  }
+  if (regions !== undefined) {
+    if (regions.max < regions.min) {
+      throw new RegistryError(
+        `${file}: /regions: max (${regions.max}) is below min (${regions.min})`,
+      );
+    }
+    const slots = Object.keys(contract.slots).length;
+    if (regions.max > slots) {
+      throw new RegistryError(
+        `${file}: /regions/max (${regions.max}) is above the number of slots (${slots}); the slots are the regions`,
+      );
+    }
+  }
   for (const [name, prop] of Object.entries(contract.props)) {
     if (
       prop.min !== undefined &&

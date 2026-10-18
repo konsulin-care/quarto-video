@@ -1,0 +1,17 @@
+---
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="statement" duration="2s"}
+
+::: {.video src="assets/silent.mp4" placement="background" fit="contain" audio="keep"}
+:::
+
+::: {.text-overlay}
+This clip has no sound to keep.
+:::
+
+:::

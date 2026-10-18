@@ -1,0 +1,16 @@
+---
+title: "Media range: source end past the file"
+---
+
+::: {.scene component="statement" duration="4s"}
+
+::: {.video src="assets/clip.mp4"
+    placement="background"
+    fit="cover"
+    sourceEnd="3s"
+    audio="mute"}
+:::
+
+Footage runs past the end of its file.
+
+:::

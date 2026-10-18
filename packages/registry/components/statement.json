@@ -5,19 +5,25 @@
   "slots": {
     "default": {
       "required": true,
+      "alternative": "text-overlay",
+      "accepts": ["paragraph", "heading"],
+      "maxBlocks": 1
+    },
+    "text-overlay": {
+      "required": false,
       "accepts": ["paragraph", "heading"],
       "maxBlocks": 1
     }
   },
   "props": {},
-  "placements": [],
+  "placements": ["background", "framed"],
   "compatibleAnimations": ["fade-in", "kinetic", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
     "minMs": 1000,
     "maxMs": 30000
   },
-  "accessibility": "The statement is the only content. Its text is drawn in the theme's text colour and strong text in the accent colour, a theme pair that meets WCAG AA on the background. The text scales down within the theme's type scale (title to body) to stay inside the safe area; below body size it is a validation warning.",
+  "accessibility": "The statement is the only content. Its text is drawn in the theme's text colour and strong text in the accent colour, a theme pair that meets WCAG AA on the background. The text scales down within the theme's type scale (title to body) to stay inside the safe area; below body size it is a validation warning. Over background footage the text sits on a theme scrim (task 039).",
   "textFit": {
     "max": "title",
     "min": "body"
