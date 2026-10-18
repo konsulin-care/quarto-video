@@ -1,5 +1,5 @@
 // Structural IR validation with the JSON Schemas in schema/ (ajv, draft
-// 2020-12): IR 0.1 to 1.9 are accepted (PRD §8.2, ADR-0007). Pure: no network,
+// 2020-12): IR 0.1 to 1.10 are accepted (PRD §8.2, ADR-0007). Pure: no network,
 // no file access after load.
 import { readFileSync } from "node:fs";
 import {
@@ -36,6 +36,7 @@ const SCHEMAS: Readonly<Record<string, ValidateFunction>> = {
   "1.7": compile("ir-1.7.json"),
   "1.8": compile("ir-1.8.json"),
   "1.9": compile("ir-1.9.json"),
+  "1.10": compile("ir-1.10.json"),
 };
 
 /** Maps one ajv error to a JSON Pointer path and a readable message. */

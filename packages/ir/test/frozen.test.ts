@@ -32,6 +32,8 @@ const FROZEN: Readonly<Record<string, string>> = {
     "0a1c46dbb01018ec35c809bd3497175f9c02c95f41f5d38bfcb552cb50c76290",
   "ir-1.9.json":
     "70087c2224c190789b99af75565c93898c92eb10284c0fab3a6f2a3c067be226",
+  "ir-1.10.json":
+    "8cab554635ffb44084728d6042787d7e7b23d1335ba81ec3535bdfd76e940cfc",
 };
 
 describe.each(Object.entries(FROZEN))("frozen schema/%s", (name, sha256) => {
