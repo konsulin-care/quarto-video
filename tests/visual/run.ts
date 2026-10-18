@@ -2,6 +2,7 @@
 // Usage: tsx tests/visual/run.ts [--approve] [case ...]
 // Exit 0 when every frame matches its reference, 1 when one differs or a run
 // fails, 2 on a usage error. The report is tests/visual/report/index.html.
+import { execFileSync } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -10,6 +11,18 @@ import { runVisual } from "./harness.js";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const VISUAL = fileURLToPath(new URL(".", import.meta.url));
+
+// The media clips are generated (gitignored), so a clean checkout has none.
+// Generate them here, as the integration tests do, before any case validates.
+function generateMedia(): void {
+  execFileSync(
+    "bash",
+    [join(ROOT, "tests", "fixtures", "media", "generate.sh")],
+    {
+      stdio: "ignore",
+    },
+  );
+}
 
 async function main(argv: string[]): Promise<number> {
   const flags = argv.filter((arg) => arg.startsWith("--"));
@@ -20,6 +33,7 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
   const mode = flags.includes("--approve") ? "approve" : "test";
+  generateMedia();
   const scratchDir = await mkdtemp(join(tmpdir(), "visual-"));
   try {
     const run = await runVisual({
