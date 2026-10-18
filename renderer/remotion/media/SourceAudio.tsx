@@ -16,6 +16,8 @@ export interface SourceAudioProps {
   incomingFrames: number;
   /** Frames of the overlap with the next scene (0 for a cut or none). */
   outgoingFrames: number;
+  /** The file the sound is read from: the project file, or its stereo copy (media/audio-source.ts). */
+  file: string;
 }
 
 export function SourceAudio({
@@ -23,6 +25,7 @@ export function SourceAudio({
   durationFrames,
   incomingFrames,
   outgoingFrames,
+  file,
 }: SourceAudioProps) {
   const volume = media.volume ?? 1;
   const ramp = {
@@ -39,7 +42,7 @@ export function SourceAudio({
           durationInFrames={pass.frames}
         >
           <Audio
-            src={staticFile(media.src)}
+            src={staticFile(file)}
             trimBefore={pass.trimBefore}
             volume={(frame: number) => gainAt(frame + pass.from, volume, ramp)}
           />

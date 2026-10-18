@@ -41,13 +41,14 @@ Human check:
 ## Notes
 
 - Human check (listening, passed 2026-10-18): `audio-keep` (tone only during its scene) and `audio-mute` (silent) rendered and listened to.
-- Mono sources play 3 dB quieter: the output is stereo and ffmpeg centre-mixes mono (ADR-0009, Consequences). Open for a human: fix (channel option or pan) or reject mono keep.
+- Mono sources played 3 dB quieter (ffmpeg centre-mixes mono into stereo). Fixed 2026-10-18: a mono kept clip and the mono music track play from a stereo `pan` copy (ADR-0009, dated note). Measured: mono tone in its scene -21.0 dB before, -18.0 dB after (file -18.0 dB); mono music at volume 0.5 -27.1 dB before, -24.1 dB after. Test: `audio-policy.test.ts` (kept mono source audio).
 - `audio="keep"` was E_VIDEO_BLOCK (task 038); its test now uses `loud`. `volume` is a real attribute now; the unknown-attribute test uses `gain`.
 - Extra fixture `audio-keep-fade` (transition ramp, ADR-0009). Fixtures `audio-*` are gitignored; text-media clips were tracked by mistake and are untracked (c829137).
 - Line limits: over 100 lines, not trimmed: `_extensions/video/README.md` 117 (was 102), `packages/validator/README.md` 153 (was 139), `renderer/remotion/README.md` 107 (was 95). Prettier (the staged-file format gate) reflowed these.
 
 ## Completion log
 
+- 2026-10-18: mono level fixed (see Notes); the mono follow-up is closed.
 - 2026-10-16: source audio policy done (ADR-0009 accepted; IR 1.8; filter `keep`/`volume`; E_AUDIO_NO_STREAM; renderer SourceAudio). Tests: `mise run check` passed; `mise run test` suites scripts 19/19, unit 996/996 (103 files), lua 257/257, integration 153 + 56 pass; visual passed on rerun (the first full run was cut off by my own timeout). Pre-push gates passed on push 083bddb.
 - Tests: `renderer/remotion/test/source-audio.test.ts`, `packages/validator/test/audio.test.ts`, `packages/ir/test/v18.test.ts`, `_extensions/video/tests/test_media_audio.lua`, `tests/integration/audio-policy.test.ts`.
 - Human check: not run by a person. I could not listen. Measured with ffmpeg volumedetect on fresh renders: audio-mute has no audio stream; audio-keep is silent in the first and last scenes (-91 dB) and peaks at -18.0 dB in the kept scene (source tone -17.5 dB peak).

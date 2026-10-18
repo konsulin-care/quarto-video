@@ -75,6 +75,7 @@ renderer mutes every footage clip (task 039), so no audio reaches the output.
   tone peaks at -20.8 dB, not -17.5 dB). Stereo sources are exact. Fixing it needs a Remotion
   channel option or a per-source pan, a follow-up task; until then this ADR does not claim exact
   level for mono sources, and the fixtures use stereo tones.
+  - **Resolved 2026-10-18** (task 044 follow-up; the Decision is unchanged): a mono kept clip and mono music play from a stereo copy with the channel on L and R at unity gain (`pan`, `renderer/remotion/src/stereo-sources.ts`). Measured: mono tone -21.0 dB before, -18.0 dB after (file -18.0 dB); mono music at volume 0.5 -27.1 dB before, -24.1 dB after. Stereo unchanged. Tests: `audio-policy.test.ts`, `stereo-sources.test.ts`.
 - Only the first audio stream of a file is used, as ffprobe and the renderer both choose it.
 
 ## Verification

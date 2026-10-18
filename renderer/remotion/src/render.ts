@@ -10,6 +10,7 @@ import type { ThemeTokens } from "@quarto-video/registry";
 import { validateIr, type IrVideo } from "@quarto-video/ir";
 import { COMPOSITION_ID } from "./composition-id.js";
 import { alignAudio, cutToFrames } from "./exact-length.js";
+import { prepareStereoSources } from "./stereo-sources.js";
 import { COMPONENTS } from "./registry-map.js";
 import { IrRenderError } from "./errors.js";
 import { canvasBackground } from "../themes/canvas.js";
@@ -165,7 +166,14 @@ export async function render(
 ): Promise<void> {
   const ir = await loadIr(irPath);
   const browserExecutable = options.browserExecutable ?? null;
-  const inputProps = inputPropsFor(ir, options);
+  // Mono sound sources are played from stereo copies (ADR-0009); the picture is not.
+  const inputProps = {
+    ...inputPropsFor(ir, options),
+    audioSources:
+      options.assetRoot === undefined || options.assetRoot === null
+        ? {}
+        : await prepareStereoSources(ir, resolve(options.assetRoot)),
+  };
   const onProgress = options.onProgress;
   await withBundle(
     options.assetRoot ?? null,

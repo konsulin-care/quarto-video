@@ -25,13 +25,16 @@ import { BackgroundScene } from "../media/BackgroundScene.js";
 import { FramedScene } from "../media/FramedScene.js";
 import { SourceAudio } from "../media/SourceAudio.js";
 import { MusicTrack } from "../media/MusicTrack.js";
+import { audioSourceOf, type AudioSources } from "../media/audio-source.js";
 import { withOverlay } from "./overlay.js";
 
 // A type alias (not an interface) so it satisfies Remotion's Record constraint.
-export type IrVideoProps = { ir: IrManifest; theme: ThemeTokens } & Record<
-  string,
-  unknown
->;
+export type IrVideoProps = {
+  ir: IrManifest;
+  theme: ThemeTokens;
+  /** Stereo copies of mono sound sources (src/stereo-sources.ts); unset plays the files. */
+  audioSources?: AudioSources;
+} & Record<string, unknown>;
 
 /** The scene's text and blocks as the components read them (task 039: text-overlay). */
 function contentOf(scene: IrManifest["scenes"][number]) {
@@ -138,7 +141,7 @@ function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   );
 }
 
-export function IrVideo({ ir, theme }: IrVideoProps) {
+export function IrVideo({ ir, theme, audioSources }: IrVideoProps) {
   const timeline = timelineOf(ir);
   const reducedMotion = reducedMotionOf(ir);
   const music = musicOf(ir);
@@ -163,6 +166,7 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
                 <SourceAudio
                   key={`audio-${pass}`}
                   media={item}
+                  file={audioSourceOf(item.src, audioSources)}
                   durationFrames={scene.durationFrames}
                   incomingFrames={overlapOf(scene)?.overlapFrames ?? 0}
                   outgoingFrames={
@@ -198,7 +202,11 @@ export function IrVideo({ ir, theme }: IrVideoProps) {
           );
         })}
         {music === undefined ? null : (
-          <MusicTrack music={music} durationFrames={timeline.durationFrames} />
+          <MusicTrack
+            music={music}
+            durationFrames={timeline.durationFrames}
+            file={audioSourceOf(music.src, audioSources)}
+          />
         )}
       </AbsoluteFill>
     </ThemeProvider>

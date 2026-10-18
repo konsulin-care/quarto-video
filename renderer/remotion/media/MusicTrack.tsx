@@ -11,9 +11,11 @@ export interface MusicTrackProps {
   music: IrMusic;
   /** The timeline's length in frames: the track ends on its last frame. */
   durationFrames: number;
+  /** The file the track is read from: the project file, or its stereo copy (media/audio-source.ts). */
+  file: string;
 }
 
-export function MusicTrack({ music, durationFrames }: MusicTrackProps) {
+export function MusicTrack({ music, durationFrames, file }: MusicTrackProps) {
   return (
     <>
       {musicPassesOf(music, durationFrames).map((pass) => (
@@ -23,7 +25,7 @@ export function MusicTrack({ music, durationFrames }: MusicTrackProps) {
           durationInFrames={pass.frames}
         >
           <Audio
-            src={staticFile(music.src)}
+            src={staticFile(file)}
             volume={(frame: number) =>
               musicGainAt(frame + pass.from, music, durationFrames)
             }

@@ -1,7 +1,8 @@
 // Source audio (task 044; PRD §7.2; ADR-0009) through the real `video` CLI. The
 // audio-mute project has no audio stream; audio-keep plays its 1 kHz tone (stereo,
 // -18 dBFS peak) in its middle scene only; audio-keep-fade fades the tone in over
-// its transition; audio-keep-silent-source is E_AUDIO_NO_STREAM. Levels are read
+// its transition; audio-keep-mono keeps the same tone on one channel, which must play
+// at the file's level (ADR-0009); audio-keep-silent-source is E_AUDIO_NO_STREAM. Levels are read
 // with ffmpeg volumedetect over windows inside each scene. Needs a Chromium
 // headless shell (QV_BROWSER_EXECUTABLE) and the generated clips.
 import { execFileSync, spawnSync } from "node:child_process";
@@ -140,6 +141,28 @@ describe("kept source audio", () => {
     assert.ok(
       Math.abs(full - TONE_DB) <= 1,
       `full level ${full} dB, expected ${TONE_DB} dB +-1`,
+    );
+  });
+});
+
+describe("kept mono source audio", () => {
+  it("plays a mono clip at its file's level, not 3 dB quieter (ADR-0009)", () => {
+    const output = render("audio-keep-mono");
+    const file = join(
+      ROOT,
+      "tests",
+      "fixtures",
+      "projects",
+      "audio-keep-mono",
+      "assets",
+      "tone.mp4",
+    );
+    // The scene's window maps to the clip's first 1.8 s, as the stereo test measures it.
+    const inside = peakDb(output, 2.1, 1.8);
+    const expected = peakDb(file, 0.1, 1.8);
+    assert.ok(
+      Math.abs(inside - expected) <= 0.5,
+      `mono tone at ${inside} dB, its file at ${expected} dB, +-0.5 dB`,
     );
   });
 });

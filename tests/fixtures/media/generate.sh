@@ -59,6 +59,13 @@ ff -f lavfi -i "testsrc2=size=640x360:rate=30" \
   -t 2 -map 0:v -map 1:a -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 128k \
   "$out/clip-2s-1khz-stereo.mp4"
 
+# The mono twin (task 044 follow-up; ADR-0009): the same 1 kHz tone on one channel, amplitude 1/8.
+# A mono source must play at its file's level in the stereo output, so the test compares the two.
+ff -f lavfi -i "testsrc2=size=640x360:rate=30" \
+  -f lavfi -i "aevalsrc=0.125*sin(2*PI*1000*t):s=44100" \
+  -t 2 -map 0:v -map 1:a -c:v libx264 -pix_fmt yuv420p -c:a aac -ac 1 -b:a 128k \
+  "$out/clip-2s-1khz-mono.mp4"
+
 # 16-bit PCM WAV, 2 s, mono, 44.1 kHz.
 ff -f lavfi -i "sine=frequency=440:sample_rate=44100" \
   -t 2 -ac 1 -c:a pcm_s16le "$out/tone-2s.wav"
@@ -105,10 +112,11 @@ done
 # the 1 kHz clip, audio-keep-fade fades it in over a transition, and audio-keep-silent-source keeps
 # a clip with no audio stream (an error).
 audio="$repo/tests/fixtures/projects"
-mkdir -p "$audio/audio-mute/assets" "$audio/audio-keep/assets" "$audio/audio-keep-fade/assets" "$audio/audio-keep-silent-source/assets"
+mkdir -p "$audio/audio-mute/assets" "$audio/audio-keep/assets" "$audio/audio-keep-fade/assets" "$audio/audio-keep-silent-source/assets" "$audio/audio-keep-mono/assets"
 cp "$out/clip-2s-audio.mp4" "$audio/audio-mute/assets/clip.mp4"
 cp "$out/clip-2s-1khz-stereo.mp4" "$audio/audio-keep/assets/tone.mp4"
 cp "$out/clip-2s-1khz-stereo.mp4" "$audio/audio-keep-fade/assets/tone.mp4"
+cp "$out/clip-2s-1khz-mono.mp4" "$audio/audio-keep-mono/assets/tone.mp4"
 cp "$out/clip-5s-silent.mp4" "$audio/audio-keep-silent-source/assets/silent.mp4"
 
 # The music fixtures (task 045; ADR-0017): a 1.5 s stereo 450 Hz tone (15 cycles per 30 fps frame, so each
