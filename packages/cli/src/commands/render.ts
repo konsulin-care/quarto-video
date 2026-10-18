@@ -4,14 +4,18 @@
 // to video.output only when it matches the IR (PRD §4.2, §9.1, §11.2). stdout:
 // `NN%` progress lines, then `Wrote <path>`. stderr: errors. Exit codes: 0 OK,
 // 1 validation or render failure, 2 usage or environment (preflight).
-import { mkdir, rename, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import type { RenderFn, RenderProgress } from "@quarto-video/remotion";
 import { checkOutput, hasErrors } from "@quarto-video/validator";
 import { checkProject } from "../check.js";
 import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { exitCodeFor } from "../exit-status.js";
-import { explicitBackground, outputPath } from "../render-config.js";
+import {
+  explicitBackground,
+  outputPath,
+  sidecarPath,
+} from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
 import { report } from "../report.js";
 import { readOutputFacts } from "../output-probe.js";
@@ -123,8 +127,21 @@ export async function runRender(
       return exitCodeFor(found);
     }
     await mkdir(dirname(output), { recursive: true });
+    // Sidecar and both modes copy the validated caption file beside the output (ADR-0019).
+    const captions = "captions" in check.ir ? check.ir.captions : undefined;
+    const sidecar =
+      captions !== undefined &&
+      (captions.mode === "sidecar" || captions.mode === "both")
+        ? sidecarPath(output)
+        : null;
+    if (sidecar !== null && captions !== undefined) {
+      await copyFile(join(project.root, captions.src), sidecar);
+    }
     await rename(temp, output);
     process.stdout.write(`Wrote ${relative(cwd, output)}\n`);
+    if (sidecar !== null) {
+      process.stdout.write(`Wrote ${relative(cwd, sidecar)}\n`);
+    }
     return EXIT_OK;
   } catch (err) {
     await rm(temp, { force: true });

@@ -1,4 +1,4 @@
-// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 to 1.10 (ir-1.10.json).
+// Types for IR 0.1 (schema/ir-0.1.json), 0.2, 0.3, 1.0 to 1.11 (ir-1.11.json).
 // Hand-written; tests check them against the schemas and examples. Frames are
 // integers; no renderer types.
 import type { IrContentV02 } from "./content-types.js";
@@ -6,8 +6,10 @@ import type { IrContentV02 } from "./content-types.js";
 export type * from "./content-types.js";
 export type * from "./music-types.js";
 export type * from "./media-types.js";
+export type * from "./captions-types.js";
 import type { IrMusic } from "./music-types.js";
 import type { IrMedia } from "./media-types.js";
+import type { IrCaptions } from "./captions-types.js";
 
 export type SchemaVersion =
   | "0.1"
@@ -23,7 +25,8 @@ export type SchemaVersion =
   | "1.7"
   | "1.8"
   | "1.9"
-  | "1.10";
+  | "1.10"
+  | "1.11";
 
 export interface IrSettings {
   width: number;
@@ -224,7 +227,13 @@ export interface IrVideoV110 extends Omit<IrVideoV19, "schemaVersion"> {
   schemaVersion: "1.10";
 }
 
-/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.10). */
+/** IR 1.11 (ADR-0019): IR 1.10 with the optional project caption track. */
+export interface IrVideoV111 extends Omit<IrVideoV110, "schemaVersion"> {
+  schemaVersion: "1.11";
+  captions?: IrCaptions;
+}
+
+/** Any manifest that carries a resolved `timeline` section (0.3, 1.0 to 1.11). */
 export type IrVideoWithTimeline =
   | IrVideoV03
   | IrVideoV10
@@ -237,7 +246,8 @@ export type IrVideoWithTimeline =
   | IrVideoV17
   | IrVideoV18
   | IrVideoV19
-  | IrVideoV110;
+  | IrVideoV110
+  | IrVideoV111;
 
 /** Any supported manifest. Renderers read every version through `plainText`. */
 export type IrVideo =
@@ -254,7 +264,8 @@ export type IrVideo =
   | IrVideoV17
   | IrVideoV18
   | IrVideoV19
-  | IrVideoV110;
+  | IrVideoV110
+  | IrVideoV111;
 
 /** One schema violation. `path` is a JSON Pointer ("" for the root). */
 export interface IrError {

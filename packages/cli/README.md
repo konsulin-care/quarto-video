@@ -42,7 +42,7 @@ Use `video.output` in front matter to choose the destination.
 
 Theme resolution (task 019a): the `--theme <name>` option wins; else the front matter `theme:` (kept in `render.json`); else `modern`. `--theme` takes a name as `--theme <name>` or `--theme=<name>`; a missing name is a usage error (exit 2). An unknown name, from either source, is `E_THEME_UNKNOWN` (exit 1), and the renderer is not called.
 4. Stage 6 (`src/output-probe.ts`, `checkOutput`): ffprobe reads the temp file; its width, height, fps and frame count must equal the IR. A mismatch, a missing file or an unreadable one: the temp file is deleted, diagnostics are reported, exit 1, and `video.output` is untouched.
-5. On success, create the output's directory and rename the temp file to the output path.
+5. On success, create the output's directory and rename the temp file to the output path. A caption track in `sidecar` or `both` mode is copied first, to `output.vtt` beside `output.mp4` (`sidecarPath` in `src/render-config.ts`, ADR-0019); `burn` writes no sidecar. The sidecar is listed after the output in the `Wrote` lines.
 
 Streams: stdout gets `NN%` progress lines, then `Wrote <path>`. With `--json`, a diagnostics array comes first (warnings, or errors); a stage 6 array can follow the progress lines. stderr: diagnostics as text, preflight problems, and `video: render failed: <message>`.
 

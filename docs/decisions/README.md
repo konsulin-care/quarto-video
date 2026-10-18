@@ -1,6 +1,6 @@
 # docs/decisions/ — Architecture Decision Records
 
-Status: ADR-0001 to ADR-0018 accepted (0009 by task 044). Other ADRs are written by the tasks listed below.
+Status: ADR-0001 to ADR-0019 accepted (0009 by task 044). Other ADRs are written by the tasks listed below.
 
 ## Purpose
 
@@ -44,6 +44,7 @@ Numbers follow task order. Each ADR is written by the task shown.
 | 0016 | Region footage and IR 1.7                        | §5.4, §5.5, §6.1, §6.2 | 043  |
 | 0017 | Project music track and IR 1.9                   | §7.1, §7.2, §18.6      | 045  |
 | 0018 | Framed image footage and IR 1.10                 | §5.4, §5.5, §6.1, §6.2 | 041, 042 |
+| 0019 | Project captions and IR 1.11                     | §12, §5.2              | 046  |
 
 ## Rules for agents
 

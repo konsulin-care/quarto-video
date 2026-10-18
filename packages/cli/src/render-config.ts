@@ -31,6 +31,14 @@ export function outputPath(project: Project): string {
   return target;
 }
 
+/**
+ * The sidecar caption file for an output (ADR-0019): `output.mp4` gets `output.vtt`
+ * beside it. `video.output` ends in .mp4 (config.lua), so the name is replaced.
+ */
+export function sidecarPath(output: string): string {
+  return output.replace(/\.mp4$/i, ".vtt");
+}
+
 /** The `theme` name from front matter, or null when the document names none. */
 export function themeName(project: Project): string | null {
   const theme = readRenderConfig(project).theme;
