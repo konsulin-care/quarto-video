@@ -1,0 +1,46 @@
+---
+title: "Component image footage"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+Framed stills: a product-demo and a text-media scene for each frame, with cover
+and contain. A still is held for its scene, with no sound and no source range.
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/landscape.jpg" placement="framed" frame="browser" fit="cover" alt="A landscape still in a browser frame"}
+:::
+
+::: {.caption}
+Browser frame: a 3:2 still in cover, cropped to the 16:9 screen.
+:::
+:::
+
+::: {.scene component="product-demo" duration="2s"}
+::: {.video src="assets/portrait.png" placement="framed" frame="phone" fit="contain" alt="A portrait still in a phone frame"}
+:::
+
+::: {.caption}
+Phone frame: a 3:4 still in contain, with bars on the 9:16 screen.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s"}
+::: {.video src="assets/landscape.jpg" placement="framed" frame="browser" fit="contain" alt="A landscape still in a browser frame"}
+:::
+
+::: {.text}
+A still beside its text, in contain.
+:::
+:::
+
+::: {.scene component="text-media" duration="2s" side="left"}
+::: {.video src="assets/portrait.png" placement="framed" frame="phone" fit="cover" alt="A portrait still in a phone frame"}
+:::
+
+::: {.text}
+The footage on the left, in cover.
+:::
+:::

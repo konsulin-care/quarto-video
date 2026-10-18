@@ -1,0 +1,22 @@
+[
+  {
+    "code": "E_VIDEO_BLOCK",
+    "line": 13,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_VIDEO_BLOCK",
+    "line": 18,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_VIDEO_BLOCK",
+    "line": 23,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_VIDEO_BLOCK",
+    "line": 28,
+    "sceneId": "scene-004"
+  }
+]
