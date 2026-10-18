@@ -35,6 +35,7 @@ Human check:
 - Layout: the frame is the largest box of its shape in the canvas safe area; the scrim sits over the footage on the screen; the statement draws over the frame. In the fixtures the statement text is wider than the phone and tablet frames and overlaps them. Layouts beside a frame belong to 041 and 043.
 - `tests/fixtures/media/generate.sh` takes about 5 s. Two validator unit files run it in a `beforeAll` with a 10 s limit: the first full run timed out while a render ran alongside, and the rerun on an idle machine passed. Making generation cheaper or running it once is a follow-up.
 - `packages/validator/README.md` (136 lines) and `_extensions/video/README.md` (102 lines) are over the 100-line rule; that predates this task.
+- Framed images (a follow-up from 041 and 042) are resolved by ADR-0018: a framed still uses these frames. The frame enum and the registry are unchanged. Commits: d188989 (IR 1.10), 8f28d95 (filter), 5a1863c (registry `mediaKinds`), f025467 (validator), 5c2a4f5 (renderer), dbb001f (fixtures, tests, visual `image-footage`), 764c305 (docs).
 
 ## Completion log
 - 2026-10-16: device frames. Commits: 261ebda (status), f1a553a (registry frames), 3bfc28f (frame check, stage 2), 23ad31b (renderer), 94f333a (fixtures, tests, 28 references), f60e026 (docs), then this log.
