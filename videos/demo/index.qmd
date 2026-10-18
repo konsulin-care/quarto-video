@@ -1,0 +1,77 @@
+---
+title: "Acceptance demo"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  captions:
+    src: assets/captions.vtt
+    mode: both
+audio:
+  music:
+    src: assets/music.wav
+    volume: 0.3
+    loop: true
+    fadeOut: 1s
+theme: modern
+---
+
+::: {.scene component="title" duration="5s" animation="reveal"}
+::: {.video src="assets/background.mp4" placement="background" fit="cover" audio="mute"}
+:::
+
+# Acceptance demo
+
+::: {.subtitle}
+One project, every major part.
+:::
+:::
+
+::: {.scene component="statement" duration="3s" animation="kinetic" transition="fade" transitionDuration="500ms"}
+Write one index.qmd. Get one MP4.
+:::
+
+::: {.scene component="bullets" duration="6s" animation="stagger" transition="slide" transitionDuration="500ms"}
+::: {.heading}
+## What a project declares
+:::
+
+- Scenes are written in Markdown
+- Footage and music are placed by name
+- Captions come from a validated WebVTT file
+:::
+
+::: {.scene component="statistic" duration="4s" value="12" unit="s" animation="count-up"}
+::: {.label}
+Seconds to build
+:::
+:::
+
+::: {.scene component="chart" duration="6s" animation="reveal" type="bar" data="data/build-stages.csv" x="stage" y="seconds" unit="s" title="Build time by stage (illustrative)" transition="wipe" transitionDuration="500ms"}
+:::
+
+::: {.scene component="product-demo" duration="5s" animation="slide-up"}
+::: {.video src="assets/product.mp4" placement="framed" frame="browser" fit="cover" audio="mute" alt="A test pattern in a browser frame"}
+:::
+:::
+
+::: {.scene component="split-screen" duration="5s" animation="fade-in" transition="fade" transitionDuration="500ms"}
+::: {.video src="assets/left.mp4" region="left" fit="cover" audio="mute" alt="A test pattern in the left region"}
+:::
+::: {.right}
+Footage on the left, text on the right.
+:::
+:::
+
+::: {.scene component="end-card" duration="4s" animation="stagger" transition="fade" transitionDuration="800ms"}
+# Thanks for watching
+
+::: {.cta}
+Build your own explainer from one index.qmd file.
+:::
+
+::: {.credits}
+- Made with quarto-video
+- Sample data: illustrative only
+:::
+:::

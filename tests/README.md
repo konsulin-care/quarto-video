@@ -25,6 +25,7 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
   patterns, tones; task 037). Outputs are gitignored (`out/`, and the `clip.avi` of
   `projects/media-unsupported`, the clip copied to `projects/media-range-*/assets/`, and the 4 s counter clips copied to `projects/background-video*/assets/` (task 039),
   task 038); the media tests run the script themselves.
+- `videos/demo` (task 047) is checked by `integration/demo.test.ts`, not a fixture; its visual case is `visual/cases/demo-scenes.json`.
 - `integration/` — CLI-level tests: spawn `video`, assert exit code, output,
   files.
 - `visual/cases/<case>.json` — fixture project + frames to capture.
@@ -64,7 +65,7 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 
 ## Browser (which suites need one)
 
-- Needs a Chromium headless shell: any test that reaches the real renderer or the CLI's stage 5 preflight after stages 1–4 pass. These are `test:integration:render` (`cli-render`, `preflight-output`, `doctor`, `theme-render-option`, `timeline`, `quarto-render`, `spike-quarto-native`, plus the vitest `render*.test.ts`) and `test:visual`.
+- Needs a Chromium headless shell: any test that reaches the real renderer or the CLI's stage 5 preflight after stages 1–4 pass. These are `test:integration:render` (`cli-render`, `preflight-output`, `doctor`, `demo`, `theme-render-option`, `timeline`, `quarto-render`, `spike-quarto-native`, plus the vitest `render*.test.ts`) and `test:visual`.
 - Needs no browser: `test:integration:pure` (every other integration file, incl. `cli-browser-gate.test.ts`), the stub-renderer tests that call `runRender` directly (`component-chart.test.ts`), and any render that exits at stage 1 or 2 (`contract`, `theme`, `validate-diagnostics`).
 - `scripts/test.sh` resolves `QV_BROWSER_EXECUTABLE` once when it is unset (`scripts/lib/browser.sh`: newest `chromium_headless_shell-*` under `PLAYWRIGHT_BROWSERS_PATH`; nothing is downloaded). If it finds none, it fails before the `integration` and `visual` suites start and names the variable and `renderer/remotion/README.md`.
 - `npm run test:integration` runs `test:integration:pure` then `test:integration:render`.

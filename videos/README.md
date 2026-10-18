@@ -1,5 +1,5 @@
 # videos/ — sample and acceptance video projects
-Status: `hello` (task 006) renders with `video render`, and with `quarto render` through its post-render hook (task 007a, ADR-0002). `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) comes later.
+Status: `hello` (task 006) renders with `video render`, and with `quarto render` through its post-render hook (task 007a, ADR-0002). `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) is the acceptance project: every PRD §13.4 element, with music and captions.
 
 ## Purpose
 Real, renderable projects that show the DSL and prove the pipeline end to end
