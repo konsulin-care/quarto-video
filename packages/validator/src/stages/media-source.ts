@@ -3,7 +3,7 @@
 // the renderer never probes files, so the probed duration is written into the IR
 // as sourceEndFrames: source frames at the project fps, rounded as the range check
 // rounds (stages/media-range.ts). Footage that cannot be probed is left as it is;
-// stage 3 has already reported it.
+// stage 3 has already reported it. An image has no source (IR 1.10, ADR-0018).
 import type { SceneWithMedia } from "./media-placement.js";
 import { probeMedia, type MediaOptions } from "./media.js";
 
@@ -23,7 +23,7 @@ export function resolveSourceEnds<T extends SourceEndManifest>(
   const scenes = ir.scenes.map((scene): SceneWithMedia => {
     if (scene.media === undefined) return scene;
     const media = scene.media.map((item) => {
-      if (item.type !== "video" || item.sourceEndFrames !== undefined) {
+      if (item.kind === "image" || item.sourceEndFrames !== undefined) {
         return item;
       }
       const probed = probeMedia("video", item.src, root, options);

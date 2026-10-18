@@ -3,6 +3,7 @@
 // limit; each region is one of its slots; and a region holds its text or its
 // footage, not both. Each region's video is checked on its own by stage 3. Pure:
 // the contracts come in as data.
+import type { IrMediaVideo } from "@quarto-video/ir";
 import type { ComponentContract } from "@quarto-video/registry";
 import type { Diagnostic } from "../diagnostic.js";
 import { problem } from "./contract.js";
@@ -15,7 +16,11 @@ function usedRegions(scene: SceneWithMedia): string[] {
     if (blocks.length > 0) names.add(name);
   }
   for (const item of scene.media ?? []) {
-    if (item.placement === "region" && item.region !== undefined) {
+    if (
+      item.kind !== "image" &&
+      item.placement === "region" &&
+      item.region !== undefined
+    ) {
       names.add(item.region);
     }
   }
@@ -30,7 +35,10 @@ function regionProblems(
 ): Diagnostic[] {
   const slots = Object.keys(contract.slots);
   const footage = (scene.media ?? []).filter(
-    (item) => item.placement === "region" && item.region !== undefined,
+    (item): item is IrMediaVideo =>
+      item.kind !== "image" &&
+      item.placement === "region" &&
+      item.region !== undefined,
   );
   const found: Diagnostic[] = [];
   for (const item of footage) {

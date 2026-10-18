@@ -5,7 +5,7 @@
 // media-range.ts). Each failing reference is one error about the scene that
 // names it. The references are either passed in, or read from the IR: each
 // image block names its file (ADR-0013) and each `.video` block its source.
-import type { IrMedia, IrSceneV02 } from "@quarto-video/ir";
+import type { IrMedia, IrMediaVideo, IrSceneV02 } from "@quarto-video/ir";
 import type { Diagnostic } from "../diagnostic.js";
 import { resolveAsset } from "../assets/resolve.js";
 import type { AssetProblem } from "../assets/syntax.js";
@@ -44,9 +44,9 @@ export interface RefIr {
   scenes: readonly RefScene[];
 }
 
-/** The range check input of one `.video` block, with its scene's timing. */
+/** The range check input of one video `.video` block, with its scene's timing. */
 function rangeOf(
-  item: IrMedia,
+  item: IrMediaVideo,
   fps: number,
   durationFrames: number,
 ): Omit<VideoRange, "path"> {
@@ -67,7 +67,8 @@ export type { MediaOptions } from "./media.js";
 
 /**
  * The references of an IR: each image block's `src` in scene and slot order,
- * then each `.video` block's `src` with its source range (task 038).
+ * then each `.video` block's `src` with its source range (task 038). A framed
+ * image in a `.video` block (IR 1.10) is an image reference.
  */
 export function assetRefsOf(ir: RefIr): AssetRef[] {
   return ir.scenes.flatMap((scene) => {
@@ -82,13 +83,18 @@ export function assetRefsOf(ir: RefIr): AssetRef[] {
         block.type === "image" ? [{ path: block.src, ...where }] : [],
       ),
     );
-    const videos = (scene.media ?? []).map((item): AssetRef => ({
-      path: item.src,
-      use: "video",
-      ...where,
-      range: rangeOf(item, ir.settings.fps, scene.durationFrames),
-      keepAudio: item.audio === "keep",
-    }));
+    const videos = (scene.media ?? []).map((item): AssetRef => {
+      // An image is a still: its file is checked for existence and format only (ADR-0018).
+      if (item.kind === "image")
+        return { path: item.src, use: "image", ...where };
+      return {
+        path: item.src,
+        use: "video",
+        ...where,
+        range: rangeOf(item, ir.settings.fps, scene.durationFrames),
+        keepAudio: item.audio === "keep",
+      };
+    });
     return [...images, ...videos];
   });
 }

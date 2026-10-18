@@ -32,6 +32,7 @@ import {
 } from "./stages/assets.js";
 import { checkContracts } from "./stages/contract.js";
 import { checkMediaFrames } from "./stages/media-frame.js";
+import { checkMediaKind } from "./stages/media-kind.js";
 import { checkMediaPlacement } from "./stages/media-placement.js";
 import { checkMediaRequired } from "./stages/media-required.js";
 import { checkRegions } from "./stages/regions.js";
@@ -142,6 +143,7 @@ export function checkManifest(
       const found = inDocumentOrder([
         ...checkContracts(ir, components),
         ...checkMediaPlacement(ir, components),
+        ...checkMediaKind(ir, components),
         ...checkMediaRequired(ir, components),
         ...checkRegions(ir, components),
         ...checkProps(ir, components),

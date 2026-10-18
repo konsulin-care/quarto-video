@@ -5,7 +5,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { IrMedia } from "@quarto-video/ir";
+import type { IrMedia, IrMediaVideo } from "@quarto-video/ir";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { MediaProbe, Prober } from "../src/media/probe.js";
 import {
@@ -38,7 +38,7 @@ function probeOf(durationS: number): MediaProbe {
   };
 }
 
-function video(overrides: Partial<IrMedia> = {}): IrMedia {
+function video(overrides: Partial<IrMediaVideo> = {}): IrMediaVideo {
   return {
     type: "video",
     src: "assets/clip.mp4",
@@ -52,6 +52,14 @@ function video(overrides: Partial<IrMedia> = {}): IrMedia {
     alt: "",
     ...overrides,
   };
+}
+
+/** The source end of the first item, which must be a video (an image has none). */
+function endOf(media: readonly IrMedia[] | undefined): number | undefined {
+  const item = media?.[0];
+  if (item === undefined || item.kind === "image")
+    throw new Error("expected a video item");
+  return item.sourceEndFrames;
 }
 
 function manifest(media: IrMedia[]): SourceEndManifest {
@@ -76,13 +84,13 @@ describe("resolveSourceEnds", () => {
     const ir = resolveSourceEnds(manifest([video()]), root, {
       probe: stub,
     });
-    expect(ir.scenes[0]?.media?.[0]?.sourceEndFrames).toBe(75);
+    expect(endOf(ir.scenes[0]?.media)).toBe(75);
   });
 
   it("rounds the probed duration to a whole frame, as the range check does", () => {
     const stub: Prober = () => ({ ok: true, media: probeOf(2.01) });
     const ir = resolveSourceEnds(manifest([video()]), root, { probe: stub });
-    expect(ir.scenes[0]?.media?.[0]?.sourceEndFrames).toBe(60);
+    expect(endOf(ir.scenes[0]?.media)).toBe(60);
   });
 
   it("keeps an authored sourceEnd and does not probe for it", () => {
@@ -96,20 +104,20 @@ describe("resolveSourceEnds", () => {
       root,
       { probe: stub },
     );
-    expect(ir.scenes[0]?.media?.[0]?.sourceEndFrames).toBe(45);
+    expect(endOf(ir.scenes[0]?.media)).toBe(45);
     expect(calls).toBe(0);
   });
 
   it("leaves footage that cannot be probed without an end", () => {
     const stub: Prober = () => ({ ok: false, reason: "no streams" });
     const ir = resolveSourceEnds(manifest([video()]), root, { probe: stub });
-    expect(ir.scenes[0]?.media?.[0]?.sourceEndFrames).toBeUndefined();
+    expect(endOf(ir.scenes[0]?.media)).toBeUndefined();
   });
 
   it("does not change the manifest it is given", () => {
     const stub: Prober = () => ({ ok: true, media: probeOf(2) });
     const input = manifest([video()]);
     resolveSourceEnds(input, root, { probe: stub });
-    expect(input.scenes[0]?.media?.[0]?.sourceEndFrames).toBeUndefined();
+    expect(endOf(input.scenes[0]?.media)).toBeUndefined();
   });
 });
