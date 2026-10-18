@@ -24,6 +24,7 @@ local SUITES = {
   "tests.test_image",
   "tests.test_media",
   "tests.test_media_audio",
+  "tests.test_media_image",
   "tests.test_music",
 }
 

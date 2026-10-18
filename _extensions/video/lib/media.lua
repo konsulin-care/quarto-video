@@ -1,5 +1,6 @@
 -- Video footage blocks (IR 1.6, task 038; IR 1.7 region footage, task 043 and
--- ADR-0016; IR 1.8 source audio, task 044 and ADR-0009; PRD §6.1, §6.2): a Div with the class `video`, directly in a scene.
+-- ADR-0016; IR 1.8 source audio, task 044 and ADR-0009; IR 1.10 framed images,
+-- ADR-0018; PRD §6.1, §6.2): a Div with the class `video`, directly in a scene.
 -- Its properties (lib/media_props.lua) become one `media` item of the scene, with
 -- source times as source frames at the project fps (lib/duration.lua), never
 -- timeline frames. A scene holds one background or framed block, or one region
@@ -9,6 +10,8 @@
 -- lib/content_lines.lua searches for). M.reset() starts a scene.
 local json = require("lib.json")
 local props = require("lib.media_props")
+local media_kind = require("lib.media_kind")
+local media_image = require("lib.media_image")
 
 local M = {}
 
@@ -137,6 +140,13 @@ function M.node(el, found, fps)
     return nil
   end
   local attrs = el.attributes
+  if media_kind.of(attrs.src or "") == "image" then
+    if not check_repeat(nil, report) then
+      return nil
+    end
+    plain = true
+    return media_image.node(attrs, report)
+  end
   local region = nil
   if attrs.region ~= nil then
     region = props.region(report, attrs)
@@ -212,6 +222,7 @@ function M.node(el, found, fps)
   end
   return {
     type = "video",
+    kind = "video",
     src = src,
     placement = placement,
     region = region,

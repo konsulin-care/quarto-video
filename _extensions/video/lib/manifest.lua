@@ -23,10 +23,26 @@ function M.render_path(project_dir)
   return pandoc.path.join({ project_dir, BUILD_DIR, RENDER_FILE })
 end
 
---- The IR version a manifest is written as: 1.9 with a music track (ADR-0017),
---- 1.8 when a scene keeps source audio (ADR-0009), 1.7 when a scene has region
---- footage (ADR-0016), 1.6 otherwise, so other manifests stay as they were.
+-- True when a scene has an image item (IR 1.10, ADR-0018).
+local function has_image(scenes)
+  for _, scene in ipairs(scenes) do
+    for _, item in ipairs(scene.media or {}) do
+      if item.kind == "image" then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+--- The IR version a manifest is written as: 1.10 with a framed image (ADR-0018),
+--- 1.9 with a music track (ADR-0017), 1.8 when a scene keeps source audio
+--- (ADR-0009), 1.7 when a scene has region footage (ADR-0016), 1.6 otherwise, so
+--- other manifests stay as they were.
 local function version_of(scenes, music)
+  if has_image(scenes) then
+    return "1.10"
+  end
   if music ~= nil then
     return "1.9"
   end
@@ -42,6 +58,21 @@ local function version_of(scenes, music)
     end
   end
   return region and "1.7" or "1.6"
+end
+
+-- The media items without `kind`: IR 1.6 to 1.9 have no such field (ADR-0018).
+local function without_kind(items)
+  local out = json.array({})
+  for i, item in ipairs(items) do
+    local copy = {}
+    for key, value in pairs(item) do
+      if key ~= "kind" then
+        copy[key] = value
+      end
+    end
+    out[i] = copy
+  end
+  return out
 end
 
 --- Assembles the IR table. Field names follow the schema of its version. The
@@ -65,8 +96,16 @@ function M.build(settings, scenes, source_file, music)
     }
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
+  local version = version_of(list, music)
+  if version ~= "1.10" then
+    for _, scene in ipairs(list) do
+      if scene.media ~= nil then
+        scene.media = without_kind(scene.media)
+      end
+    end
+  end
   return {
-    schemaVersion = version_of(list, music),
+    schemaVersion = version,
     type = "video",
     settings = settings,
     scenes = list,
