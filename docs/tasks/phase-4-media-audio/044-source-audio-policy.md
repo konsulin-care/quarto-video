@@ -40,6 +40,7 @@ Human check:
 
 ## Notes
 
+- Human check (listening, passed 2026-10-18): `audio-keep` (tone only during its scene) and `audio-mute` (silent) rendered and listened to.
 - Mono sources play 3 dB quieter: the output is stereo and ffmpeg centre-mixes mono (ADR-0009, Consequences). Open for a human: fix (channel option or pan) or reject mono keep.
 - `audio="keep"` was E_VIDEO_BLOCK (task 038); its test now uses `loud`. `volume` is a real attribute now; the unknown-attribute test uses `gain`.
 - Extra fixture `audio-keep-fade` (transition ramp, ADR-0009). Fixtures `audio-*` are gitignored; text-media clips were tracked by mistake and are untracked (c829137).

@@ -40,7 +40,7 @@ Human check:
 
 - Fade-out box: the per-frame check is not used, because AAC block steps (1024 samples, about 0.64 frame) make per-frame levels non-monotone on the aligned render. The replacement (approved): three-frame windows (4410 samples, four blocks) must not rise by more than 0.5 dB, the windows from frame 120 to 141 must match the gain curve (149-f)/30 within 1 dB, and the total drop from 120 to 141 must match within 1 dB. The tail (frames 144 to 149) stays in the monotone check and must reach silence. A missing or reversed fade fails both the curve match and the monotone check. The window and tolerances are set from the measured numbers (largest rise -0.68 dB; largest curve error 0.74 dB up to frame 141).
 - Onset: the stitch moves the pre-encoded audio earlier by the AAC encoder delay (2048 samples at 48 kHz; `renderer/remotion/src/exact-length.ts`). The first audible sample is at index 1 (was 1882). An integration assertion keeps it within 64 samples.
-- Human check (open, not run by a person): render `tests/fixtures/projects/music-loop` and listen. The track should start at frame 0, loop, and fade out. Not done: no one has listened.
+- Human check (listening, passed 2026-10-18): `music-loop` rendered and listened to; the track starts at frame 0, loops and fades out.
 - Mono levels and framed images: unchanged; still open for the user (ADR-0009).
 - Line limits, not trimmed: `_extensions/video/README.md` 121 (was 117), `packages/validator/README.md` 156 (was 153).
 - The output is cut to the timeline (`-t`) for every render, so 044 outputs also end on the last frame.
