@@ -1,7 +1,9 @@
 // `video doctor [--json]`: the tools a render needs, with versions or the
 // reason and fix for each one (PRD §9.1 stage 5; packages/cli/README.md).
 // Human: one line per tool on stdout, ✓ or ✗. --json: an array of
-// { tool, ok, version, hint }. Exit 0 when every tool is ok, else 2.
+// { tool, ok, version, hint, warning }. A version outside the compatibility matrix
+// (compatibility.json) is a warning on the tool's line and does not change the exit
+// status. Exit 0 when every tool is ok, else 2.
 import { EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { detectTools } from "../tools.js";
 
@@ -19,7 +21,7 @@ export function runDoctor(
   } else {
     for (const tool of tools) {
       const line = tool.ok
-        ? `✓ ${tool.tool.padEnd(9)} ${tool.version ?? ""}`
+        ? `✓ ${tool.tool.padEnd(9)} ${tool.version ?? ""}${tool.warning ? `  ⚠ ${tool.warning}` : ""}`
         : `✗ ${tool.tool.padEnd(9)} ${tool.hint ?? ""}`;
       process.stdout.write(`${line}\n`);
     }

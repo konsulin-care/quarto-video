@@ -42,12 +42,14 @@ Use `video.output` in front matter to choose the destination.
 
 Theme resolution (task 019a): the `--theme <name>` option wins; else the front matter `theme:` (kept in `render.json`); else `modern`. `--theme` takes a name as `--theme <name>` or `--theme=<name>`; a missing name is a usage error (exit 2). An unknown name, from either source, is `E_THEME_UNKNOWN` (exit 1), and the renderer is not called.
 4. Stage 6 (`src/output-probe.ts`, `checkOutput`): ffprobe reads the temp file; its width, height, fps and frame count must equal the IR. A mismatch, a missing file or an unreadable one: the temp file is deleted, diagnostics are reported, exit 1, and `video.output` is untouched.
-5. On success, create the output's directory and rename the temp file to the output path. A caption track in `sidecar` or `both` mode is copied first, to `output.vtt` beside `output.mp4` (`sidecarPath` in `src/render-config.ts`, ADR-0019); `burn` writes no sidecar. The sidecar is listed after the output in the `Wrote` lines.
+5. Build info (`src/build-info.ts`, task 049): before the rename, the IR text hash, SHA-256 of each asset the IR names (footage, images, music, captions, device frame definitions), tool versions, OS, arch and the CLI flags are validated against `schema/build-info.json`. On success, after the rename, `.video-build/build-info.json` is written. A stale file is removed at the start of each run.
+6. On success, create the output's directory and rename the temp file to the output path. A caption track in `sidecar` or `both` mode is copied first, to `output.vtt` beside `output.mp4` (`sidecarPath` in `src/render-config.ts`, ADR-0019); `burn` writes no sidecar. The sidecar is listed after the output in the `Wrote` lines.
 
 Streams: stdout gets `NN%` progress lines, then `Wrote <path>`. With `--json`, a diagnostics array comes first (warnings, or errors); a stage 6 array can follow the progress lines. stderr: diagnostics as text, preflight problems, and `video: render failed: <message>`.
 
 ## `doctor` (`src/commands/doctor.ts`)
 - One line per tool: `✓ <tool> <version>` or `✗ <tool> <reason>; <how to install>`. `--json`: `[{tool, ok, version, hint}]`, in the same order.
+- A version not listed in `src/compatibility.json` (the matrix in `docs/guides/compatibility.md`) adds `⚠ <version> is outside the compatibility matrix (...)` to the tool's ✓ line, and `warning` in the JSON. It does not change the exit status.
 - Exit 0 when every tool is ok; 2 otherwise (an environment problem).
 
 Environment:
@@ -62,6 +64,7 @@ Environment:
 | --- | --- | --- | --- |
 | `manifest.json` (IR), `render.json`, `diagnostics.json` | written by filter | kept | kept (diagnosis) |
 | `render.partial.mp4` | written by renderer | renamed to output, gone | deleted |
+| `build-info.json` | removed at start | written (task 049) | absent |
 
 - Each run removes the previous manifest, render settings and diagnostics before it starts. The temp file is also removed before each render.
 - Only `<root>/<video.output>` (default `output.mp4`) is a deliverable. `.video-build/` is gitignored and safe to delete.
@@ -72,15 +75,15 @@ Environment:
 - Neither variable is in `--help` or documented for authors.
 
 ## Dependencies (`packages/cli/package.json`)
-- `@quarto-video/ir`, `@quarto-video/validator` (`checkManifest`, `checkOutput`, formatters) and `@quarto-video/remotion` (`render`, `loadIr`, types). The CLI imports only those indexes.
+- `@quarto-video/ir`, `@quarto-video/validator` (`checkManifest`, `checkOutput`, formatters) and `@quarto-video/remotion` (`render`, `loadIr`, types). The CLI imports only those indexes. `ajv` (exact 8.20.0) validates build-info against `schema/build-info.json`.
 
 ## Rules
 - The CLI never parses Markdown or interprets component rules itself.
 - Never start the renderer when any stage reported an error, or preflight failed.
 
 ## Testing
-- Unit: `test/preflight.test.ts` (each preflight rule), `test/tools.test.ts`, `test/output-probe.test.ts`, `test/components.test.ts`.
-- Integration: `tests/integration/cli-browser-gate.test.ts` (variable unset: exit 2, renderer not called), `tests/integration/validate*.test.ts`, `contract.test.ts`, `cli-render.test.ts` (render, output size, fps, frames), `preflight-output.test.ts` (stages 5 and 6), `doctor.test.ts`, `components.test.ts`, `theme.test.ts` (unknown theme: exit 1, no video), `theme-render-option.test.ts` (`--theme` precedence, default `modern`, unknown option, explicit background).
+- Unit: `test/preflight.test.ts` (each preflight rule), `test/tools.test.ts`, `test/output-probe.test.ts`, `test/components.test.ts`, `test/compat-matrix.test.ts` (matrix pins equal mise.toml and the Remotion package; doc lists each version; the warning).
+- Integration: `tests/integration/cli-browser-gate.test.ts` (variable unset: exit 2, renderer not called), `tests/integration/validate*.test.ts`, `contract.test.ts`, `cli-render.test.ts` (render, output size, fps, frames), `preflight-output.test.ts` (stages 5 and 6), `doctor.test.ts`, `compat-doctor.test.ts` (warning on a fake Quarto 1.0.0), `reproducibility.test.ts` (build-info of two renders; asset changes), `components.test.ts`, `theme.test.ts` (unknown theme: exit 1, no video), `theme-render-option.test.ts` (`--theme` precedence, default `modern`, unknown option, explicit background).
 
 ## Related
-Tasks 005–008, 013, 018, 048. PRD §4.2, §5.5, §9, §11.2, §11.3.
+Tasks 005–008, 013, 018, 048, 049. PRD §4.2, §5.5, §9, §11.2, §11.3.

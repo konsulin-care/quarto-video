@@ -1,0 +1,10 @@
+{
+  "description": "Supported tool versions (docs/guides/compatibility.md, task 049). Each list holds exact versions; `video doctor` warns when a probed version is not listed. Node is listed without its leading v. Pins must equal mise.toml and renderer/remotion/package.json (test: packages/cli/test/compat-matrix.test.ts).",
+  "tools": {
+    "node": ["24.21.0"],
+    "quarto": ["1.10.19"],
+    "pandoc": ["3.10"],
+    "remotion": ["4.0.530"],
+    "ffprobe": ["9.0.2"]
+  }
+}

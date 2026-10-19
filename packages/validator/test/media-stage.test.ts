@@ -61,7 +61,7 @@ function spyProbe(): { probe: Prober; calls: string[] } {
 
 beforeAll(() => {
   execFileSync("bash", [join(MEDIA, "generate.sh")], { stdio: "ignore" });
-});
+}, 120_000); // generate.sh encodes several clips; two suites run it in parallel.
 
 afterAll(() => rmSync(SCRATCH, { recursive: true, force: true }));
 
