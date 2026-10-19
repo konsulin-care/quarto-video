@@ -36,7 +36,7 @@ The component has no props. Content is drawn as plain lines, one per block (ADR-
 Errors (validator, stage 2): a missing `right` (or `left`) is `E_SLOT_REQUIRED`; any other slot name, such as `.center`, is `E_SLOT_UNKNOWN`; a code block in a slot is `E_SLOT_BLOCK_KIND`.
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the whole grid of columns together.
 - Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 

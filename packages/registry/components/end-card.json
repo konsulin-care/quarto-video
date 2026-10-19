@@ -21,7 +21,7 @@
   "compatibleAnimations": ["fade-in", "reveal", "slide-up", "stagger"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 2000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "The message, the optional call to action and the credits are the only content. Colour and size come from the theme (task 019): the call to action uses the accent token and the credits the muted text token. Credits are one line per list item and are set smaller, never clipped, when the list is long."

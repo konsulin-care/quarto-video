@@ -34,7 +34,7 @@ The footage is the scene's media, not a slot: a scene with no `.video` block is 
 Content is drawn as plain lines, one per block (ADR-0004).
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `reveal`, `slide-up` (see [README](README.md#animations-task-021)). The animation moves the text and the frame together.
 - Placements: `framed` only. A `background` block is `E_MEDIA_PLACEMENT`. Footage kinds: video and image (`mediaKinds` in the contract, ADR-0018). Transitions: none listed in the contract (ADR-0005).
 

@@ -39,7 +39,7 @@ Errors (validator): `E_PROP_REQUIRED` for a missing required prop; `E_PROP_VALUE
 Stage 3 checks the CSV only when stage 2 has no errors (ADR-0014).
 
 ## Timing and placement
-- Duration: 2s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (see [README](README.md#animations-task-021)). The animation moves the whole chart, title included; `reveal` fades it in while it grows from 96% to full size.
 - Placements: none (Phase 4). Transitions: none listed in the contract.
 

@@ -40,7 +40,7 @@ describe("video components", () => {
     assert.match(lines[0] ?? "", /^ID\s+VERSION\s+DURATION\s+SLOTS\s+PROPS$/);
     const title = lines.find((line) => line.startsWith("title "));
     assert.ok(title, `no title row in:\n${run.stdout}`);
-    assert.match(title, /1s-30s/);
+    assert.match(title, /100ms-30s/);
     assert.match(
       title,
       /default \(required: paragraph, heading\); subtitle \(optional: paragraph\)/,
@@ -69,7 +69,7 @@ describe("video components", () => {
     });
     assert.deepEqual(title["placements"], ["background"]);
     assert.deepEqual(title["props"], {});
-    assert.deepEqual(title["duration"], { minMs: 1000, maxMs: 30000 });
+    assert.deepEqual(title["duration"], { minMs: 100, maxMs: 30000 });
   });
 
   it("rejects an extra argument with usage, exit 2", () => {

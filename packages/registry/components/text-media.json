@@ -22,7 +22,7 @@
   "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "textFit": {

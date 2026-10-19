@@ -18,7 +18,7 @@ video:
 ::: {.scene component="chart" duration="4s" type="bar" data="data/bars.txt" x="region" y="sales" unit="kEUR" title="Sales"}
 :::
 
-::: {.scene component="chart" duration="1s" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales"}
+::: {.scene component="chart" duration="50ms" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title="Sales"}
 :::
 
 ::: {.scene component="chart" duration="4s" type="bar" data="data/bars-3.csv" x="region" y="sales" unit="kEUR" title=""}

@@ -53,7 +53,7 @@ A slot the statistic does not have.
 :::
 :::
 
-::: {.scene component="statistic" duration="0.5s" value="42"}
+::: {.scene component="statistic" duration="50ms" value="42"}
 ::: {.label}
 Too short to read.
 :::

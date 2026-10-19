@@ -20,7 +20,7 @@
   "compatibleAnimations": ["fade-in", "kinetic", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "The statement is the only content. Its text is drawn in the theme's text colour and strong text in the accent colour, a theme pair that meets WCAG AA on the background. The text scales down within the theme's type scale (title to body) to stay inside the safe area; below body size it is a validation warning. Over background footage the text sits on a theme scrim (task 039).",

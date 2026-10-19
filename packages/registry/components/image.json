@@ -17,7 +17,7 @@
   "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "The image is the picture; its alt text is stored in the IR as accessibility metadata (alt=\"\" marks a decorative image) and is not drawn. The image is framed by fit: cover fills the frame and may crop, contain shows the whole image and leaves the rest of the frame in the surface colour. The caption uses the muted text token, a theme pair that meets WCAG AA, and wraps inside the safe area."

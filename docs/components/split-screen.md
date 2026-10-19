@@ -29,7 +29,7 @@ The regions are the slots. A scene uses two or three of them, each with its text
 Content is drawn as plain lines, one per block (ADR-0004).
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `reveal`, `slide-up` (see [README](README.md#animations-task-021)). The entrance moves all regions together.
 - Placements: `region` only. A `background` or `framed` block is `E_MEDIA_PLACEMENT`. Transitions: none listed in the contract (ADR-0005).
 - Footage: each region's clip has its own `sourceStart`, `sourceEnd`, `loop`, `freeze` and `fit`. All regions share the scene's timeline. Each clip is checked against its own file, so a range past the file is `E_MEDIA_RANGE` and a short clip is `E_MEDIA_SHORT_SOURCE` at the scene's line.

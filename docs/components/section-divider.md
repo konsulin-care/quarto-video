@@ -30,7 +30,7 @@ Content is drawn as plain lines, one per block (ADR-0004). The `default` slot is
 Errors (validator, stage 2): a `.kicker` with a list is `E_SLOT_BLOCK_KIND`; any other slot name, such as `.caption`, is `E_SLOT_UNKNOWN`; a scene with no title is `E_SLOT_REQUIRED`.
 
 ## Timing and placement
-- Duration: 1s to 8s per scene (`duration` in the contract). Shorter or longer is `E_DURATION_BOUNDS`.
+- Duration: 0.1s to 8s per scene (`duration` in the contract). Shorter or longer is `E_DURATION_BOUNDS`.
 - Animations: `fade-in` and `slide-up` (see [README](README.md#animations-task-021)). `reveal` is not compatible with this component: `E_ANIMATION_INCOMPATIBLE` (see Known limits).
 - Placements and transitions: none listed in the contract, and not checked yet (ADR-0005).
 

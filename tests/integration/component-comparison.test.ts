@@ -97,6 +97,6 @@ describe("component comparison fixtures", () => {
       middle: { required: false, accepts: ["heading", "paragraph", "list"] },
       right: { required: true, accepts: ["heading", "paragraph", "list"] },
     });
-    assert.deepEqual(comparison["duration"], { minMs: 1000, maxMs: 30000 });
+    assert.deepEqual(comparison["duration"], { minMs: 100, maxMs: 30000 });
   });
 });

@@ -37,7 +37,7 @@ Background footage is not a framed clip.
 Text is not a caption: it has no default slot.
 :::
 
-::: {.scene component="product-demo" duration="0.5s"}
+::: {.scene component="product-demo" duration="50ms"}
 ::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
 :::
 :::

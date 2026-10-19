@@ -142,7 +142,7 @@ describe("statistic in the component list", () => {
       .split("\n")
       .find((line) => line.startsWith("statistic "));
     assert.ok(row, `no statistic row in:\n${run.stdout}`);
-    assert.match(row, /1s-30s/);
+    assert.match(row, /100ms-30s/);
     assert.match(
       row,
       /context \(optional: paragraph\); label \(required: paragraph\)/,

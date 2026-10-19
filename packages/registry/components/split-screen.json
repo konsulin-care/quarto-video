@@ -28,7 +28,7 @@
   "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "Each region is a column of the canvas safe area. Footage is muted (source audio is task 044), clipped to its region and framed by its fit; its alt text is kept in the IR and not drawn. A region's text is drawn in the theme's text colour in its own column and scales down within the type scale, so it never runs into a neighbour. Regions read left to right: left, middle, right."

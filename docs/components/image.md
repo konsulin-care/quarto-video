@@ -47,7 +47,7 @@ Contract errors (stage 2): a caption with a non-paragraph block is
 is named.
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the picture and caption together.
 - Placements: none (task 038 and later). Transitions: none listed in the contract (ADR-0005).
 

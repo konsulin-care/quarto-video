@@ -33,7 +33,7 @@ A paragraph is not a credits list.
 2. Second item.
 :::
 
-::: {.scene component="end-card" duration="0.5s"}
+::: {.scene component="end-card" duration="50ms"}
 Too short to read.
 :::
 
