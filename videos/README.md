@@ -1,5 +1,5 @@
 # videos/ — sample and acceptance video projects
-Status: `hello` (task 006) renders with `video render`, and with `quarto render` through its post-render hook (task 007a, ADR-0002). `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) is the acceptance project: every PRD §13.4 element, with music and captions.
+Status: `hello` (task 006) renders with `video render`, and with `quarto render` through its post-render hook (task 007a, ADR-0002). `hello-world` (ADR-0020, IR 1.12) is six title scenes on a 1000 x 1000 black canvas: `H` fades in over 0.5 s, `E`, `L`, `L`, `O` hold 0.5 s each, `World!` holds 1.5 s and fades out over 0.5 s (5.0 s, 150 frames). It has the same post-render hook as `hello`. `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) is the acceptance project: every PRD §13.4 element, with music and captions.
 
 ## Purpose
 Real, renderable projects that show the DSL and prove the pipeline end to end
@@ -11,7 +11,7 @@ videos/<name>/
 ├── index.qmd        # the only authored file required
 ├── assets/          # images, footage, audio, captions (project-relative)
 ├── data/            # chart data (CSV/JSON)
-├── _quarto.yml      # hello only: post-render hook for `quarto render` (007a)
+├── _quarto.yml      # hello and hello-world: post-render hook for `quarto render` (007a)
 ├── render-video.sh  # hello only: the hook; runs `video render` (007a)
 ├── .video-build/    # generated; gitignored
 └── output.mp4       # generated; gitignored
@@ -55,4 +55,4 @@ its status, so a failed render (for example a validation error) makes
   and licensed for redistribution (record source in `assets/SOURCES.md`).
 
 ## Related
-Tasks 006, 036, 047. `tests/README.md` for fixture projects. `videos/gpu` is authored only in the DSL: no renderer code (task 036).
+Tasks 006, 036, 047; ADR-0020 (hello-world). `tests/README.md` for fixture projects. `videos/gpu` is authored only in the DSL: no renderer code (task 036).
