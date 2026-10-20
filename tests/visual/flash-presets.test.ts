@@ -23,6 +23,7 @@ import { readPng } from "./png.js";
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const PROJECTS = [
   "tests/fixtures/projects/animations-basic",
+  "tests/fixtures/projects/animations-exit",
   "tests/fixtures/projects/transitions",
   "tests/fixtures/projects/reduced-motion-animations",
   "tests/fixtures/projects/reduced-motion-transitions",
@@ -57,6 +58,7 @@ async function measure(project: string): Promise<Measured> {
     timeline: { durationFrames: number };
     scenes: Array<{
       animation?: { name: string };
+      exit?: { name: string };
       transition?: { name: string };
     }>;
   };
@@ -73,6 +75,7 @@ async function measure(project: string): Promise<Measured> {
   const presets = new Set<string>();
   for (const scene of ir.scenes) {
     if (scene.animation) presets.add(scene.animation.name);
+    if (scene.exit) presets.add(scene.exit.name);
     if (scene.transition) presets.add(scene.transition.name);
   }
   return {
