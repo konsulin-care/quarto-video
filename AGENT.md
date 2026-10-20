@@ -46,7 +46,8 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - Footage is never silently stretched, sped up, or looped to fit a scene.
 - Authors choose semantic properties (`fit`, `frame`, `placement`), never
   pixels, CSS, or JavaScript.
-- Never claim `quarto render` support beyond what ADR-0002 verified.
+- Never claim `quarto render` support beyond what ADR-0002 and ADR-0022 verified.
+- Only `_extensions/video/render.lua` may start a process from Lua, and only `video render` (ADR-0022).
 
 ## Dependency direction
 `ir` ← `registry` ← `validator` ← `cli` → `renderer/remotion`.
@@ -65,14 +66,14 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 - `npm run typecheck -w @quarto-video/ir` — one workspace.
 - `npm run ir:check -w packages/ir -- <file.json>` — validate an IR manifest (task 002); an unsupported `schemaVersion` is `E_IR_UNSUPPORTED_VERSION`, exit 1 (task 017).
 - `npm run test:lua` — Lua filter unit tests via `quarto pandoc` (task 003).
-- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the content nodes test (task 012), the contract stage test (task 014), the timeline test (task 015), the IR 1.0 golden manifests (task 017), the `video` CLI tests (validate: 005; render: 006; preflight, output check and doctor: 018) and `quarto render` through the post-render hook (007a), and the acceptance demo `videos/demo` (task 047), path robustness `paths.test.ts` (task 048; spaces, non-ASCII, cwds, moves), and reproducibility of `videos/demo` (`reproducibility.test.ts`, task 049: identical stills, build-info schema and asset changes) with the doctor warning (`compat-doctor.test.ts`).
+- `npm run test:integration` — Remotion render (task 004; needs a Chromium headless shell, `renderer/remotion/README.md`), the golden filter test (task 003), the content nodes test (task 012), the contract stage test (task 014), the timeline test (task 015), the IR 1.0 golden manifests (task 017), the `video` CLI tests (validate: 005; render: 006; preflight, output check and doctor: 018) and `quarto render` through the extension's post-render filter, in this repository and after `quarto add` (053), and the acceptance demo `videos/demo` (task 047), path robustness `paths.test.ts` (task 048; spaces, non-ASCII, cwds, moves), and reproducibility of `videos/demo` (`reproducibility.test.ts`, task 049: identical stills, build-info schema and asset changes) with the doctor warning (`compat-doctor.test.ts`).
 - `npm run test:visual` — visual regression: fixture stills vs approved references, report in `tests/visual/report/` (task 020). `npm run test:visual:approve -- <case>` replaces references (tests/README.md).
 - `npx video validate <path> [--print-ir] [--json]` — filter, IR, contract and timeline check; exit 0/1/2 (tasks 005, 008, 014, 015). From another directory: `npm exec --prefix <repo> -- video validate <path>`.
 - `npx video components [--json]` — list the component contracts: id, version, slots, props, duration (task 013).
 - `npx video render <path> [--json] [--theme <name>]` — validate, preflight (tools, writable output, disk), render to `video.output`, check the output against the IR (tasks 006, 008, 018). A `video.captions` track in `sidecar` or `both` mode also writes `output.vtt` beside the output (task 046). Each success writes `.video-build/build-info.json`: IR, asset and tool hashes and versions (task 049). Progress on stdout; exit 0/1 as for validate, 2 for preflight. Needs `QV_BROWSER_EXECUTABLE` (a Chromium headless shell).
 - `bash tests/fixtures/media/generate.sh` — media test fixtures via ffmpeg (task 037; gitignored; the media tests run it).
 - `npx video doctor [--json]` — tools and versions, one ✓/✗ line each; exit 0 when all are ok, else 2 (task 018). A version outside `docs/guides/compatibility.md` (`packages/cli/src/compatibility.json`) gets a ⚠ warning, exit status unchanged (task 049).
-- `quarto render videos/hello/index.qmd` (or `quarto render videos/hello`) — writes `videos/hello/output.mp4` through the project post-render hook (task 007a, ADR-0002). Needs the pinned Quarto and `QV_BROWSER_EXECUTABLE`; a failing render exits non-zero.
+- `quarto render videos/<name>` (or `quarto render videos/<name>/index.qmd`) — writes `videos/<name>/output.mp4`: the root `_quarto.yml` sets `filters: [video]`, and the extension's post-render filter runs `video render` (task 053; ADR-0022). Needs `video` on PATH (`node_modules/.bin`, which mise adds). Needs the pinned Quarto and `QV_BROWSER_EXECUTABLE`; a failing render exits non-zero.
 
 ## Working rules
 - One task per change set. Commits use Conventional Commits

@@ -1,6 +1,6 @@
 # docs/tasks/ — sequential development tasks
 
-Status: Tasks 000 through 050 done (including 007a and 019a); 051 `in-progress` (its GitHub job box is unverified). Numbers are the execution order.
+Status: Tasks 000 through 050 done (including 007a and 019a); 051 `in-progress` (its GitHub job box is unverified); 052 and 053 done. Numbers are the execution order.
 
 ## Picking work
 
@@ -96,3 +96,5 @@ Sections: Goal, Scope (In/Out), Deliverables, Definition of done
 | 049                                | Reproducibility + compatibility matrix          | 047      |
 | 050                                | User guides                                     | 049      |
 | 051                                | Fresh-setup verification                        | 050      |
+| 052                                | `quarto render` for every project in videos/ (ADR-0021) | 007a |
+| 053                                | Render from the extension filter (ADR-0022)     | 052      |

@@ -33,6 +33,10 @@ videos/*/index.html
 videos/*/index_files/
 videos/*/.quarto/
 videos/*/.gitignore
+# Quarto's cache for the root project (task 053; ADR-0022). Listed here so
+# `quarto render` finds them and leaves this file as it is.
+/.quarto/
+**/*.quarto_ipynb
 
 # Harness worktrees for delegated agents (local state, never committed)
 .claude/worktrees/

@@ -116,12 +116,23 @@ PATH="$(cd /path/to/quarto-video && mise bin-paths | tr '\n' ':')$PATH" \
 
 ## Quarto render (optional)
 
-`quarto render` produces `output.mp4` only through a project's `_quarto.yml`
-post-render hook (ADR-0002). A project that wants it copies `_quarto.yml` and
-`render-video.sh` from `videos/hello-world` and keeps `render-video.sh`
-executable. The script finds the repository two folders above the project, so a
-project outside `videos/` needs `video` on `PATH` instead. The template has
-neither file, so `quarto render` on a plain copy of it renders nothing and exits 0.
+quarto-video is a Quarto filter extension (ADR-0022). With `filters: [video]`,
+`quarto render` writes the MP4 itself: the extension's post-render filter runs
+`video render` on the project. In this repository the root `_quarto.yml` sets
+the filter for every sample:
+
+```sh
+mise exec -- quarto render videos/my-video   # or videos/my-video/index.qmd
+```
+
+`mise exec` (or an activated mise shell) puts the pinned tools and
+`node_modules/.bin`, where `video` lives, on `PATH`. `QV_BROWSER_EXECUTABLE`
+is needed as for `video render`, and a failed render makes `quarto render`
+exit non-zero. `videos/_template` is not a render target.
+
+For a project of your own, outside this repository, install the extension
+with `quarto add` and add `filters: [video]`; the root `README.md` walks
+through it step by step.
 
 ## Next steps
 

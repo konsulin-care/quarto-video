@@ -56,6 +56,12 @@ new_project() {
     "$work/videos/hello/.quarto"
   rm -f "$work/videos/hello/_quarto.yml" "$work/videos/hello/render-video.sh"
   cp -r "$repo/_extensions/video" "$work/videos/hello/_extensions/"
+  # The extension as ADR-0002 tried it: video.lua as its only filter. Task 053
+  # (ADR-0022) added the post-render render.lua; it is left out here so the
+  # evidence stays the one recorded in the ADR.
+  printf 'title: Video\nversion: 0.1.0\ncontributes:\n  filters:\n    - video.lua\n' \
+    >"$work/videos/hello/_extensions/video/_extension.yml"
+  rm -f "$work/videos/hello/_extensions/video/render.lua"
   printf '%s' "$work"
 }
 

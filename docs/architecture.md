@@ -62,7 +62,7 @@ Cleanup policy (task 006): `packages/cli/README.md`.
 - Determinism: no wall clock, randomness, network, or browser state in the
   renderer; dependencies pinned (ADR-0001).
 - Quarto-native rendering (`quarto render`) is supported only as far as
-  ADR-0002 verified. The CLI is always the reference entry point.
+  ADR-0002 and ADR-0022 verified. The CLI is always the reference entry point.
 
 ## Decisions
 See `docs/decisions/README.md` for the ADR index (0001–0009).

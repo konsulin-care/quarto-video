@@ -86,6 +86,14 @@ spawn`; post-render scripts run with the project directory as cwd.
   MP4; a failing `video render` exits non-zero and leaves no `output.mp4` when none existed).
   The supported claim is limited to `videos/hello` with the pinned Quarto
   (1.10.19); other projects copy the two files.
+- ADR-0021 (task 052) replaces the per-project files with one shared
+  `videos/_quarto.yml` and `videos/_render-video.sh`, so every project under
+  `videos/` renders with `quarto render`. The decision above is unchanged:
+  the output still comes only from a project post-render hook.
+- ADR-0022 (task 053) supersedes decisions 2, 3 and 5: the extension's
+  `render.lua`, a filter at `post-render`, runs `video render`, so
+  `quarto add`, `filters: [video]` and `quarto render` are enough. The spike
+  above keeps the 0.1.0 extension and its evidence.
 
 ## Verification
 - `scripts/spike-quarto-native.sh` prints the lines above and exits 0. Its
