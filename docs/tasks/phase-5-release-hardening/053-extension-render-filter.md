@@ -13,7 +13,8 @@ Use quarto-video like any Quarto filter extension: install it with
 - Out: publishing the CLI to npm, bundling a browser, `quarto preview`.
 
 ## Deliverables
-- `_extensions/video/render.lua`, `_extensions/video/_extension.yml` (0.2.0).
+- `_extensions/video/render.lua`, `_extensions/video/_extension.yml` (version
+  stays 0.1.0: it equals the generator version in every manifest, ADR-0007).
 - `_quarto.yml` (root). `tests/integration/quarto-render.test.ts`.
 - ADR-0022; ADR-0021 superseded.
 
@@ -41,3 +42,7 @@ Human check:
 - 2026-10-20. `render.lua` passes the rendered `.qmd`, not its directory, so a
   file other than `index.qmd` renders itself (it rendered `index.qmd` before).
   Test added (`topic-c.qmd`); README "Several videos in one project".
+- 2026-10-20. CI: `generator.test.ts` failed because `_extension.yml` said
+  0.2.0 while `lib/generator.lua` writes 0.1.0. Restored 0.1.0: the manifest
+  is unchanged, and a version bump changes the constants, the CLI version and
+  the golden manifests together (ADR-0007), which is a release decision.

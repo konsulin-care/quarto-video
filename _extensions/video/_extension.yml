@@ -1,6 +1,6 @@
 title: Video
 author: quarto-video
-version: 0.2.0
+version: 0.1.0
 quarto-required: ">=1.10.19"
 contributes:
   filters:
