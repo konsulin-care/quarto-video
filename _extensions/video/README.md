@@ -22,8 +22,10 @@ Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, 
 
 `quarto add <repo>` installs this directory into a project. `filters: [video]`
 (front matter or `_quarto.yml`) loads the one contributed filter, `render.lua`,
-at the `post-render` entry point. It runs `video render <project>`, with the
-CLI from `QUARTO_VIDEO_CLI` or `video` on `PATH`, and its output on stderr. A
+at the `post-render` entry point. It runs `video render <file>.qmd` on the
+rendered file (its directory is the project root, so each `.qmd` is its own
+video), with the CLI from `QUARTO_VIDEO_CLI` or `video` on `PATH`, and its
+output on stderr. A
 missing CLI ends `quarto render` with exit 2 and an install message; a failed
 render with the CLI's status (`os.exit`: Quarto ignores an `error()` raised at
 post-render). The CLI then runs `video.lua` from its own checkout, as below, so

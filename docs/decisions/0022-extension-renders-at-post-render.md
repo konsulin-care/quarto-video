@@ -31,8 +31,11 @@ it never tried one. Quarto 1.10.19 lets an extension filter run at the
    `{path: render.lua, at: post-render}`. `filters: [video]` in a document's
    front matter or in `_quarto.yml` turns it on.
 2. `render.lua` finds the CLI (`QUARTO_VIDEO_CLI`, else `video` on `PATH`) and
-   runs `video render <directory of the input file>`, with the child's output
-   on stderr. It is the only Lua file that starts a process, and it starts
+   runs `video render <input file>.qmd`, with the child's output on stderr. So
+   each rendered `.qmd` is its own video, and its directory is that video's
+   project root (`packages/cli/src/project.ts`): `topic-a/index.qmd` writes
+   `topic-a/output.mp4`, and files side by side share a root, so each sets
+   its own `video.output`. It is the only Lua file that starts a process, and it starts
    nothing else. `video.lua` and `lib/` stay pure; the CLI still runs
    `video.lua` itself through `quarto pandoc` (ADR-0002 Invocation), so there is
    no recursion.
@@ -69,6 +72,13 @@ it never tried one. Quarto 1.10.19 lets an extension filter run at the
   invalid scene exits non-zero with its diagnostic and no output, and no
   `video` on `PATH` exits non-zero with the install message.
 - `tests/integration/spike-quarto-native.test.ts`: ADR-0002 evidence unchanged.
+- The same test renders a second `.qmd` (`topic-c.qmd`, `video.output:
+  topic-c.mp4`) beside `index.qmd` with `render: ["*.qmd", "*/index.qmd"]`.
+- Manual (2026-10-20): `topic-a/index.qmd`, `topic-b/index.qmd`,
+  `topic-c.qmd` and `topic-d.qmd` (`output: videos/topic-d.mp4`) in one
+  project: `quarto render` wrote all four and skipped `README.md`;
+  `quarto render topic-a` and `quarto render topic-c.qmd` rewrote only their
+  own video. A file that is not a render target gets no project `filters`.
 - Manual (2026-10-20, Quarto 1.10.19): `filters: [video]` in front matter with
   `quarto render index.qmd` and no `_quarto.yml`; a bare `quarto render`;
   `QUARTO_VIDEO_CLI` with no `video` on `PATH`; no `QV_BROWSER_EXECUTABLE`

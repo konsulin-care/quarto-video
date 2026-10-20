@@ -26,8 +26,8 @@ filters:                                  # 2. turn it on (_quarto.yml or front 
 quarto render                             # 3. writes output.mp4
 ```
 
-The extension needs its renderer installed once per machine (Node, the `video`
-CLI and a headless Chromium). The steps below cover that, and a first video.
+The renderer (Node, the `video` CLI and a headless Chromium) is installed once
+per machine. The steps below cover that, and a first video.
 
 ## How it works
 
@@ -178,10 +178,10 @@ rendering or a browser.
 
 ## Where the output goes
 
-Everything is written inside the project directory. Nothing is written next to
-it.
+Everything is written in the folder of the rendered `.qmd`: here the project
+directory. Nothing is written outside it.
 
-| Path (in the project directory) | What it is |
+| Path (next to `index.qmd`) | What it is |
 | --- | --- |
 | `output.mp4` | **The video.** Set `video.output` in front matter to change it, for example `output: dist/intro.mp4` writes `dist/intro.mp4`. The path must stay inside the project and end in `.mp4`. |
 | `output.vtt` | Only with `video.captions` in `sidecar` or `both` mode: the captions, next to the video. |
@@ -192,43 +192,71 @@ The video is first rendered to `.video-build/render.partial.mp4` and checked
 (size, fps, frame count). Only then does it replace the output file. A failed
 render leaves your previous `output.mp4` untouched.
 
-Add this to the project's `.gitignore` to keep generated files out of commits:
+To keep generated files out of commits, add `output.mp4`, `output.vtt`,
+`.video-build/`, `.quarto/`, `index.html` and `index_files/` to `.gitignore`.
+
+## Several videos in one project
+
+Each `.qmd` file the filter sees becomes its own video. One project can hold
+many, in subfolders or side by side:
 
 ```
-output.mp4
-output.vtt
-.video-build/
-.quarto/
-index.html
-index_files/
+my-video/
+├── _extensions/video/     # quarto add, once for the whole project
+├── _quarto.yml
+├── topic-a/index.qmd      # → topic-a/output.mp4
+├── topic-b/index.qmd      # → topic-b/output.mp4
+├── topic-c.qmd            # → topic-c.mp4 (set in its front matter)
+└── topic-d.qmd            # → videos/topic-d.mp4 (set in its front matter)
 ```
 
-## Many videos in one folder
-
-Keep several projects side by side under one parent. Install the extension
-once in the parent, and put one `_quarto.yml` there:
+List every video file as a render target in `_quarto.yml`:
 
 ```yaml
 project:
   type: default
   render:
     - "*/index.qmd"
+    - "*.qmd"
 filters:
   - video
 ```
 
-Then `quarto render intro` renders `intro/output.mp4`, and `quarto render`
-renders them all. This repository works this way: its root `_quarto.yml`
-renders `videos/*/index.qmd`.
+Quarto applies the project's `filters` only to its render targets. A file
+outside the list renders as a plain HTML page, with no video. Other files,
+such as `README.md`, stay out.
 
-```sh
-cd ~/quarto-video
-cp -r videos/_template videos/my-video
-quarto render videos/my-video         # writes videos/my-video/output.mp4
+**Where each video goes.** A video's root is the folder its `.qmd` is in. Its
+`video.output`, asset paths and `.video-build/` are relative to that folder.
+
+- `topic-a/index.qmd` writes `topic-a/output.mp4`. Each subfolder has its own
+  default output, so nothing collides.
+- Files side by side in one folder share it. Give each one its own
+  `video.output`, or they all write `output.mp4`, and the last one wins:
+
+```yaml
+---
+title: "Topic C"
+video:
+  output: topic-c.mp4        # relative to my-video/; videos/topic-c.mp4 also works
+---
 ```
 
-Don't add a `_quarto.yml` inside one of these projects. Quarto would treat
-that project as separate, without the filter.
+**Render all, or one:**
+
+```sh
+cd my-video
+quarto render                    # every video
+quarto render topic-a            # only topic-a/index.qmd
+quarto render topic-c.qmd        # only topic-c.qmd
+```
+
+A subfolder per video (`topic-a/index.qmd`, with its own `assets/`) keeps
+outputs and assets apart, and is the layout to prefer. This repository works
+the same way: its root `_quarto.yml` renders `videos/*/index.qmd`.
+
+Don't add a `_quarto.yml` inside a topic folder: Quarto would make it a
+separate project, without the filter.
 
 ## When something goes wrong
 

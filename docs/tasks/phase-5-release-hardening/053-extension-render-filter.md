@@ -38,3 +38,6 @@ Human check:
 - 2026-10-20. Implemented. Local (Quarto 1.10.19, Node 24.21.0 from mise,
   headless shell 1194): `quarto-render.test.ts` 5/5, spike 1/1, `test:lua`
   308 passed, stylua and selene clean. Manual checks listed in ADR-0022.
+- 2026-10-20. `render.lua` passes the rendered `.qmd`, not its directory, so a
+  file other than `index.qmd` renders itself (it rendered `index.qmd` before).
+  Test added (`topic-c.qmd`); README "Several videos in one project".

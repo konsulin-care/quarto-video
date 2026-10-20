@@ -1,9 +1,10 @@
 -- Renders the MP4 at the end of `quarto render` (task 053; ADR-0022). Registered
 -- as the extension's filter at the `post-render` entry point, so `filters:
 -- [video]` in a document is enough: after Pandoc has the document, this runs
--- `video render <project>` on the directory of the input file. The video CLI
--- reads the .qmd again with video.lua, validates it and renders it; this file
--- only starts it. It is the one Lua file allowed to start a process
+-- `video render <file>.qmd` on the input file, so every .qmd renders to its own
+-- video, its directory being the project root (packages/cli/src/project.ts).
+-- The video CLI reads the .qmd again with video.lua, validates it and renders
+-- it; this file only starts it. It is the one Lua file allowed to start a process
 -- (_extensions/video/README.md), and it starts nothing but `video render`.
 
 -- Quotes a value for the POSIX shell.
@@ -34,7 +35,6 @@ end
 
 function Pandoc(doc)
   local input = quarto.doc.input_file
-  local project = pandoc.path.directory(input)
   local cli = find_cli()
   if not cli then
     fail(
@@ -44,7 +44,7 @@ function Pandoc(doc)
     )
   end
   -- Child output goes to stderr, so it never mixes with Pandoc's own output.
-  local command = shell_quote(cli) .. " render " .. shell_quote(project) .. " 1>&2"
+  local command = shell_quote(cli) .. " render " .. shell_quote(input) .. " 1>&2"
   local ok, _, code = os.execute(command)
   if not ok then
     fail(

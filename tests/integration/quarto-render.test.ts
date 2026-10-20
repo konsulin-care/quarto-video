@@ -2,9 +2,9 @@
 // (task 053; ADR-0022): `filters: [video]` and nothing else, no hook script.
 // In this repository: videos/hello rendered in the file and directory forms
 // through the root _quarto.yml. As a user would: a scratch project that
-// installs the extension with `quarto add <repo>`, renders, then fails on an
-// invalid scene and on a missing `video` CLI with a non-zero exit and no
-// output. `video` is found on PATH (node_modules/.bin). Needs quarto
+// installs the extension with `quarto add <repo>`, renders its index.qmd and
+// a second .qmd to its own output, then fails on an invalid scene and on a
+// missing `video` CLI with a non-zero exit and no output. `video` is found on PATH (node_modules/.bin). Needs quarto
 // (ADR-0010 pin), ffprobe and a Chromium headless shell: a missing tool is a
 // failure.
 import { spawnSync } from "node:child_process";
@@ -34,6 +34,10 @@ const GENERATED = ["output.mp4", "index.html", "index_files", ".video-build"];
 // The user's project: the README's _quarto.yml, which loads the extension.
 const USER_QUARTO_YML =
   "project:\n  type: default\n  render:\n    - index.qmd\nfilters:\n  - video\n";
+
+// The README's _quarto.yml for several videos in one project.
+const MULTI_QUARTO_YML =
+  'project:\n  type: default\n  render:\n    - "*.qmd"\n    - "*/index.qmd"\nfilters:\n  - video\n';
 
 interface Run {
   status: number | null;
@@ -189,6 +193,32 @@ describe("quarto render in a project with the extension installed", () => {
       assert.equal(run.status, 0, run.output);
       assert.match(run.output, /Wrote output\.mp4/);
       assertMp4(join(project, "output.mp4"));
+    },
+  );
+
+  it(
+    "renders another .qmd of the project to its own video.output",
+    { timeout: TIMEOUT_MS },
+    () => {
+      // topic-c.qmd beside index.qmd: rendered as its own document, with the
+      // project directory as root, to the output its front matter names. A
+      // file must be a render target to get the project's filters (README,
+      // "Several videos in one project").
+      const project = join(SCRATCH, "work", "my-video");
+      writeFileSync(join(project, "_quarto.yml"), MULTI_QUARTO_YML);
+      const text = readFileSync(join(PROJECT, "index.qmd"), "utf8");
+      writeFileSync(
+        join(project, "topic-c.qmd"),
+        text.replace("  fps: 30\n", "  fps: 30\n  output: topic-c.mp4\n"),
+      );
+      const run = quarto(
+        ["render", "topic-c.qmd"],
+        project,
+        pathWithLocalBin(),
+      );
+      assert.equal(run.status, 0, run.output);
+      assert.match(run.output, /Wrote topic-c\.mp4/);
+      assertMp4(join(project, "topic-c.mp4"));
     },
   );
 
