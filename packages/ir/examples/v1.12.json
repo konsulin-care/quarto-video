@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "1.12",
+  "type": "video",
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "background": "#10131C",
+    "reducedMotion": true
+  },
+  "generator": {
+    "extension": "0.1.0",
+    "cli": "0.0.0"
+  },
+  "scenes": [
+    {
+      "id": "scene-001",
+      "component": "split-screen",
+      "durationFrames": 120,
+      "content": {
+        "slots": {
+          "left": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Left"
+                }
+              ]
+            }
+          ],
+          "right": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Right"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 5
+      },
+      "animation": {
+        "name": "fade-in"
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "assets/left.mp4",
+          "placement": "region",
+          "region": "left",
+          "fit": "cover",
+          "sourceStartFrames": 0,
+          "sourceEndFrames": 60,
+          "audio": "keep",
+          "loop": false,
+          "freeze": true,
+          "playbackRate": 1,
+          "alt": "",
+          "volume": 0.5,
+          "kind": "video"
+        },
+        {
+          "type": "video",
+          "src": "assets/right.mp4",
+          "placement": "region",
+          "region": "right",
+          "fit": "contain",
+          "sourceStartFrames": 30,
+          "sourceEndFrames": 90,
+          "audio": "mute",
+          "loop": false,
+          "freeze": true,
+          "playbackRate": 1,
+          "alt": "",
+          "kind": "video"
+        }
+      ],
+      "exit": {
+        "name": "fade-out"
+      },
+      "animationDurationFrames": 30
+    },
+    {
+      "id": "scene-002",
+      "component": "title",
+      "durationFrames": 120,
+      "transition": {
+        "name": "fade",
+        "durationFrames": 30
+      },
+      "content": {
+        "slots": {
+          "default": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "Parallel work"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 11
+      }
+    },
+    {
+      "id": "scene-003",
+      "component": "chart",
+      "durationFrames": 120,
+      "transition": {
+        "name": "fade",
+        "durationFrames": 30
+      },
+      "content": {
+        "slots": {}
+      },
+      "props": {
+        "type": "bar",
+        "data": "data/memory.csv",
+        "x": "gpu",
+        "y": "bandwidth",
+        "unit": "GB/s",
+        "title": "Memory bandwidth"
+      },
+      "tables": {
+        "data": {
+          "columns": [
+            "gpu",
+            "bandwidth"
+          ],
+          "rows": [
+            [
+              "A",
+              "900"
+            ],
+            [
+              "B",
+              "1555"
+            ],
+            [
+              "C",
+              "2039"
+            ]
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 17
+      }
+    },
+    {
+      "id": "scene-004",
+      "component": "product-demo",
+      "durationFrames": 120,
+      "content": {
+        "slots": {
+          "caption": [
+            {
+              "type": "paragraph",
+              "inlines": [
+                {
+                  "type": "text",
+                  "text": "A still image in a browser frame"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source": {
+        "file": "index.qmd",
+        "line": 23
+      },
+      "media": [
+        {
+          "type": "video",
+          "kind": "image",
+          "src": "assets/still.png",
+          "placement": "framed",
+          "frame": "browser",
+          "fit": "cover",
+          "alt": "A still in a browser frame"
+        }
+      ],
+      "transition": {
+        "name": "fade",
+        "durationFrames": 30
+      }
+    }
+  ],
+  "timeline": {
+    "durationFrames": 390,
+    "scenes": [
+      {
+        "id": "scene-001",
+        "startFrame": 0
+      },
+      {
+        "id": "scene-002",
+        "startFrame": 90
+      },
+      {
+        "id": "scene-003",
+        "startFrame": 180
+      },
+      {
+        "id": "scene-004",
+        "startFrame": 270
+      }
+    ]
+  },
+  "music": {
+    "src": "assets/music.wav",
+    "volume": 0.5,
+    "loop": true,
+    "fadeOutFrames": 30,
+    "lengthFrames": 45
+  },
+  "captions": {
+    "src": "assets/captions.vtt",
+    "mode": "both",
+    "cues": [
+      {
+        "startFrame": 15,
+        "endFrame": 75,
+        "text": "A caption of two lines,\nas a long cue wraps in the box."
+      }
+    ]
+  }
+}
