@@ -129,10 +129,11 @@ project's `index.qmd`, its post-render hook `videos/_render-video.sh` runs
 are needed, and a failed render makes `quarto render` exit non-zero.
 `quarto render videos` renders every project; `videos/_template` is skipped.
 
-A project outside `videos/` needs `_quarto.yml` and `_render-video.sh`, copied
-from `videos/` into its parent directory, and `video` on `PATH`. Without a
-`_quarto.yml` in the project's directory or above it, `quarto render` renders
-nothing and exits 0. Do not add a `_quarto.yml` inside a project under
+A project outside `videos/` keeps its own `_quarto.yml` (with
+`render: [index.qmd]` and the same `post-render` entry) and a copy of
+`_render-video.sh` in its directory, and needs `video` on `PATH`. The root
+`README.md` walks through it step by step. Without a `_quarto.yml` in the
+project's directory or above it, `quarto render` renders nothing and exits 0. Do not add a `_quarto.yml` inside a project under
 `videos/`: it would replace the shared one, which has the hook.
 
 ## Next steps

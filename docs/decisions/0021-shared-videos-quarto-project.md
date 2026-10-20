@@ -46,9 +46,13 @@ rendered nothing and exited 0. Authors want `quarto render videos/<name>` and
    (`videos/_template`) are skipped, as are `.md` files (`videos/README.md`,
    `assets/SOURCES.md`), because they are not render targets.
 5. ADR-0002 decision 4 still holds outside `videos/`: a directory with no
-   `_quarto.yml` in it or above it renders nothing. A project elsewhere copies
-   `videos/_quarto.yml` and `videos/_render-video.sh` into its parent directory
-   and needs `video` on `PATH`.
+   `_quarto.yml` in it or above it renders nothing. A project elsewhere keeps
+   its own `_quarto.yml` (`render: [index.qmd]`, the same `post-render`) and a
+   copy of `videos/_render-video.sh` in its directory; Quarto lists
+   `index.html`, so the hook renders that directory. It needs `video` on
+   `PATH` (`<repo>/node_modules/.bin`). A parent folder of several projects can
+   copy `videos/` instead: `render: ["*/index.qmd"]` and one hook.
+   `output-dir` must stay unset: the hook maps rendered pages to projects.
 
 ## Consequences
 - A copy of `videos/_template` renders with `quarto render` and no other
@@ -71,7 +75,11 @@ rendered nothing and exited 0. Authors want `quarto render videos/<name>` and
   fresh copy of `videos/_template` rendered by
   `quarto render videos/my-video` gave 1920x1080, 30/1, 360 frames;
   `quarto render videos/hello-world/index.qmd` gave 1000x1000, 30/1, 150
-  frames; `quarto render` from inside the project rendered too. With one
+  frames; `quarto render` from inside the project rendered too. A standalone
+  project outside the repository (decision 5, the README walkthrough, with
+  `video` and the mise tools on `PATH`) rendered with both forms: 1280x720,
+  30/1, 150 frames, `Wrote output.mp4`; `video.output: dist/hello-world.mp4`
+  wrote that file; without `QV_BROWSER_EXECUTABLE` `quarto render` exited 1. With one
   invalid and one valid project in `QUARTO_PROJECT_OUTPUT_FILES`, the hook
   rendered the valid one and exited 1.
 

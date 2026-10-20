@@ -45,3 +45,7 @@ Human check:
   `hello-world` file form (150 frames), render from inside the project
   directory, and a two-project hook run with one invalid project (exit 1, the
   valid one written). See ADR-0021.
+- 2026-10-20. Root README: step-by-step guide for a project outside the
+  repository (own `_quarto.yml` and hook copy) and where the output goes.
+  Walkthrough run as written in a scratch directory: both forms wrote the MP4
+  (ADR-0021 Verification).

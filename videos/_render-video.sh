@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Post-render hook for the shared videos/ project (task 052; ADR-0021). Quarto
-# runs it from videos/ after `quarto render` and lists the pages it rendered in
-# QUARTO_PROJECT_OUTPUT_FILES, one `<project>/index.html` per line. The hook
-# runs `video render` on each of those projects and exits with the first
+# runs it from the directory of _quarto.yml after `quarto render` and lists the
+# pages it rendered in QUARTO_PROJECT_OUTPUT_FILES, one per line:
+# `<project>/index.html` here, or `index.html` when a project outside this
+# repository keeps _quarto.yml and a copy of this hook in itself (README.md).
+# The hook runs `video render` on each of those projects and exits with the first
 # non-zero status, so a failed render fails `quarto render`. Uses only
 # documented mechanisms: `video` on PATH if present, else `npm exec --prefix
 # <repo>` (packages/cli/README.md).

@@ -90,9 +90,9 @@ text is drawn at its smallest size and still does not fit: shorten it.
 **`quarto render` exits 0 and writes no `output.mp4`.** Quarto found no
 project with the hook. Under `videos/`, check that the project has no
 `_quarto.yml` of its own, which would replace the shared `videos/_quarto.yml`.
-Elsewhere, copy `_quarto.yml` and `_render-video.sh` from `videos/` into the
-project's parent directory
-([installation.md](installation.md#quarto-render-optional)).
+Elsewhere, the project needs its own `_quarto.yml` and a copy of
+`_render-video.sh` (the root `README.md`,
+[installation.md](installation.md#quarto-render-optional)).
 
 **`quarto render` fails at the hook.** The hook runs `video render`, so the
 same rules apply: `QV_BROWSER_EXECUTABLE` must be set, and the diagnostics
