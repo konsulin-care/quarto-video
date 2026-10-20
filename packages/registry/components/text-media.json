@@ -19,10 +19,10 @@
   "requiresMedia": true,
   "placements": ["framed"],
   "mediaKinds": ["video", "image"],
-  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleAnimations": ["fade-in", "fade-out", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "textFit": {

@@ -15,10 +15,10 @@
   },
   "props": {},
   "placements": [],
-  "compatibleAnimations": ["fade-in", "reveal", "slide-up", "stagger"],
+  "compatibleAnimations": ["fade-in", "fade-out", "reveal", "slide-up", "stagger"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "The points are the only body text. Each point is a line with a bullet in the theme accent colour; the text colour and size come from the theme (task 019). Items keep their order and are drawn in full, so a point wraps inside the safe area rather than being cut. The optional heading uses the theme's subtitle size."

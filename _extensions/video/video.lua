@@ -14,6 +14,7 @@ local scenes = require("lib.scenes")
 local source_scan = require("lib.scan")
 local manifest = require("lib.manifest")
 local music_track = require("lib.music")
+local caption_track = require("lib.captions")
 local diagnostics = require("lib.diagnostics")
 
 -- Path of the .qmd being rendered. Under `quarto render` Pandoc only sees a
@@ -61,6 +62,9 @@ function Pandoc(doc)
   local music = diagnostics.try(function()
     return music_track.read(doc.meta, fps)
   end, found)
+  local captions = diagnostics.try(function()
+    return caption_track.read(doc.meta)
+  end, found)
   local before = #found
   local defaults = diagnostics.try(function()
     return config.scene_defaults(doc.meta, fps)
@@ -85,7 +89,7 @@ function Pandoc(doc)
     error(diagnostics.messages(found), 0)
   end
   diagnostics.write(diagnostics_path, {})
-  manifest.write(path, manifest.build(video, list, file_name, music))
+  manifest.write(path, manifest.build(video, list, file_name, music, captions))
   -- The theme name is resolved by the validator (E_THEME_UNKNOWN), not here.
   -- The explicit background is kept too; the renderer's canvas default is the theme's.
   manifest.write(render_path, {

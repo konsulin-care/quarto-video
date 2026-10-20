@@ -1,0 +1,31 @@
+---
+title: "Contract exit invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" exit="spin"}
+Unknown exit
+:::
+
+::: {.scene component="title" duration="2s" exit="fade-in"}
+An entrance used as an exit
+:::
+
+::: {.scene component="title" duration="2s" animation="fade-out"}
+An exit used as an animation
+:::
+
+::: {.scene component="title" duration="2s" animation="fade-in" animationDuration="3s"}
+A window longer than the scene
+:::
+
+::: {.scene component="statement" duration="2s" animation="kinetic" animationDuration="500ms"}
+Kinetic keeps its own schedule
+:::
+
+::: {.scene component="title" duration="2s" animation="fade-in" exit="fade-out" animationDuration="1200ms"}
+Two windows that overlap
+:::

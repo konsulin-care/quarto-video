@@ -1,0 +1,32 @@
+[
+  {
+    "code": "E_ANIMATION_UNKNOWN",
+    "line": 9,
+    "sceneId": "scene-001"
+  },
+  {
+    "code": "E_ANIMATION_UNKNOWN",
+    "line": 13,
+    "sceneId": "scene-002"
+  },
+  {
+    "code": "E_ANIMATION_UNKNOWN",
+    "line": 17,
+    "sceneId": "scene-003"
+  },
+  {
+    "code": "E_ANIMATION_DURATION",
+    "line": 21,
+    "sceneId": "scene-004"
+  },
+  {
+    "code": "E_ANIMATION_DURATION",
+    "line": 25,
+    "sceneId": "scene-005"
+  },
+  {
+    "code": "E_ANIMATION_DURATION",
+    "line": 29,
+    "sceneId": "scene-006"
+  }
+]

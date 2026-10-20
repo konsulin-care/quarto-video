@@ -23,6 +23,6 @@ Side
 2. two
 :::
 
-::: {#fourth .scene component="title" duration="0.5s"}
+::: {#fourth .scene component="title" duration="50ms"}
 Short
 :::

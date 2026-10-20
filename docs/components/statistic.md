@@ -57,7 +57,7 @@ Errors (validator, stage 2): `E_PROP_REQUIRED` (no `value`); `E_PROP_TYPE` for a
 The number takes the largest size up to twice the theme's title size (192px at `modern`) that fits the safe-area width, and never less than the body size (40px). A unit is drawn at half that size. A long number steps down so it stays inside the frame (`size.ts`, using the registry's glyph estimate). The label and context keep their sizes (56px and 40px) and wrap.
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `count-up` (task 032: the number counts up from zero, see [README](README.md#animations-task-021)), `fade-in`, `slide-up`, `reveal`. The animation moves the number, label and context together.
 - Placements and transitions: none.
 

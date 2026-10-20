@@ -38,7 +38,7 @@ print("code is not a comparison area")
 :::
 :::
 
-::: {.scene component="comparison" duration="0.5s"}
+::: {.scene component="comparison" duration="50ms"}
 ::: {.left}
 Left area.
 :::

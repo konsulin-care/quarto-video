@@ -49,7 +49,7 @@ Right region.
 :::
 :::
 
-::: {.scene component="split-screen" duration="0.5s"}
+::: {.scene component="split-screen" duration="50ms"}
 ::: {.left}
 Too short a scene.
 :::

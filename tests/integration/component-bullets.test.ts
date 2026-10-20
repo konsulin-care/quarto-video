@@ -64,7 +64,7 @@ describe("component bullets fixtures", () => {
       heading: { required: false, accepts: ["heading"] },
     });
     assert.deepEqual(bullets["props"], {});
-    assert.deepEqual(bullets["duration"], { minMs: 1000, maxMs: 30000 });
+    assert.deepEqual(bullets["duration"], { minMs: 100, maxMs: 30000 });
   });
 
   it("component-bullets validates with the OK line and exit 0", () => {

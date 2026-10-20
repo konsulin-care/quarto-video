@@ -26,7 +26,7 @@ Over background footage the statement is written in `.text-overlay` instead of `
 Content is drawn as plain lines, one per block (ADR-0004). Inline emphasis is kept: `strong` takes the accent colour (`colors.accent`), `emphasis` is italic, and quotes and line breaks are drawn as written.
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal`, `kinetic` (see [README](README.md#animations-task-021)). `kinetic` shows each word in turn; a statement over 12 words is drawn with `fade-in` and warns `W_ANIMATION_FALLBACK`.
 - Placements: `background` (task 039): the footage fills the canvas and a theme scrim (`scrim.opacity` of the background colour) sits over it, so the text stays legible. `framed` (task 040): the footage sits in a device frame (`frame`) at the largest size of the frame's shape inside the canvas safe area; the scrim sits over the footage on the screen, and the statement draws over the frame. Layouts that place text beside a frame belong to `product-demo` (041) and `split-screen` (043). Other components do not take framed footage (`E_MEDIA_PLACEMENT`). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 

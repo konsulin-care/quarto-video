@@ -10,6 +10,8 @@ export { checkTextFit } from "./stages/fit.js";
 export { checkTheme } from "./stages/theme.js";
 export type { ThemeCheck } from "./stages/theme.js";
 export { checkAssets } from "./stages/assets.js";
+export { resolveCaptions } from "./stages/captions.js";
+export { parseVtt } from "./vtt/parse.js";
 export type { AssetRef, MediaOptions } from "./stages/assets.js";
 export { mediaProblem } from "./stages/media.js";
 export { probeFile, parseProbe } from "./media/probe.js";

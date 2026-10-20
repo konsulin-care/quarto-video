@@ -32,7 +32,7 @@ Content is drawn as plain lines, one per block (ADR-0004). The renderer splits t
 Errors (validator, stage 2): a slot with no list (a paragraph in `default`) is `E_SLOT_BLOCK_KIND`; a list of fewer than 2 or more than 6 items, or two lists in `default`, is `E_SLOT_CONSTRAINT` (the message gives the limit); any other slot name, such as `.caption`, is `E_SLOT_UNKNOWN`; a scene with no list is `E_SLOT_REQUIRED`.
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the heading and the list together. `stagger` (task 028) reveals the points one after another and leaves the heading in place; see the README.
 - Placements: none (task 038). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 

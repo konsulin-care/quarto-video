@@ -4,6 +4,8 @@
 // (PRD §8.4). The theme's tokens are passed in as props.
 import type {
   IrBlock,
+  IrCaptions,
+  IrCaptionCue,
   IrMedia,
   IrMediaVideo,
   IrMusic,
@@ -26,6 +28,8 @@ import { BackgroundScene } from "../media/BackgroundScene.js";
 import { FramedScene } from "../media/FramedScene.js";
 import { SourceAudio } from "../media/SourceAudio.js";
 import { MusicTrack } from "../media/MusicTrack.js";
+import { CaptionLayer } from "../media/CaptionLayer.js";
+import { burnedCues } from "../media/captions.js";
 import { audioSourceOf, type AudioSources } from "../media/audio-source.js";
 import { withOverlay } from "./overlay.js";
 
@@ -49,6 +53,18 @@ function contentOf(scene: IrManifest["scenes"][number]) {
 function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
   const name = "animation" in scene ? scene.animation?.name : undefined;
   return effectiveAnimation(name, contentOf(scene).texts["default"] ?? "");
+}
+
+/** The scene's exit preset id (ADR-0020), or undefined. Scenes before IR 1.12 have none. */
+function exitOf(scene: IrManifest["scenes"][number]): string | undefined {
+  return "exit" in scene ? scene.exit?.name : undefined;
+}
+
+/** The scene's animationDuration in frames (ADR-0020), or undefined for the default window. */
+function windowOf(scene: IrManifest["scenes"][number]): number | undefined {
+  return "animationDurationFrames" in scene
+    ? scene.animationDurationFrames
+    : undefined;
 }
 
 /** The scene's `.video` footage with the given placement, if it has one (tasks 039, 040). */
@@ -132,6 +148,11 @@ function musicOf(ir: IrManifest): IrMusic | undefined {
   return "music" in ir ? ir.music : undefined;
 }
 
+/** The caption track, when the manifest has one (IR 1.11, ADR-0019). */
+function captionsOf(ir: IrManifest): IrCaptions | undefined {
+  return "captions" in ir ? ir.captions : undefined;
+}
+
 /** The component, over its scene's footage when it has some: background (task 039) or framed (task 040). */
 function withMedia(scene: IrManifest["scenes"][number], component: ReactNode) {
   if (PLACES_OWN_MEDIA.has(scene.component)) return component;
@@ -157,6 +178,7 @@ export function IrVideo({ ir, theme, audioSources }: IrVideoProps) {
   const timeline = timelineOf(ir);
   const reducedMotion = reducedMotionOf(ir);
   const music = musicOf(ir);
+  const cues: readonly IrCaptionCue[] | undefined = burnedCues(captionsOf(ir));
   return (
     <ThemeProvider theme={theme}>
       <AbsoluteFill
@@ -194,6 +216,8 @@ export function IrVideo({ ir, theme, audioSources }: IrVideoProps) {
               >
                 <AnimatedScene
                   animation={animationOf(scene)}
+                  exit={exitOf(scene)}
+                  windowFrames={windowOf(scene)}
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >
@@ -213,6 +237,7 @@ export function IrVideo({ ir, theme, audioSources }: IrVideoProps) {
             </Sequence>
           );
         })}
+        {cues === undefined ? null : <CaptionLayer cues={cues} />}
         {music === undefined ? null : (
           <MusicTrack
             music={music}

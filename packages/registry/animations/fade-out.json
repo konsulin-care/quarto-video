@@ -1,0 +1,24 @@
+{
+  "id": "fade-out",
+  "version": "1.0.0",
+  "purpose": "Content fades from opaque to transparent over the last part of its scene (the exit).",
+  "compatibleComponents": [
+    "title",
+    "section-divider",
+    "end-card",
+    "statement",
+    "comparison",
+    "bullets",
+    "image",
+    "chart",
+    "statistic",
+    "product-demo",
+    "text-media",
+    "split-screen"
+  ],
+  "minFrames": 15,
+  "shortScene": "static",
+  "reducedMotion": "static",
+  "role": "exit",
+  "windowed": true
+}

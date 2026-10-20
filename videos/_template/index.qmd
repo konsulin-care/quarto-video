@@ -1,0 +1,30 @@
+---
+title: "My video"
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  output: output.mp4
+---
+
+::: {.scene component="title" duration="3.0s" animation="fade-in" animationDuration="500ms" exit="fade-out"}
+# Your title
+
+::: {.subtitle}
+A short subtitle
+:::
+:::
+
+::: {.scene component="statement" duration="4.0s" animation="reveal"}
+One sentence that makes your point.
+:::
+
+::: {.scene component="bullets" duration="5.0s" animation="stagger"}
+::: {.heading}
+## Three things to remember
+:::
+
+- First point
+- Second point
+- Third point
+:::

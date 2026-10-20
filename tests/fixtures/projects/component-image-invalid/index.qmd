@@ -37,7 +37,7 @@ Text is not an image.
 :::
 :::
 
-::: {.scene component="image" duration="0.5s"}
+::: {.scene component="image" duration="50ms"}
 ::: {.image src="assets/photo.png" alt="A photo"}
 :::
 :::

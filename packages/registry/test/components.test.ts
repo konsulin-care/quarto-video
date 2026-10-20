@@ -12,7 +12,7 @@ describe("component lookups", () => {
       },
       heading: { required: false, accepts: ["heading"] },
     });
-    expect(bullets.duration).toEqual({ minMs: 1000, maxMs: 30000 });
+    expect(bullets.duration).toEqual({ minMs: 100, maxMs: 30000 });
   });
 
   it("lists title with its slots, props and duration bounds", () => {
@@ -33,7 +33,7 @@ describe("component lookups", () => {
     });
     expect(title?.props).toEqual({});
     expect(title?.placements).toEqual(["background"]);
-    expect(title?.duration).toEqual({ minMs: 1000, maxMs: 30000 });
+    expect(title?.duration).toEqual({ minMs: 100, maxMs: 30000 });
   });
 
   it("every alternative names a slot of the same contract", () => {
@@ -54,8 +54,12 @@ describe("component lookups", () => {
       default: { required: true, accepts: ["paragraph", "heading"] },
       kicker: { required: false, accepts: ["paragraph"] },
     });
-    expect(divider.duration).toEqual({ minMs: 1000, maxMs: 8000 });
-    expect(divider.compatibleAnimations).toEqual(["fade-in", "slide-up"]);
+    expect(divider.duration).toEqual({ minMs: 100, maxMs: 8000 });
+    expect(divider.compatibleAnimations).toEqual([
+      "fade-in",
+      "fade-out",
+      "slide-up",
+    ]);
   });
 
   it("returns copies, so a caller cannot change the registry", () => {
@@ -83,7 +87,7 @@ describe("component lookups", () => {
       enum: ["bar", "line"],
       required: true,
     });
-    expect(chart.duration).toEqual({ minMs: 2000, maxMs: 30000 });
+    expect(chart.duration).toEqual({ minMs: 100, maxMs: 30000 });
   });
 
   it("rejects an unknown component id with an error, not undefined", () => {

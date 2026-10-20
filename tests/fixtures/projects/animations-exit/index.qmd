@@ -1,0 +1,15 @@
+---
+title: "Animations exit"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" animation="fade-in" animationDuration="500ms" exit="fade-out"}
+Enter and exit
+:::
+
+::: {.scene component="title" duration="2s" exit="fade-out"}
+Exit on the default window
+:::

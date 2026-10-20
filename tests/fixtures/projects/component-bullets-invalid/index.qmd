@@ -57,7 +57,7 @@ A paragraph is not a list.
 2. Second list again.
 :::
 
-::: {.scene component="bullets" duration="0.5s"}
+::: {.scene component="bullets" duration="50ms"}
 - Too short to read.
 - Second point.
 :::

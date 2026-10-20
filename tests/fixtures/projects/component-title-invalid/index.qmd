@@ -33,7 +33,7 @@ Title text.
 :::
 :::
 
-::: {.scene component="title" duration="0.5s"}
+::: {.scene component="title" duration="50ms"}
 Too short to read.
 :::
 

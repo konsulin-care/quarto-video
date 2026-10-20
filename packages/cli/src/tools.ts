@@ -7,6 +7,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { matrixWarning } from "./compat-matrix.js";
 
 export const TOOL_IDS = [
   "node",
@@ -26,6 +27,8 @@ export interface ToolStatus {
   version: string | null;
   /** Why it is unavailable and how to fix it; set only when `ok` is false. */
   hint: string | null;
+  /** Set when the version is not in the compatibility matrix (a warning, not a failure). */
+  warning?: string | null;
 }
 
 /** Outcome of one probe: a version, or the reason the tool is unavailable. */
@@ -148,13 +151,20 @@ export function detectTools(
       ? { reason: "marked missing by QV_TEST_MISSING" }
       : probes[tool]();
     if ("version" in probe) {
-      return { tool, ok: true, version: probe.version, hint: null };
+      return {
+        tool,
+        ok: true,
+        version: probe.version,
+        hint: null,
+        warning: matrixWarning(tool, probe.version),
+      };
     }
     return {
       tool,
       ok: false,
       version: null,
       hint: `${probe.reason}; ${INSTALL[tool]}`,
+      warning: null,
     };
   });
 }

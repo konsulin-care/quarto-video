@@ -1,0 +1,18 @@
+---
+title: "Captions burn"
+video:
+  width: 640
+  height: 360
+  fps: 30
+  captions:
+    src: assets/captions.vtt
+    mode: burn
+---
+
+::: {.scene component="title" duration="2s"}
+# Captions burn
+
+::: {.subtitle}
+The caption track is drawn over the picture.
+:::
+:::

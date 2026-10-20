@@ -1,0 +1,7 @@
+WEBVTT
+
+00:00:0.500 --> 00:00:01.000
+Malformed start time.
+
+00:00:01.200 --> 00:00:03.000
+This cue ends after the 2 s video.

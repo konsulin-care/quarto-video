@@ -1,0 +1,6 @@
+{
+  "project": "videos/demo",
+  "theme": "modern",
+  "frames": [60, 160, 300, 440, 560, 700, 880, 1000],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

@@ -39,10 +39,10 @@
     }
   },
   "placements": [],
-  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleAnimations": ["fade-in", "fade-out", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 2000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "Every value is printed beside its mark, and the x labels and the unit are always drawn, so the data never depends on colour. The series uses the theme accent token; text uses the theme text and muted text tokens, a pair that meets WCAG AA. The optional caption is a paragraph under the chart. Labels wrap inside the safe area; the text is not shrunk."

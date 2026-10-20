@@ -8,7 +8,7 @@ video:
 ---
 
 
-::: {#short .scene component="title" duration="0.5s"}
+::: {#short .scene component="title" duration="50ms"}
 Short
 :::
 

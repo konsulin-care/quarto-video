@@ -7,7 +7,7 @@ import {
   listAnimations,
   type ThemeTokens,
 } from "@quarto-video/registry";
-import { animationIds, animationStyle } from "../animations/index.js";
+import { animationIds, animationStyle, exitIds } from "../animations/index.js";
 import { enterFrames, easeOut } from "../animations/curve.js";
 import { themeTokens } from "../themes/tokens.js";
 
@@ -160,7 +160,12 @@ describe.each(IDS)("%s", (name) => {
 
 describe("preset API", () => {
   it("has a frame function for every registry preset, and no others", () => {
-    expect(IDS).toEqual(listAnimations().map((p) => p.id));
+    // Entrances (IDS) and exits (exitIds) together are the registry's presets.
+    expect([...IDS, ...exitIds()].sort()).toEqual(
+      listAnimations()
+        .map((p) => p.id)
+        .sort(),
+    );
   });
 
   it("throws for a name the renderer does not know", () => {

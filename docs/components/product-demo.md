@@ -32,7 +32,7 @@ The component has no props. Its settings are the attributes of its `.video` bloc
 Content is drawn as plain lines, one per block (ADR-0004).
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (see [README](README.md#animations-task-021)). The animation moves the frame and the caption together.
 - Placements: `framed` only. A `background` block is `E_MEDIA_PLACEMENT`. Footage kinds: video and image (`mediaKinds` in the contract, ADR-0018). Transitions: none listed in the contract (ADR-0005).
 

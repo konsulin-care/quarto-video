@@ -64,7 +64,7 @@ describe("component statement fixtures", () => {
       .split("\n")
       .find((line) => line.startsWith("statement "));
     assert.ok(row, `no statement row in:\n${run.stdout}`);
-    assert.match(row, /1s-30s/);
+    assert.match(row, /100ms-30s/);
     assert.match(row, /default \(required: paragraph, heading\)/);
   });
 

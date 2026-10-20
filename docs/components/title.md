@@ -34,7 +34,7 @@ The title takes the largest size from the theme's `title` (96px) down to its `bo
 Warning (validator, stage 2): `W_TEXT_FIT` when the title does not fit at 40px, or when the subtitle cannot sit beside the title at 40px. The text is still drawn at the minimum size, so it may run past the frame, as `statement` does (task 025). The warning is on the scene's line, with `property` `slots.default` or `slots.subtitle`, and the suggestion says to shorten the text or use a larger frame.
 
 ## Timing and placement
-- Duration: 1s to 30s per scene (`duration` in the contract).
+- Duration: 0.1s to 30s per scene (`duration` in the contract).
 - Animations: `fade-in`, `slide-up`, `reveal` (task 021; see [README](README.md#animations-task-021)). The animation moves the title and subtitle together.
 - Placements: `background` (task 039): footage fills the canvas behind the title, under a theme scrim that keeps it legible. Framed footage is not taken (`E_MEDIA_PLACEMENT`; only `statement` takes framed, task 040). Transitions: none listed in the contract, and not checked yet (ADR-0005).
 

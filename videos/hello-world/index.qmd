@@ -1,0 +1,32 @@
+---
+title: "Hello World"
+video:
+  width: 1000
+  height: 1000
+  fps: 30
+  background: "#000000"
+---
+
+::: {.scene component="title" duration="1.0s" animation="fade-in" animationDuration="500ms"}
+# H
+:::
+
+::: {.scene component="title" duration="0.5s"}
+# E
+:::
+
+::: {.scene component="title" duration="0.5s"}
+# L
+:::
+
+::: {.scene component="title" duration="0.5s"}
+# L
+:::
+
+::: {.scene component="title" duration="0.5s"}
+# O
+:::
+
+::: {.scene component="title" duration="2.0s" exit="fade-out" animationDuration="500ms"}
+# World!
+:::

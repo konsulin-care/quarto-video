@@ -18,10 +18,10 @@
   },
   "props": {},
   "placements": [],
-  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleAnimations": ["fade-in", "fade-out", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "The areas are the only content. They sit side by side as two columns, or three with the optional middle slot, and start at the same top edge, so unequal lengths stay aligned. Colour and size come from the theme (task 019): the text uses the text token on the surface token, a theme pair that meets WCAG AA. Long text wraps inside the safe area."

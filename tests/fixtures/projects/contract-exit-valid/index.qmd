@@ -1,0 +1,15 @@
+---
+title: "Contract exit valid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+---
+
+::: {.scene component="title" duration="2s" animation="fade-in" animationDuration="500ms" exit="fade-out"}
+An entrance and an exit, each 15 frames
+:::
+
+::: {.scene component="title" duration="1s" exit="fade-out"}
+An exit alone, with the default window
+:::

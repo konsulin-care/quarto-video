@@ -22,15 +22,18 @@ const BASE = {
   minFrames: 15,
   shortScene: "static",
   reducedMotion: "static",
+  role: "entrance",
+  windowed: true,
 };
 const text = (patch: Record<string, unknown>) =>
   JSON.stringify({ ...BASE, ...patch });
 
 describe("animation presets", () => {
-  it("lists count-up, fade-in, kinetic, reveal, slide-up and stagger, sorted", () => {
+  it("lists count-up, fade-in, fade-out, kinetic, reveal, slide-up and stagger, sorted", () => {
     expect(listAnimations().map((preset) => preset.id)).toEqual([
       "count-up",
       "fade-in",
+      "fade-out",
       "kinetic",
       "reveal",
       "slide-up",
@@ -45,6 +48,24 @@ describe("animation presets", () => {
       expect(preset.minFrames).toBeGreaterThan(0);
       expect(preset.compatibleComponents.length).toBeGreaterThan(0);
     }
+  });
+
+  it("marks fade-out as the exit preset and the others as entrances", () => {
+    expect(getAnimation("fade-out").role).toBe("exit");
+    for (const preset of listAnimations()) {
+      if (preset.id !== "fade-out") expect(preset.role).toBe("entrance");
+    }
+  });
+
+  it("rejects a preset without a role, or with a role that is not entrance or exit", () => {
+    const missing = JSON.parse(text({})) as Record<string, unknown>;
+    delete missing["role"];
+    expect(() =>
+      parseAnimation(JSON.stringify(missing), "fade-in.json"),
+    ).toThrow(/role/);
+    expect(() =>
+      parseAnimation(text({ role: "both" }), "fade-in.json"),
+    ).toThrow(/role/);
   });
 
   it("links each preset and each component both ways", () => {
@@ -85,7 +106,7 @@ describe("animation presets", () => {
   it("rejects an unknown preset id with an error, not undefined", () => {
     expect(() => getAnimation("spin")).toThrow(RegistryError);
     expect(() => getAnimation("spin")).toThrow(
-      /unknown animation "spin" \(known: count-up, fade-in, kinetic, reveal, slide-up, stagger\)/,
+      /unknown animation "spin" \(known: count-up, fade-in, fade-out, kinetic, reveal, slide-up, stagger\)/,
     );
   });
 

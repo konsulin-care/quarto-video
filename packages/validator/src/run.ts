@@ -23,6 +23,7 @@ import {
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
+import { checkWindows } from "./stages/windows.js";
 import { checkKinetic } from "./stages/kinetic.js";
 import {
   assetRefsOf,
@@ -38,6 +39,7 @@ import { checkMediaRequired } from "./stages/media-required.js";
 import { checkRegions } from "./stages/regions.js";
 import { resolveSourceEnds } from "./stages/media-source.js";
 import { resolveMusic } from "./stages/music.js";
+import { resolveCaptions } from "./stages/captions.js";
 import { resolveData } from "./stages/data.js";
 import { withNumbers } from "./stages/number.js";
 import { checkProps } from "./stages/props.js";
@@ -148,6 +150,7 @@ export function checkManifest(
         ...checkRegions(ir, components),
         ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
+        ...checkWindows(ir, animations),
         ...checkKinetic(ir),
       ]);
       // Number props become JSON numbers (ADR-0015); with errors the run stops here.
@@ -168,8 +171,14 @@ export function checkManifest(
         assets.media ?? {},
       );
       const track = resolveMusic(sourced, assets.root, assets.media ?? {});
-      state.ir = track.ir;
-      return [...assetErrors, ...data.diagnostics, ...track.diagnostics];
+      const captions = resolveCaptions(track.ir, assets.root);
+      state.ir = captions.ir;
+      return [
+        ...assetErrors,
+        ...data.diagnostics,
+        ...track.diagnostics,
+        ...captions.diagnostics,
+      ];
     },
     () => {
       const ir = state.ir;

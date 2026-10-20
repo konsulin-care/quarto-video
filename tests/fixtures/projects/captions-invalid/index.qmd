@@ -1,0 +1,18 @@
+---
+title: "Captions invalid"
+video:
+  width: 640
+  height: 360
+  fps: 30
+  captions:
+    src: assets/captions.vtt
+    mode: burn
+---
+
+::: {.scene component="title" duration="2s"}
+# Captions invalid
+
+::: {.subtitle}
+The caption file has a malformed time and a cue past the end.
+:::
+:::

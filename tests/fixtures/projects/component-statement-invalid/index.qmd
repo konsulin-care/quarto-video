@@ -25,7 +25,7 @@ A slot the statement does not have.
 2. Second item.
 :::
 
-::: {.scene component="statement" duration="0.5s"}
+::: {.scene component="statement" duration="50ms"}
 Too short to read.
 :::
 

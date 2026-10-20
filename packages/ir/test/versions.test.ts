@@ -17,13 +17,13 @@ const UNSUPPORTED = {
       path: "/schemaVersion",
       code: "E_IR_UNSUPPORTED_VERSION",
       message:
-        '"2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10',
+        '"2.0" is not a supported IR version; supported versions: 0.1, 0.2, 0.3, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12',
     },
   ],
 };
 
 describe("IR version gate", () => {
-  it("supports 0.1 to 1.10, with 1.10 the latest", () => {
+  it("supports 0.1 to 1.12, with 1.12 the latest", () => {
     expect([...SUPPORTED_VERSIONS]).toEqual([
       "0.1",
       "0.2",
@@ -39,8 +39,10 @@ describe("IR version gate", () => {
       "1.8",
       "1.9",
       "1.10",
+      "1.11",
+      "1.12",
     ]);
-    expect(LATEST_VERSION).toBe("1.10");
+    expect(LATEST_VERSION).toBe("1.12");
   });
 
   it("reads each supported version against its own schema", () => {

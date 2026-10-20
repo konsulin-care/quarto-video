@@ -1,5 +1,5 @@
 # docs/ — product, architecture, decisions, tasks
-Status: Planning docs in place; user-facing guides arrive in tasks 049–050.
+Status: Planning docs in place; user guides are in `docs/guides/` (task 050).
 
 ## Index
 | Path                         | Purpose                                         | Read when                        |
@@ -11,7 +11,7 @@ Status: Planning docs in place; user-facing guides arrive in tasks 049–050.
 | docs/tasks/README.md         | Task lifecycle and index                        | Always, before starting work     |
 | docs/testing.md              | What needs tests, gates, how to test            | Before writing or changing code  |
 | docs/components/<id>.md      | Per-component reference (created by tasks 024+) | Authoring or changing a component|
-| docs/guides/                 | Human guides (created by tasks 049–050)         | Writing user-facing docs         |
+| docs/guides/                 | Human guides: install, author, CLI, diagnostics | Writing user-facing docs         |
 
 ## Precedence
 `prd.md` > accepted ADRs > `architecture.md` > directory READMEs > task file.

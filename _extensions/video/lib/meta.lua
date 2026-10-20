@@ -14,9 +14,20 @@ function M.is_list(value)
 end
 
 --- The text of a scalar value ("" for an empty value).
+-- Pandoc reads a metadata value as Markdown, so a backslash before a letter becomes a
+-- raw inline (`assets\captions.vtt` gives Str "assets", RawInline "\captions", Str ".vtt").
+-- stringify drops raw inlines, so the text is rebuilt from each item: a backslash must
+-- reach the validator, which rejects it (ADR-0006).
 function M.text(value)
   if type(value) == "string" then
     return value
+  end
+  if pandoc.utils.type(value) == "Inlines" then
+    local parts = {}
+    for _, item in ipairs(value) do
+      parts[#parts + 1] = item.tag == "RawInline" and item.text or pandoc.utils.stringify(item)
+    end
+    return table.concat(parts)
   end
   return pandoc.utils.stringify(value)
 end

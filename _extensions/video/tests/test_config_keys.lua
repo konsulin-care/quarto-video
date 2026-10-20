@@ -41,7 +41,7 @@ return {
     local diagnostic = first("---\nvideo:\n  bitrate: 5\n---\n\n")
     h.eq(
       diagnostic.suggestion,
-      "Allowed keys here: background, fps, height, output, reducedMotion, width.",
+      "Allowed keys here: background, captions, fps, height, output, reducedMotion, width.",
       "suggestion"
     )
   end,

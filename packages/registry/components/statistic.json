@@ -34,10 +34,10 @@
     }
   },
   "placements": [],
-  "compatibleAnimations": ["count-up", "fade-in", "reveal", "slide-up"],
+  "compatibleAnimations": ["count-up", "fade-in", "fade-out", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
-    "minMs": 1000,
+    "minMs": 100,
     "maxMs": 30000
   },
   "accessibility": "The value, label and optional context are the only content. The value is bold in the text colour, at the largest size up to twice the title size that fits the safe-area width; the unit is smaller and muted. The label uses the text colour and the context the muted text colour. Both wrap inside the safe area and are not shrunk. Colour and size come from the theme; both pairs meet WCAG AA."

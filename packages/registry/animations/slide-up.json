@@ -18,5 +18,7 @@
   ],
   "minFrames": 15,
   "shortScene": "static",
-  "reducedMotion": "static"
+  "reducedMotion": "static",
+  "role": "entrance",
+  "windowed": true
 }

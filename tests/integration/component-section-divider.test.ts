@@ -61,7 +61,7 @@ describe("component section-divider", () => {
       default: { required: true, accepts: ["paragraph", "heading"] },
       kicker: { required: false, accepts: ["paragraph"] },
     });
-    assert.deepEqual(divider["duration"], { minMs: 1000, maxMs: 8000 });
+    assert.deepEqual(divider["duration"], { minMs: 100, maxMs: 8000 });
   });
 
   it("component-section-divider validates with the OK line and exit 0", () => {

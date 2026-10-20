@@ -33,7 +33,7 @@ Section title.
 :::
 :::
 
-::: {.scene component="section-divider" duration="0.5s"}
+::: {.scene component="section-divider" duration="50ms"}
 Too short to read.
 :::
 

@@ -3,18 +3,29 @@
 // .video-build/. Stage 6 (the output check) runs on that file, and it is renamed
 // to video.output only when it matches the IR (PRD §4.2, §9.1, §11.2). stdout:
 // `NN%` progress lines, then `Wrote <path>`. stderr: errors. Exit codes: 0 OK,
-// 1 validation or render failure, 2 usage or environment (preflight).
-import { mkdir, rename, rm, writeFile } from "node:fs/promises";
+// 1 validation or render failure, 2 usage or environment (preflight). On success it
+// also writes .video-build/build-info.json (build-info.ts, task 049).
+import { copyFile, mkdir, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import type { RenderFn, RenderProgress } from "@quarto-video/remotion";
 import { checkOutput, hasErrors } from "@quarto-video/validator";
 import { checkProject } from "../check.js";
+import {
+  BUILD_INFO_RELATIVE,
+  buildInfo,
+  writeBuildInfo,
+} from "../build-info.js";
 import { EXIT_INVALID, EXIT_OK, EXIT_USAGE } from "../exit-codes.js";
 import { exitCodeFor } from "../exit-status.js";
-import { explicitBackground, outputPath } from "../render-config.js";
+import {
+  explicitBackground,
+  outputPath,
+  sidecarPath,
+} from "../render-config.js";
 import { ProjectError, resolveProject } from "../project.js";
 import { report } from "../report.js";
 import { readOutputFacts } from "../output-probe.js";
+import { detectTools } from "../tools.js";
 
 /** Partial output, inside the build dir; never left behind (see the CLI README). */
 const TEMP_RELATIVE = join(".video-build", "render.partial.mp4");
@@ -98,9 +109,11 @@ export async function runRender(
       return EXIT_USAGE;
     }
     await rm(temp, { force: true });
+    await rm(join(project.root, BUILD_INFO_RELATIVE), { force: true });
     const resolved = join(project.root, RESOLVED_RELATIVE);
+    const irText = `${JSON.stringify(check.ir, null, 2)}\n`;
     await mkdir(dirname(resolved), { recursive: true });
-    await writeFile(resolved, `${JSON.stringify(check.ir, null, 2)}\n`);
+    await writeFile(resolved, irText);
     try {
       await renderer(resolved, temp, {
         browserExecutable: options.browserExecutable,
@@ -122,9 +135,31 @@ export async function runRender(
       report(found, options.json);
       return exitCodeFor(found);
     }
+    // Build info is validated before the output is renamed into place (task 049).
+    const info = await buildInfo({
+      root: project.root,
+      ir: check.ir,
+      irText,
+      flags: { json: options.json, theme: options.theme ?? null },
+      tools: detectTools(),
+    });
     await mkdir(dirname(output), { recursive: true });
+    // Sidecar and both modes copy the validated caption file beside the output (ADR-0019).
+    const captions = "captions" in check.ir ? check.ir.captions : undefined;
+    const sidecar =
+      captions !== undefined &&
+      (captions.mode === "sidecar" || captions.mode === "both")
+        ? sidecarPath(output)
+        : null;
+    if (sidecar !== null && captions !== undefined) {
+      await copyFile(join(project.root, captions.src), sidecar);
+    }
     await rename(temp, output);
+    await writeBuildInfo(project.root, info);
     process.stdout.write(`Wrote ${relative(cwd, output)}\n`);
+    if (sidecar !== null) {
+      process.stdout.write(`Wrote ${relative(cwd, sidecar)}\n`);
+    }
     return EXIT_OK;
   } catch (err) {
     await rm(temp, { force: true });

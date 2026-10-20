@@ -4,8 +4,14 @@ import preset from "@quarto-video/registry/animations/slide-up.json" with { type
 import { css, progress } from "./curve.js";
 import type { AnimationFn } from "./types.js";
 
-export const slideUp: AnimationFn = (frame, durationFrames, tokens) => {
-  const p = progress(frame, durationFrames, preset.minFrames);
+export const slideUp: AnimationFn = (frame, durationFrames, tokens, window) => {
+  const p = progress(
+    frame,
+    durationFrames,
+    preset.minFrames,
+    undefined,
+    window,
+  );
   return {
     opacity: p,
     transform: `translateY(${css((1 - p) * tokens.space.lg)}px)`,

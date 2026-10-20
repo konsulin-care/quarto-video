@@ -44,7 +44,7 @@ A caption is not a slot of text-media.
 :::
 :::
 
-::: {.scene component="text-media" duration="0.5s"}
+::: {.scene component="text-media" duration="50ms"}
 ::: {.video src="assets/wide.mp4" placement="framed" frame="browser" fit="contain" audio="mute" alt="A counter clip"}
 :::
 
