@@ -1,8 +1,8 @@
-# Quarto extension manifest (PRD §4.3). The filter is registered for the
-# documents that list this extension; the direct Pandoc invocation is in README.md.
 title: Video
 author: quarto-video
-version: 0.1.0
+version: 0.2.0
+quarto-required: ">=1.10.19"
 contributes:
   filters:
-    - video.lua
+    - path: render.lua
+      at: post-render

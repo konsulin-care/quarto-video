@@ -8,7 +8,7 @@ Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, 
 
 ## Owns
 
-- `_extension.yml` (extension metadata, filter registration) and `video.lua` (entry point).
+- `_extension.yml` (extension metadata; registers `render.lua` at `post-render`, ADR-0022), `video.lua` (entry point: `.qmd` → IR) and `render.lua` (runs `video render` at the end of `quarto render`, task 053).
 - `lib/`: `captions.lua` (the `video.captions` track, ADR-0019), `media_kind.lua` (the footage kind of a `.video` src: image or video, ADR-0018), `media_image.lua` (the image item and the attributes an image refuses), `config.lua` (front matter settings and defaults, ADR-0003 default duration), `config_keys.lua` (unknown keys, "did you mean"), `meta.lua` (front matter value shapes), `scenes.lua` (`.scene` Divs), `duration.lua` (`"<n>s"`/`"<n>ms"` → frames, ADR-0003), `scan.lua` (raw-text scan of scene fences), `locate.lua` (scene ids, Div pairing, source lines), `manifest.lua` (IR table, JSON file), `generator.lua` (extension and CLI versions in `generator`, ADR-0007), `diagnostics.lua` (error codes, collection, `diagnostics.json`), `json.lua` (deterministic encoder), `content.lua` (scene content: slots, blocks, unsupported findings), `content_inlines.lua` (inline nodes), `media.lua` (`.video` blocks → scene `media`, IR 1.6, task 038) and `media_props.lua` (its properties and their codes), `content_lines.lua` (lines of unsupported content), `transitions.lua` (a scene's incoming transition, ADR-0005), `music.lua` (the `audio.music` track, ADR-0017), `timeline.lua` (start frames and total, ADR-0005).
 - `tests/`: Lua unit tests (`run.lua` runner, one `test_*.lua` per module; `pandoc lua _extensions/video/tests/run.lua` runs them without quarto).
 
@@ -17,6 +17,17 @@ Turn the scene DSL inside `index.qmd` into a Video IR manifest (PRD §4.3, §5, 
 - Component semantics (which slots and durations are valid) → `packages/registry`; checks against them → `packages/validator` (stage 2, task 014).
 - File-system checks on assets → `packages/validator`.
 - Any rendering, React, or Remotion code. Never generate code.
+
+## Use with `quarto render` (task 053, ADR-0022)
+
+`quarto add <repo>` installs this directory into a project. `filters: [video]`
+(front matter or `_quarto.yml`) loads the one contributed filter, `render.lua`,
+at the `post-render` entry point. It runs `video render <project>`, with the
+CLI from `QUARTO_VIDEO_CLI` or `video` on `PATH`, and its output on stderr. A
+missing CLI ends `quarto render` with exit 2 and an install message; a failed
+render with the CLI's status (`os.exit`: Quarto ignores an `error()` raised at
+post-render). The CLI then runs `video.lua` from its own checkout, as below, so
+the installed copy of `video.lua` is not what renders.
 
 ## Invocation (decided in task 003)
 
@@ -117,10 +128,10 @@ line of each unsupported element. No recognised text means no line, never a wron
 
 ## Rules
 
-- Lua code is pure: no `os.execute`, `io.popen`, network, or reading files other than the document. Attribute names are case-sensitive. An attribute that is not a scene attribute (`component`, `duration`, `transition`, `transitionDuration`, `animation`, `exit`, `animationDuration`) is passed on as a component prop (`props` in the IR, ADR-0014); the validator rejects those the contract does not declare. Nothing is dropped.
+- Lua code is pure: no `os.execute`, `io.popen`, network, or reading files other than the document. The one exception is `render.lua` (ADR-0022), which starts `video render` and nothing else; `video.lua` and `lib/` never start a process. Attribute names are case-sensitive. An attribute that is not a scene attribute (`component`, `duration`, `transition`, `transitionDuration`, `animation`, `exit`, `animationDuration`) is passed on as a component prop (`props` in the IR, ADR-0014); the validator rejects those the contract does not declare. Nothing is dropped.
 - Keep Pandoc inside this directory: IR nodes must not use Pandoc names (`Para`, `Str`, …).
 - Duration conversion must pass `packages/ir/test-vectors/durations.json` (ADR-0003).
 
 ## Related
 
-Tasks 003, 007, 008–012, 015, 019, 038. ADR-0002, 0003, 0004, 0005.
+Tasks 003, 007, 008–012, 015, 019, 038, 053. ADR-0002, 0003, 0004, 0005, 0022.

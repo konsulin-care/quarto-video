@@ -116,25 +116,23 @@ PATH="$(cd /path/to/quarto-video && mise bin-paths | tr '\n' ':')$PATH" \
 
 ## Quarto render (optional)
 
-Every project under `videos/` also renders with Quarto, with no extra files
-(ADR-0021):
+quarto-video is a Quarto filter extension (ADR-0022). With `filters: [video]`,
+`quarto render` writes the MP4 itself: the extension's post-render filter runs
+`video render` on the project. In this repository the root `_quarto.yml` sets
+the filter for every sample:
 
 ```sh
-quarto render videos/my-video              # or videos/my-video/index.qmd
+mise exec -- quarto render videos/my-video   # or videos/my-video/index.qmd
 ```
 
-`videos/_quarto.yml` makes `videos/` one Quarto project. After Quarto renders a
-project's `index.qmd`, its post-render hook `videos/_render-video.sh` runs
-`video render` on that project, so the same tools and `QV_BROWSER_EXECUTABLE`
-are needed, and a failed render makes `quarto render` exit non-zero.
-`quarto render videos` renders every project; `videos/_template` is skipped.
+`mise exec` (or an activated mise shell) puts the pinned tools and
+`node_modules/.bin`, where `video` lives, on `PATH`. `QV_BROWSER_EXECUTABLE`
+is needed as for `video render`, and a failed render makes `quarto render`
+exit non-zero. `videos/_template` is not a render target.
 
-A project outside `videos/` keeps its own `_quarto.yml` (with
-`render: [index.qmd]` and the same `post-render` entry) and a copy of
-`_render-video.sh` in its directory, and needs `video` on `PATH`. The root
-`README.md` walks through it step by step. Without a `_quarto.yml` in the
-project's directory or above it, `quarto render` renders nothing and exits 0. Do not add a `_quarto.yml` inside a project under
-`videos/`: it would replace the shared one, which has the hook.
+For a project of your own, outside this repository, install the extension
+with `quarto add` and add `filters: [video]`; the root `README.md` walks
+through it step by step.
 
 ## Next steps
 

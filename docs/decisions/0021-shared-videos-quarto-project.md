@@ -1,6 +1,7 @@
 # ADR-0021: One shared Quarto project for videos/
 
-- Status: accepted
+- Status: superseded by ADR-0022 (task 053): the extension's post-render filter
+  renders; the shared project and hook script are removed
 - Date: 2026-10-20
 - Task: 052
 - PRD: §1.3, §4.3, §16, §18.1

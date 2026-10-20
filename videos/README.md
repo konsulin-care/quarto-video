@@ -1,5 +1,5 @@
 # videos/ — sample and acceptance video projects
-Status: every project here renders with `video render`, and with `quarto render` through the shared `videos/_quarto.yml` post-render hook (tasks 007a, 052; ADR-0002, ADR-0021). `hello-world` (ADR-0020, IR 1.12) is six title scenes on a 1000 x 1000 black canvas: `H` fades in over 0.5 s, `E`, `L`, `L`, `O` hold 0.5 s each, `World!` holds 1.5 s and fades out over 0.5 s (5.0 s, 150 frames). `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) is the acceptance project: every PRD §13.4 element, with music and captions.
+Status: every project here renders with `video render`, and with `quarto render` through the extension's post-render filter, which the root `_quarto.yml` turns on (task 053; ADR-0022). `hello-world` (ADR-0020, IR 1.12) is six title scenes on a 1000 x 1000 black canvas: `H` fades in over 0.5 s, `E`, `L`, `L`, `O` hold 0.5 s each, `World!` holds 1.5 s and fades out over 0.5 s (5.0 s, 150 frames). `gpu` (task 036, 49 s, validates with no diagnostics) is the design-system sample; `demo` (task 047) is the acceptance project: every PRD §13.4 element, with music and captions.
 
 ## Purpose
 Real, renderable projects that show the DSL and prove the pipeline end to end
@@ -9,9 +9,7 @@ Real, renderable projects that show the DSL and prove the pipeline end to end
 
 ## Project layout
 ```
-videos/
-├── _quarto.yml          # shared Quarto project: render targets and post-render hook (052)
-├── _render-video.sh     # the hook; runs `video render` on each rendered project (052)
+videos/                  # the root _quarto.yml renders videos/*/index.qmd with filters: [video]
 └── <name>/
     ├── index.qmd        # the only authored file required
     ├── assets/          # images, footage, audio, captions (project-relative)
@@ -26,30 +24,23 @@ videos/
 - Quarto:   `quarto render videos/<name>` or `quarto render videos/<name>/index.qmd`
   → `videos/<name>/output.mp4`. Needs the pinned Quarto (`mise.toml`).
 
-## Quarto render (tasks 007a, 052; ADR-0002, ADR-0021)
-`videos/_quarto.yml` makes `videos/` one Quarto project: `render:` lists
-`*/index.qmd`, and `post-render:` runs `./_render-video.sh`. Quarto finds it by
-searching parent directories, so a project directory needs no Quarto files of
-its own. After rendering, Quarto runs the hook from `videos/` with
-`QUARTO_PROJECT_OUTPUT_FILES` set to the rendered pages (`<name>/index.html`,
-one per line). The hook runs `video render` on each of those projects and exits
-with the first non-zero status, so a failed render (for example a validation
-error) makes `quarto render` exit non-zero. A previous `output.mp4` is left as
-it was, as `video render` does (`packages/cli/README.md`).
+## Quarto render (task 053; ADR-0022)
+The root `_quarto.yml` is the Quarto project for these samples: `render:` lists
+`videos/*/index.qmd`, and `filters: [video]` loads `_extensions/video`, whose
+`render.lua` runs at `post-render` and calls `video render` on the project of
+the rendered file. A failed render (for example a validation error) makes
+`quarto render` exit non-zero; a previous `output.mp4` is left as it was, as
+`video render` does (`packages/cli/README.md`).
 
 - Forms: `quarto render videos/<name>`, `quarto render videos/<name>/index.qmd`,
-  and `quarto render` from inside `videos/<name>`. `quarto render videos`
-  renders every project. `_template` and `.md` files are not render targets.
-- The hook finds the CLI with documented mechanisms only: `video` on PATH if
-  present, else `npm exec --prefix <repo> -- video` (`packages/cli/README.md`).
-- `_render-video.sh` must stay executable and use `./_render-video.sh` in
-  `_quarto.yml`; a bare name fails to spawn.
-- Never add a `_quarto.yml` inside a project here: Quarto would treat that
-  directory as its own project, without the hook.
+  and `quarto render index.qmd` inside `videos/<name>`. `_template` is skipped.
+- `video` must be on PATH (`node_modules/.bin`; mise adds it) or named by
+  `QUARTO_VIDEO_CLI`.
+- Do not add a `_quarto.yml` inside a project here: it would make that
+  directory its own project, without the filter.
 - Other Quarto versions and `quarto preview` are not supported.
 - `quarto render` also writes `index.html` and `index_files/` next to each
-  `index.qmd`, and `.quarto/` and `.gitignore` in `videos/`. They are generated
-  and gitignored (root `.gitignore`).
+  `index.qmd`, and `.quarto/` at the repository root. They are gitignored.
 
 ## Authoring rules (for agents writing `.qmd`)
 - Use only components, presets and themes listed by `npx video components`
@@ -63,4 +54,4 @@ it was, as `video render` does (`packages/cli/README.md`).
   and licensed for redistribution (record source in `assets/SOURCES.md`).
 
 ## Related
-Tasks 006, 007a, 036, 047, 052; ADR-0002, ADR-0020 (hello-world), ADR-0021. `tests/README.md` for fixture projects. `videos/gpu` is authored only in the DSL: no renderer code (task 036).
+Tasks 006, 007a, 036, 047, 052, 053; ADR-0002, ADR-0020 (hello-world), ADR-0022. `tests/README.md` for fixture projects. `videos/gpu` is authored only in the DSL: no renderer code (task 036).

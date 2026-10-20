@@ -87,18 +87,19 @@ text is drawn at its smallest size and still does not fit: shorten it.
 
 ## Quarto render
 
-**`quarto render` exits 0 and writes no `output.mp4`.** Quarto found no
-project with the hook. Under `videos/`, check that the project has no
-`_quarto.yml` of its own, which would replace the shared `videos/_quarto.yml`.
-Elsewhere, the project needs its own `_quarto.yml` and a copy of
-`_render-video.sh` (the root `README.md`,
-[installation.md](installation.md#quarto-render-optional)).
+**`quarto render` exits 0 and writes no `output.mp4`.** The filter is not
+on. Check `filters: [video]` in the front matter or `_quarto.yml`, and that
+`_extensions/video/` is in the project (`quarto add`). `quarto render <dir>`
+and a bare `quarto render` also need a `_quarto.yml` in that directory;
+`quarto render <dir>/index.qmd` does not.
 
-**`quarto render` fails at the hook.** The hook runs `video render`, so the
-same rules apply: `QV_BROWSER_EXECUTABLE` must be set, and the diagnostics
-are printed. Check that `_render-video.sh` is executable (`chmod +x`).
-The script finds the repository one folder above itself, so a copy outside
-`videos/` needs `video` on `PATH`.
+**``quarto-video: the `video` renderer is not installed or not on PATH``.** Put
+`video` on `PATH` (the repository's `node_modules/.bin`), or set
+`QUARTO_VIDEO_CLI` to it (README.md, step 2).
+
+**``quarto-video: `video render` failed``.** The messages above it are the
+renderer's: the same diagnostics and rules as `video render`, for example
+`QV_BROWSER_EXECUTABLE` must be set.
 
 ## Results that differ between machines
 

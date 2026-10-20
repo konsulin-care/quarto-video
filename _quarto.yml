@@ -1,0 +1,11 @@
+# Quarto project for the sample videos (task 053; ADR-0022). `filters: [video]`
+# loads the extension in _extensions/video, whose post-render filter runs
+# `video render` on each rendered project, so `quarto render videos/<name>` or
+# `quarto render videos/<name>/index.qmd` writes videos/<name>/output.mp4.
+# Only the sample projects are render targets; `_template` is skipped.
+project:
+  type: default
+  render:
+    - "videos/*/index.qmd"
+filters:
+  - video
