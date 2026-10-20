@@ -55,6 +55,18 @@ function animationOf(scene: IrManifest["scenes"][number]): string | undefined {
   return effectiveAnimation(name, contentOf(scene).texts["default"] ?? "");
 }
 
+/** The scene's exit preset id (ADR-0020), or undefined. Scenes before IR 1.12 have none. */
+function exitOf(scene: IrManifest["scenes"][number]): string | undefined {
+  return "exit" in scene ? scene.exit?.name : undefined;
+}
+
+/** The scene's animationDuration in frames (ADR-0020), or undefined for the default window. */
+function windowOf(scene: IrManifest["scenes"][number]): number | undefined {
+  return "animationDurationFrames" in scene
+    ? scene.animationDurationFrames
+    : undefined;
+}
+
 /** The scene's `.video` footage with the given placement, if it has one (tasks 039, 040). */
 function mediaOf(
   scene: IrManifest["scenes"][number],
@@ -204,6 +216,8 @@ export function IrVideo({ ir, theme, audioSources }: IrVideoProps) {
               >
                 <AnimatedScene
                   animation={animationOf(scene)}
+                  exit={exitOf(scene)}
+                  windowFrames={windowOf(scene)}
                   durationFrames={scene.durationFrames}
                   reducedMotion={reducedMotion}
                 >

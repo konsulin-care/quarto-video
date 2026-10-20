@@ -17,7 +17,7 @@
   },
   "props": {},
   "placements": ["background", "framed"],
-  "compatibleAnimations": ["fade-in", "kinetic", "reveal", "slide-up"],
+  "compatibleAnimations": ["fade-in", "fade-out", "kinetic", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
     "minMs": 100,

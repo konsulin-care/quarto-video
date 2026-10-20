@@ -5,5 +5,7 @@
   "compatibleComponents": ["bullets", "end-card"],
   "minFrames": 45,
   "shortScene": "static",
-  "reducedMotion": "static"
+  "reducedMotion": "static",
+  "role": "entrance",
+  "windowed": false
 }

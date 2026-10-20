@@ -9,8 +9,14 @@ import type { AnimationFn } from "./types.js";
 /** The scale the entrance starts from: 96% of full size. */
 export const REVEAL_START_SCALE = 0.96;
 
-export const reveal: AnimationFn = (frame, durationFrames) => {
-  const p = progress(frame, durationFrames, preset.minFrames);
+export const reveal: AnimationFn = (frame, durationFrames, _tokens, window) => {
+  const p = progress(
+    frame,
+    durationFrames,
+    preset.minFrames,
+    undefined,
+    window,
+  );
   const scale = 1 - (1 - p) * (1 - REVEAL_START_SCALE);
   return { opacity: p, transform: `scale(${css(scale)})` };
 };

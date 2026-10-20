@@ -23,6 +23,7 @@ import {
 } from "@quarto-video/registry";
 import { hasErrors, type Diagnostic } from "./diagnostic.js";
 import { checkAnimations } from "./stages/animation.js";
+import { checkWindows } from "./stages/windows.js";
 import { checkKinetic } from "./stages/kinetic.js";
 import {
   assetRefsOf,
@@ -149,6 +150,7 @@ export function checkManifest(
         ...checkRegions(ir, components),
         ...checkProps(ir, components),
         ...checkAnimations(ir, components, animations),
+        ...checkWindows(ir, animations),
         ...checkKinetic(ir),
       ]);
       // Number props become JSON numbers (ADR-0015); with errors the run stops here.

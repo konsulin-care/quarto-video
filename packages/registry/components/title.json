@@ -20,7 +20,7 @@
   },
   "props": {},
   "placements": ["background"],
-  "compatibleAnimations": ["fade-in", "reveal", "slide-up"],
+  "compatibleAnimations": ["fade-in", "fade-out", "reveal", "slide-up"],
   "compatibleTransitions": [],
   "duration": {
     "minMs": 100,

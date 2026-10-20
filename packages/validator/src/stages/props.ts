@@ -156,6 +156,8 @@ const SCENE_ATTRIBUTES = [
   "transition",
   "transitionDuration",
   "animation",
+  "exit",
+  "animationDuration",
 ];
 
 function unknownProp(

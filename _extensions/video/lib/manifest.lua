@@ -35,11 +35,25 @@ local function has_image(scenes)
   return false
 end
 
---- The IR version a manifest is written as: 1.11 with a caption track (ADR-0019),
+-- True when a scene has an exit or an animation window (IR 1.12, ADR-0020).
+local function has_window(scenes)
+  for _, scene in ipairs(scenes) do
+    if scene.exit ~= nil or scene.animationDurationFrames ~= nil then
+      return true
+    end
+  end
+  return false
+end
+
+--- The IR version a manifest is written as: 1.12 with a scene exit or window
+--- (ADR-0020), 1.11 with a caption track (ADR-0019),
 --- 1.10 with a framed image (ADR-0018), 1.9 with a music track (ADR-0017), 1.8 when
 --- a scene keeps source audio (ADR-0009), 1.7 when a scene has region footage
 --- (ADR-0016), 1.6 otherwise, so other manifests stay as they were.
 local function version_of(scenes, music, captions)
+  if has_window(scenes) then
+    return "1.12"
+  end
   if captions ~= nil then
     return "1.11"
   end
@@ -64,7 +78,8 @@ local function version_of(scenes, music, captions)
 end
 
 -- The media items without `kind`: IR 1.6 to 1.9 have no such field (ADR-0018).
--- IR 1.10 and 1.11 write it on every item.
+-- IR 1.10 to 1.12 write it on every item.
+local KIND_VERSIONS = { ["1.10"] = true, ["1.11"] = true, ["1.12"] = true }
 local function without_kind(items)
   local out = json.array({})
   for i, item in ipairs(items) do
@@ -94,6 +109,8 @@ function M.build(settings, scenes, source_file, music, captions)
       durationFrames = scene.durationFrames,
       transition = scene.transition,
       animation = scene.animation,
+      exit = scene.exit,
+      animationDurationFrames = scene.animationDurationFrames,
       props = scene.props,
       content = { slots = scene.slots },
       media = scene.media,
@@ -102,7 +119,7 @@ function M.build(settings, scenes, source_file, music, captions)
     entries[i] = { id = scene.id, startFrame = starts[i] }
   end
   local version = version_of(list, music, captions)
-  if version ~= "1.10" and version ~= "1.11" then
+  if not KIND_VERSIONS[version] then
     for _, scene in ipairs(list) do
       if scene.media ~= nil then
         scene.media = without_kind(scene.media)

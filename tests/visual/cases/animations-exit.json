@@ -1,0 +1,6 @@
+{
+  "project": "tests/fixtures/projects/animations-exit",
+  "theme": "modern",
+  "frames": [0, 7, 15, 44, 45, 52, 59, 60, 110, 119],
+  "threshold": { "channelTolerance": 2, "maxDiffRatio": 0.0005 }
+}

@@ -41,6 +41,7 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 
 | Id | Purpose | Compatible components | Min frames | Short scene | Reduced motion |
 | --- | --- | --- | --- | --- | --- |
+| `fade-out` | Content fades from opaque to transparent over the last window of the scene: the exit (`exit="fade-out"`, ADR-0020). | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media`, `split-screen` | 15 | static | static |
 | `fade-in` | Content fades from transparent to opaque. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media`, `split-screen` | 15 | static | static |
 | `slide-up` | Content fades in while it rises into place. | `title`, `section-divider`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media`, `split-screen` | 15 | static | static |
 | `reveal` | The content fades in while it grows from 96% to full size. | `title`, `end-card`, `statement`, `comparison`, `bullets`, `image`, `chart`, `statistic`, `text-media`, `split-screen` | 15 | static | static |
@@ -49,8 +50,9 @@ Written as `animation="<id>"` on a `.scene` Div. An animation moves the whole sc
 | `count-up` | The value of a statistic counts up from zero to its exact value, shown from 70% of the scene. | `statistic` | 45 | static | static |
 
 Rules that apply to every animation preset:
-- Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps). The entrance ends before the scene's last frame. `kinetic` keeps its own timing (below).
-- Easing: `fade-in`, `slide-up` and `reveal` ease out (cubic).
+- Timing: the entrance takes a third of the scene, at least 1 frame and at most 30 frames (1 s at 30 fps), unless the scene sets `animationDuration` (ADR-0020), which is the length of the entrance and of the exit window. The entrance ends before the scene's last frame. `kinetic` keeps its own timing (below).
+- Exit (ADR-0020): `exit="<id>"` names an exit preset (`fade-out`), drawn over the scene's last window; `animation` names an entrance. `animationDuration` needs an animation or an exit, a windowed preset (`fade-in`, `slide-up`, `reveal`, `fade-out`), a length of at most the scene, and room for both windows (2 × length at most the scene). Below `minFrames` and under reduced motion, `fade-out` draws the scene as it is.
+- Easing: `fade-in`, `slide-up` and `reveal` ease out (cubic); `fade-out` is the same curve reversed in time.
 - Short scene: a scene shorter than `minFrames` shows its end state from its first frame. No motion.
 - Reduced motion: each preset declares `static`, which is the end state from its first frame. The switch that applies it is task 023; until then the rule is declared, not applied.
 - A preset is a pure function of the frame, the scene length and the theme tokens. The same frame always gives the same picture (PRD §11.1).

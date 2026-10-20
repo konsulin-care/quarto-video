@@ -97,6 +97,7 @@ describe("component end-card fixtures", () => {
     assert.deepEqual(card["duration"], { minMs: 100, maxMs: 30000 });
     assert.deepEqual(card["compatibleAnimations"], [
       "fade-in",
+      "fade-out",
       "reveal",
       "slide-up",
       "stagger",

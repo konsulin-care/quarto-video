@@ -12,7 +12,9 @@
     "compatibleComponents",
     "minFrames",
     "shortScene",
-    "reducedMotion"
+    "reducedMotion",
+    "role",
+    "windowed"
   ],
   "properties": {
     "id": {
@@ -45,11 +47,26 @@
     },
     "shortScene": {
       "description": "What a scene shorter than minFrames shows. static: the end state from its first frame.",
-      "enum": ["static"]
+      "enum": [
+        "static"
+      ]
     },
     "reducedMotion": {
       "description": "What the preset draws when reduced motion is requested (task 023). static: the end state from its first frame.",
-      "enum": ["static"]
+      "enum": [
+        "static"
+      ]
+    },
+    "role": {
+      "description": "entrance: an animation (scene attribute animation). exit: an exit (scene attribute exit). ADR-0020.",
+      "enum": [
+        "entrance",
+        "exit"
+      ]
+    },
+    "windowed": {
+      "description": "true: the preset runs over one window that the scene attribute animationDuration can set (ADR-0020). false: the preset has its own schedule and animationDuration is an error.",
+      "type": "boolean"
     }
   }
 }

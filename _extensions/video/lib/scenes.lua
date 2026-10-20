@@ -27,6 +27,8 @@ local SCENE_ATTRIBUTES = {
   transition = true,
   transitionDuration = true,
   animation = true,
+  exit = true,
+  animationDuration = true,
 }
 local NESTED_MESSAGE =
   "'.scene' Divs must be top-level blocks (nested scenes are not supported yet)."
@@ -77,17 +79,7 @@ local function scene_frames(div, id, fps, default_frames)
   )
 end
 
-local function scene_record(
-  div,
-  id,
-  fps,
-  default_frames,
-  line,
-  slots,
-  transition,
-  animation,
-  footage
-)
+local function scene_record(div, id, fps, default_frames, line, slots, transition, motion, footage)
   check_shape(div, id)
   local props = props_of(div)
   local component = div.attributes.component
@@ -103,7 +95,9 @@ local function scene_record(
     component = component,
     durationFrames = scene_frames(div, id, fps, default_frames),
     transition = transition,
-    animation = animation,
+    animation = motion.animation,
+    exit = motion.exit,
+    animationDurationFrames = motion.window,
     props = props,
     slots = slots,
     media = footage,
@@ -224,6 +218,13 @@ function M.collect(doc, fps, default_frames, scan, default_transition)
       local animation = diagnostics.try(function()
         return animations.resolve(entry.div, id)
       end, found, context)
+      local exit = diagnostics.try(function()
+        return animations.resolve_exit(entry.div, id)
+      end, found, context)
+      local window = diagnostics.try(function()
+        return animations.resolve_window(entry.div, id, fps)
+      end, found, context)
+      local motion = { animation = animation, exit = exit, window = window }
       list[#list + 1] = diagnostics.try(function()
         return scene_record(
           entry.div,
@@ -233,7 +234,7 @@ function M.collect(doc, fps, default_frames, scan, default_transition)
           line,
           slots,
           transition,
-          animation,
+          motion,
           footage
         )
       end, found, context)

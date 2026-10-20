@@ -141,6 +141,10 @@ export interface AnimationPreset {
   shortScene: "static";
   /** Shown when reduced motion is requested (task 023). */
   reducedMotion: "static";
+  /** entrance (scene attribute animation) or exit (scene attribute exit), ADR-0020. */
+  role: "entrance" | "exit";
+  /** True when animationDuration sets the preset window (ADR-0020). */
+  windowed: boolean;
 }
 
 /** A transition preset's data (schema/transition.json, PRD §5.6; ADR-0005). */

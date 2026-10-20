@@ -55,7 +55,11 @@ describe("component lookups", () => {
       kicker: { required: false, accepts: ["paragraph"] },
     });
     expect(divider.duration).toEqual({ minMs: 100, maxMs: 8000 });
-    expect(divider.compatibleAnimations).toEqual(["fade-in", "slide-up"]);
+    expect(divider.compatibleAnimations).toEqual([
+      "fade-in",
+      "fade-out",
+      "slide-up",
+    ]);
   });
 
   it("returns copies, so a caller cannot change the registry", () => {

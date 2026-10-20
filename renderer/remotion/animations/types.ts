@@ -11,11 +11,14 @@ export interface AnimationStyle {
 
 /**
  * Preset API: the style at `frame` (0-based, from the scene's first frame) of a
- * scene `durationFrames` long, drawn with `tokens`. Never reads the clock,
- * randomness or browser state (PRD §8.4, §11.1).
+ * scene `durationFrames` long, drawn with `tokens`. `windowFrames` is the
+ * scene's animationDuration when it sets one (ADR-0020); absent means the
+ * default window. Never reads the clock, randomness or browser state
+ * (PRD §8.4, §11.1).
  */
 export type AnimationFn = (
   frame: number,
   durationFrames: number,
   tokens: ThemeTokens,
+  windowFrames?: number,
 ) => AnimationStyle;

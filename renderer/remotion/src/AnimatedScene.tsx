@@ -1,10 +1,14 @@
-// Applies a scene's animation preset (PRD §5.6; task 021) to the whole scene.
-// The frame is the scene's own frame (the enclosing Sequence starts it at 0),
-// and the scene's length comes from the IR. A scene without an animation is
-// drawn as it is.
+// Applies a scene's animation preset (entrance, PRD §5.6; task 021) and its exit
+// (ADR-0020) to the whole scene. The frame is the scene's own frame (the enclosing
+// Sequence starts it at 0), and the scene's length comes from the IR. A scene
+// without an animation or an exit is drawn as it is.
 import type { ReactNode } from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
-import { animationStyle } from "../animations/index.js";
+import {
+  animationStyle,
+  combineStyles,
+  exitStyle,
+} from "../animations/index.js";
 import {
   CountMotionContext,
   type CountMotion,
@@ -22,7 +26,11 @@ import { useTheme } from "../themes/ThemeProvider.js";
 export interface AnimatedSceneProps {
   /** A preset id, or undefined for no animation. */
   animation: string | undefined;
+  /** An exit preset id (ADR-0020), or undefined for no exit. */
+  exit?: string | undefined;
   durationFrames: number;
+  /** The scene's animationDuration in frames (ADR-0020); undefined for the default window. */
+  windowFrames?: number | undefined;
   /** The IR's reduced-motion setting (task 023); absent means false. */
   reducedMotion?: boolean | undefined;
   children: ReactNode;
@@ -30,21 +38,32 @@ export interface AnimatedSceneProps {
 
 export function AnimatedScene({
   animation,
+  exit,
   durationFrames,
+  windowFrames,
   reducedMotion,
   children,
 }: AnimatedSceneProps) {
   const frame = useCurrentFrame();
   const theme = useTheme();
-  if (animation === undefined) return <>{children}</>;
+  if (animation === undefined && exit === undefined) return <>{children}</>;
   const reduced = reducedMotion === true;
-  const style = animationStyle(
-    animation,
-    frame,
-    durationFrames,
-    theme,
-    reduced,
-  );
+  const entrance =
+    animation === undefined
+      ? {}
+      : animationStyle(
+          animation,
+          frame,
+          durationFrames,
+          theme,
+          reduced,
+          windowFrames,
+        );
+  const leaving =
+    exit === undefined
+      ? {}
+      : exitStyle(exit, frame, durationFrames, theme, reduced, windowFrames);
+  const style = combineStyles(entrance, leaving);
   // kinetic moves its words, not the scene: the statement reads this (task 026).
   const words: WordMotion | undefined =
     animation === "kinetic"
