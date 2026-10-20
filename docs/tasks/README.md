@@ -1,6 +1,6 @@
 # docs/tasks/ — sequential development tasks
 
-Status: Tasks 000 through 050 done (including 007a and 019a); 051 `todo`. Numbers are the execution order.
+Status: Tasks 000 through 050 done (including 007a and 019a); 051 `in-progress` (its GitHub job box is unverified). Numbers are the execution order.
 
 ## Picking work
 
