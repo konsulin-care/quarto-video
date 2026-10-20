@@ -87,16 +87,18 @@ text is drawn at its smallest size and still does not fit: shorten it.
 
 ## Quarto render
 
-**`quarto render` exits 0 and writes no `output.mp4`.** A folder without
-`_quarto.yml` is not a render form: `quarto render` does nothing and exits 0.
-Copy `_quarto.yml` and `render-video.sh` from `videos/hello-world`
+**`quarto render` exits 0 and writes no `output.mp4`.** Quarto found no
+project with the hook. Under `videos/`, check that the project has no
+`_quarto.yml` of its own, which would replace the shared `videos/_quarto.yml`.
+Elsewhere, copy `_quarto.yml` and `_render-video.sh` from `videos/` into the
+project's parent directory
 ([installation.md](installation.md#quarto-render-optional)).
 
 **`quarto render` fails at the hook.** The hook runs `video render`, so the
 same rules apply: `QV_BROWSER_EXECUTABLE` must be set, and the diagnostics
-are printed. Check that `render-video.sh` is executable (`chmod +x`).
-The script finds the repository two folders up from the project, so a
-project outside `videos/` needs `video` on `PATH`.
+are printed. Check that `_render-video.sh` is executable (`chmod +x`).
+The script finds the repository one folder above itself, so a copy outside
+`videos/` needs `video` on `PATH`.
 
 ## Results that differ between machines
 

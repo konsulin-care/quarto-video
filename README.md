@@ -21,6 +21,7 @@ npx video doctor                              # tools; set QV_BROWSER_EXECUTABLE
 npx video validate videos/hello-world         # OK hello-world (6 scenes, 150 frames)
 cp -r videos/_template videos/my-video        # a starter project
 npx video render videos/my-video              # writes videos/my-video/output.mp4
+quarto render videos/my-video                 # the same, through Quarto (ADR-0021)
 ```
 
 - [Installation](docs/guides/installation.md): the tools, the browser and a first run.

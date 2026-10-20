@@ -116,12 +116,24 @@ PATH="$(cd /path/to/quarto-video && mise bin-paths | tr '\n' ':')$PATH" \
 
 ## Quarto render (optional)
 
-`quarto render` produces `output.mp4` only through a project's `_quarto.yml`
-post-render hook (ADR-0002). A project that wants it copies `_quarto.yml` and
-`render-video.sh` from `videos/hello-world` and keeps `render-video.sh`
-executable. The script finds the repository two folders above the project, so a
-project outside `videos/` needs `video` on `PATH` instead. The template has
-neither file, so `quarto render` on a plain copy of it renders nothing and exits 0.
+Every project under `videos/` also renders with Quarto, with no extra files
+(ADR-0021):
+
+```sh
+quarto render videos/my-video              # or videos/my-video/index.qmd
+```
+
+`videos/_quarto.yml` makes `videos/` one Quarto project. After Quarto renders a
+project's `index.qmd`, its post-render hook `videos/_render-video.sh` runs
+`video render` on that project, so the same tools and `QV_BROWSER_EXECUTABLE`
+are needed, and a failed render makes `quarto render` exit non-zero.
+`quarto render videos` renders every project; `videos/_template` is skipped.
+
+A project outside `videos/` needs `_quarto.yml` and `_render-video.sh`, copied
+from `videos/` into its parent directory, and `video` on `PATH`. Without a
+`_quarto.yml` in the project's directory or above it, `quarto render` renders
+nothing and exits 0. Do not add a `_quarto.yml` inside a project under
+`videos/`: it would replace the shared one, which has the hook.
 
 ## Next steps
 

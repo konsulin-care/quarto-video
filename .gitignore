@@ -33,6 +33,9 @@ videos/*/index.html
 videos/*/index_files/
 videos/*/.quarto/
 videos/*/.gitignore
+# The shared videos/ project (task 052; ADR-0021) puts Quarto's cache here.
+videos/.quarto/
+videos/.gitignore
 
 # Harness worktrees for delegated agents (local state, never committed)
 .claude/worktrees/

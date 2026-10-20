@@ -1,7 +1,0 @@
-# Quarto project config for videos/hello (task 007a; ADR-0002).
-# `quarto render` runs the post-render hook, which calls the video CLI and
-# writes output.mp4. The hook is project config, not an extension contribution.
-project:
-  type: default
-  post-render:
-    - ./render-video.sh

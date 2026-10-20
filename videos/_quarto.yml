@@ -1,0 +1,12 @@
+# Shared Quarto project for every video under videos/ (task 052; ADR-0021).
+# `quarto render videos/<name>` or `quarto render videos/<name>/index.qmd`
+# finds this file in the parent directory, renders that project's index.qmd,
+# then runs the post-render hook, which calls the video CLI on each project
+# Quarto rendered and writes its output.mp4. Projects need no Quarto files of
+# their own. Directories starting with `_` (the starter `_template`) are skipped.
+project:
+  type: default
+  render:
+    - "*/index.qmd"
+  post-render:
+    - ./_render-video.sh

@@ -1,12 +1,14 @@
-// `quarto render` writes output.mp4 for videos/hello through the project
-// post-render hook (task 007a; ADR-0002): file and directory forms, and a
-// failing `video render` that fails quarto and leaves no output. The two
-// success forms render in place with node_modules/.bin off PATH, so the hook
-// finds the CLI through `npm exec --prefix <repo>`. The failure case runs on a
-// scratch copy with the local bin on PATH. Needs quarto (ADR-0010 pin), ffprobe
-// and a Chromium headless shell: a missing tool is a failure.
+// `quarto render` writes output.mp4 for videos/hello through the shared
+// videos/ project and its post-render hook (task 052; ADR-0021, which extends
+// ADR-0002): file and directory forms, and a failing `video render` that fails
+// quarto and leaves no output. videos/hello has no Quarto files of its own. The
+// two success forms render in place with node_modules/.bin off PATH, so the
+// hook finds the CLI through `npm exec --prefix <repo>`. The failure case runs
+// on a scratch copy with the local bin on PATH. Needs quarto (ADR-0010 pin),
+// ffprobe and a Chromium headless shell: a missing tool is a failure.
 import { spawnSync } from "node:child_process";
 import {
+  chmodSync,
   copyFileSync,
   existsSync,
   mkdirSync,
@@ -24,7 +26,8 @@ import { strict as assert } from "node:assert";
 
 const ROOT = fileURLToPath(new URL("../..", import.meta.url));
 const BIN_DIR = join(ROOT, "node_modules", ".bin");
-const PROJECT = join(ROOT, "videos", "hello");
+const VIDEOS = join(ROOT, "videos");
+const PROJECT = join(VIDEOS, "hello");
 const SCRATCH = mkdtempSync(join(tmpdir(), "quarto-render-"));
 const TIMEOUT_MS = 300_000;
 // Build outputs quarto and the CLI leave in the committed project directory.
@@ -36,6 +39,8 @@ const GENERATED = [
   ".gitignore",
   ".video-build",
 ];
+// Files quarto writes at the root of the shared videos/ project.
+const SHARED_GENERATED = [".quarto", ".gitignore"];
 
 interface Run {
   status: number | null;
@@ -94,6 +99,9 @@ function clean(dir: string): void {
   for (const name of GENERATED) {
     rmSync(join(dir, name), { recursive: true, force: true });
   }
+  for (const name of SHARED_GENERATED) {
+    rmSync(join(VIDEOS, name), { recursive: true, force: true });
+  }
 }
 
 /** Asserts the MP4 is 1920x1080, 30/1 fps, 120 frames (ADR-0002). */
@@ -127,19 +135,20 @@ after(() => {
   rmSync(SCRATCH, { recursive: true, force: true });
 });
 
-describe("quarto render with the videos/hello post-render hook", () => {
+describe("quarto render with the shared videos/ post-render hook", () => {
   it(
     "writes output.mp4 for quarto render videos/hello/index.qmd",
     { timeout: TIMEOUT_MS },
     () => {
       clean(PROJECT);
+      assert.equal(existsSync(join(PROJECT, "_quarto.yml")), false);
       const run = quartoRender(
         "videos/hello/index.qmd",
         ROOT,
         pathWithoutLocalBin(),
       );
       assert.equal(run.status, 0, run.output);
-      assert.match(run.output, /Wrote output\.mp4/);
+      assert.match(run.output, /Wrote hello\/output\.mp4/);
       assertMp4(join(PROJECT, "output.mp4"));
     },
   );
@@ -151,7 +160,7 @@ describe("quarto render with the videos/hello post-render hook", () => {
       clean(PROJECT);
       const run = quartoRender("videos/hello", ROOT, pathWithoutLocalBin());
       assert.equal(run.status, 0, run.output);
-      assert.match(run.output, /Wrote output\.mp4/);
+      assert.match(run.output, /Wrote hello\/output\.mp4/);
       assertMp4(join(PROJECT, "output.mp4"));
     },
   );
@@ -160,13 +169,17 @@ describe("quarto render with the videos/hello post-render hook", () => {
     "exits non-zero and leaves no output.mp4 when video render fails",
     { timeout: TIMEOUT_MS },
     () => {
-      // A scratch copy with an invalid scene (duration 0s), so the hook's
-      // `video render` fails validation and no earlier output exists.
-      const copy = join(SCRATCH, "invalid", "videos", "hello");
+      // A scratch copy of the shared project with an invalid scene (duration
+      // 0s), so the hook's `video render` fails validation and no earlier
+      // output exists. quarto runs from inside the project directory.
+      const videos = join(SCRATCH, "invalid", "videos");
+      const copy = join(videos, "hello");
       mkdirSync(copy, { recursive: true });
-      for (const name of ["index.qmd", "_quarto.yml", "render-video.sh"]) {
-        copyFileSync(join(PROJECT, name), join(copy, name));
+      for (const name of ["_quarto.yml", "_render-video.sh"]) {
+        copyFileSync(join(VIDEOS, name), join(videos, name));
       }
+      chmodSync(join(videos, "_render-video.sh"), 0o755);
+      copyFileSync(join(PROJECT, "index.qmd"), join(copy, "index.qmd"));
       const document = join(copy, "index.qmd");
       writeFileSync(
         document,

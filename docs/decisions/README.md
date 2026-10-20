@@ -46,6 +46,7 @@ Numbers follow task order. Each ADR is written by the task shown.
 | 0018 | Framed image footage and IR 1.10                 | §5.4, §5.5, §6.1, §6.2 | 041, 042 |
 | 0019 | Project captions and IR 1.11                     | §12, §5.2              | 046  |
 | 0020 | Scene exit and animation window, IR 1.12         | §5.6, §8.2, §12        | none |
+| 0021 | One shared Quarto project for videos/            | §1.3, §4.3, §16, §18.1 | 052  |
 
 ## Rules for agents
 
