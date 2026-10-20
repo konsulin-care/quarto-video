@@ -1,0 +1,52 @@
+# Fresh setup (task 051, PRD §16): the commands of docs/guides/installation.md,
+# run on a clean runner with no cache, then videos/demo is validated, rendered
+# and checked. The same script runs locally: scripts/fresh-setup.sh.
+name: Fresh setup
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fresh-setup-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fresh-setup:
+    name: Fresh setup from the installation guide
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out the commit under test
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Only mise itself is installed here: the guide's step 2 installs the
+      # pinned tools, so there is no install or cache step.
+      - name: Install mise
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.10.0
+          install: false
+          cache: false
+
+      # The guide's step 1 clones the repository. The clone is the one that is
+      # set up: the script clones this checkout's committed state, not a cache.
+      - name: Follow the installation guide and verify videos/demo
+        env:
+          REPO_URL: file://${{ github.workspace }}
+          WORK_DIR: ${{ runner.temp }}/fresh-setup
+        run: scripts/fresh-setup.sh "$REPO_URL" "$WORK_DIR"
+
+      - name: Upload the logs
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fresh-setup-logs
+          path: ${{ runner.temp }}/fresh-setup/logs/
+          if-no-files-found: ignore
+          retention-days: 14

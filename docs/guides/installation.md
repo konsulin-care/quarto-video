@@ -34,6 +34,10 @@ npm ci
 `mise install` fetches the pinned tools. `mise run setup` installs the git
 hooks (contributors). `npm ci` installs the workspace from `package-lock.json`.
 
+Run these where `npm` and `npx` use the pinned Node: activate mise in your shell
+(`mise activate`, see <https://mise.jdx.dev>), or prefix each command with
+`mise exec --`. `video doctor` reports any other Node version as ✗.
+
 ## 3. Check the machine
 
 ```sh
@@ -46,8 +50,17 @@ step 4 the `browser` line is `✗`, which is expected.
 
 ## 4. Point at a Chromium headless shell
 
-Rendering needs a Chromium headless shell. The CLI never downloads one. Install
-one by any method you use, then set `QV_BROWSER_EXECUTABLE` to its binary:
+Rendering needs a Chromium headless shell. The CLI never downloads one. A pinned
+way to install one is the Playwright cache (the CI job runs this line):
+
+```sh
+npx --yes playwright@1.56.1 install --with-deps chromium-headless-shell
+```
+
+`--with-deps` installs system libraries with apt and may ask for sudo. The binary
+is `chromium_headless_shell-1194/chrome-linux/headless_shell` under
+`~/.cache/ms-playwright`, or under `$PLAYWRIGHT_BROWSERS_PATH` when that is set.
+Any other install works too. Set `QV_BROWSER_EXECUTABLE` to the binary:
 
 ```sh
 export QV_BROWSER_EXECUTABLE=/path/to/chromium_headless_shell/headless_shell
@@ -82,6 +95,8 @@ The copy prints `OK my-video (3 scenes, 360 frames)`. Edit `videos/my-video/inde
 and follow [authoring.md](authoring.md). Files under `videos/*/` named
 `output.*` and `.video-build/` are gitignored, so generated output stays out
 of commits.
+
+### Outside `videos/`
 
 A project does not have to live under `videos/`. Run the CLI from the
 repository with the project's path:

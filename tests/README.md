@@ -35,6 +35,10 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
   `video` command and flag named in the guides is in `video --help`; every `qmd`
   fence in the guides that is a project validates (allow-list in the file, with reasons);
   `videos/_template` validates with no diagnostics.
+- `integration/acceptance-checklist.test.ts` (task 051, pure suite, under 1 s): the
+  bullets of PRD §16 (read from `docs/prd.md`) each have one row in
+  `docs/guides/acceptance-checklist.md`; every evidence link resolves; every test file a row
+  names is run by an npm script.
 - `visual/cases/<case>.json` — fixture project + frames to capture.
 - `visual/references/<case>/<frame>.png` — approved stills.
 - `visual/report/` — generated diff report; gitignored.

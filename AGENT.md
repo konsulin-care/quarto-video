@@ -55,6 +55,7 @@ Product source of truth: `docs/prd.md`. Architecture: `docs/architecture.md`.
 
 ## Commands
 - `mise install && mise run setup` — pinned tools + git hooks (ADR-0010).
+- `scripts/fresh-setup.sh <repo-url> <work-dir>` — the installation guide's commands in a new clone, then `videos/demo` validated, rendered and checked (task 051; needs network and a Chromium headless shell).
 - `npm ci` — install workspace dependencies from `package-lock.json` (ADR-0001).
 - `mise run check` — `scripts/check.sh --all`: line limit, format, lint, typecheck.
 - `mise run test` — `scripts/test.sh --all`: all suites. Narrow with
