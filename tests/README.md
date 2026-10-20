@@ -30,6 +30,11 @@ What needs a test: `docs/testing.md`. Gates and runners: ADR-0010.
 - `integration/paths.test.ts` (task 048) copies the demo to `My Videos/démo 動画`, renders it from four cwds with relative, absolute and `.qmd` paths, re-renders a moved copy (framemd5 per frame), and checks the ADR-0006 separator rejections.
 - `integration/` — CLI-level tests: spawn `video`, assert exit code, output,
   files.
+- `integration/docs.test.ts` (task 050, pure suite): every diagnostic code in
+  `packages/validator/README.md` appears in `docs/guides/diagnostics.md`; every
+  `video` command and flag named in the guides is in `video --help`; every `qmd`
+  fence in the guides that is a project validates (allow-list in the file, with reasons);
+  `videos/_template` validates with no diagnostics.
 - `visual/cases/<case>.json` — fixture project + frames to capture.
 - `visual/references/<case>/<frame>.png` — approved stills.
 - `visual/report/` — generated diff report; gitignored.

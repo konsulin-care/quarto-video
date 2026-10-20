@@ -1,5 +1,14 @@
-# docs/guides/ — human guides
+# docs/guides/ — user guides
 
-Status: `compatibility.md` (task 049) is real. User guides arrive in task 050.
+Status: task 050. Every guide is current with IR 1.12 and the `video` CLI, and is
+checked by `tests/integration/docs.test.ts` (diagnostic codes, commands, flags and the
+`qmd` examples).
 
-- `compatibility.md`: supported Quarto, Pandoc, Node, Remotion and ffmpeg versions (the pins in `mise.toml` and `renderer/remotion/package.json`), OS notes and known cross-platform differences. Its versions are the single matrix in `packages/cli/src/compatibility.json`, which `video doctor` reads; `packages/cli/test/compat-matrix.test.ts` checks both.
+- `installation.md`: the tools, the browser variable, a first run and a new project.
+- `authoring.md`: the DSL reference (front matter, scenes, durations, components, transitions, animations, exit, `animationDuration`, slots, music, captions).
+- `cli.md`: every `video` command, flag, exit code and file it writes.
+- `diagnostics.md`: every error and warning code, with its fix.
+- `extending.md`: the checklist for a new component or preset.
+- `troubleshooting.md`: symptoms, causes and fixes.
+- `versioning.md`: IR and DSL versioning (ADR-0007), IR 1.0 to 1.12, and migration.
+- `compatibility.md` (task 049): supported Quarto, Pandoc, Node, Remotion and ffmpeg versions, OS notes and known cross-platform differences. Its versions are the single matrix in `packages/cli/src/compatibility.json`, which `video doctor` reads; `packages/cli/test/compat-matrix.test.ts` checks both.

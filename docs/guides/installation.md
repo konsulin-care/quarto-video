@@ -56,7 +56,7 @@ npx video doctor
 
 `renderer/remotion/README.md` describes the variable. Set it in your shell
 profile to keep it. `video render` and `quarto render` refuse to start without
-it (exit 2).
+it (exit 2), so `quarto render` fails too.
 
 ## 5. Try the reference video
 
@@ -104,8 +104,9 @@ PATH="$(cd /path/to/quarto-video && mise bin-paths | tr '\n' ':')$PATH" \
 `quarto render` produces `output.mp4` only through a project's `_quarto.yml`
 post-render hook (ADR-0002). A project that wants it copies `_quarto.yml` and
 `render-video.sh` from `videos/hello-world` and keeps `render-video.sh`
-executable. The template has neither file, so `quarto render` on a plain copy
-of it renders nothing and exits 0.
+executable. The script finds the repository two folders above the project, so a
+project outside `videos/` needs `video` on `PATH` instead. The template has
+neither file, so `quarto render` on a plain copy of it renders nothing and exits 0.
 
 ## Next steps
 

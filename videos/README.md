@@ -5,6 +5,8 @@ Status: `hello` (task 006) renders with `video render`, and with `quarto render`
 Real, renderable projects that show the DSL and prove the pipeline end to end
 (PRD §4.1, §13.4). Test-only projects live in `tests/fixtures/projects/`.
 
+`videos/_template/` (task 050) is the starter project: `index.qmd` only, with a title, a statement, a bullet list and an exit with `animationDuration`. `npx video validate videos/_template` prints no diagnostics. Copy it to start a project; it has no `_quarto.yml` or `render-video.sh` (see `docs/guides/installation.md`).
+
 ## Project layout
 ```
 videos/<name>/
